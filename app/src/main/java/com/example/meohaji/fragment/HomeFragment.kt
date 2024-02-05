@@ -10,11 +10,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
+import com.example.meohaji.CategoryChannel
+import com.example.meohaji.CategoryChannelAdapter
+import com.example.meohaji.CategoryVideo
+import com.example.meohaji.CategoryVideoAdapter
 import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.MostPopularVideoAdapter
-import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentHomeBinding
-import com.example.meohaji.databinding.FragmentMyPageBinding
 
 class HomeFragment : Fragment() {
 
@@ -25,6 +27,14 @@ class HomeFragment : Fragment() {
 
     private val mostPopularVideoAdapter by lazy {
         MostPopularVideoAdapter(requireContext())
+    }
+
+    private val categoryChannelAdapter by lazy {
+        CategoryChannelAdapter(requireContext())
+    }
+
+    private val categoryVideoAdapter by lazy {
+        CategoryVideoAdapter(requireContext())
     }
 
     private val categoryList = listOf(
@@ -84,6 +94,12 @@ class HomeFragment : Fragment() {
         binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
         mostPopularVideoAdapter.submitList(dummy)
 
+        binding.rvHomeCategoryChannel.adapter = categoryChannelAdapter
+        categoryChannelAdapter.submitList(dummy2)
+
+        binding.rvHomeCategoryVideo.adapter = categoryVideoAdapter
+        categoryVideoAdapter.submitList(dummy3)
+
         val adapter1 = ArrayAdapter(
             requireContext(),
             com.bumptech.glide.R.layout.support_simple_spinner_dropdown_item,
@@ -136,8 +152,50 @@ class HomeFragment : Fragment() {
             title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        )
+    )
+
+    private val dummy2 = listOf<CategoryChannel>(
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
-        MostPopularVideo(
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        ),
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        ),
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        ),
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        ),
+        CategoryChannel(
+            id = "kW_z-NMuZIU",
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+        )
+    )
+
+    private val dummy3 = listOf<CategoryVideo>(
+        CategoryVideo(
             id = "kW_z-NMuZIU",
             publishedAt = "2024-02-02T21:30:04Z",
             channelTitle = "쿠팡플레이 스포츠",
@@ -145,7 +203,7 @@ class HomeFragment : Fragment() {
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
-        MostPopularVideo(
+        CategoryVideo(
             id = "kW_z-NMuZIU",
             publishedAt = "2024-02-02T21:30:04Z",
             channelTitle = "쿠팡플레이 스포츠",
