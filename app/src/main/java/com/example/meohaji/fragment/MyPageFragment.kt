@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentMyPageBinding
 import com.example.meohaji.databinding.FragmentSearchBinding
@@ -34,7 +35,8 @@ class MyPageFragment : Fragment() {
 
         val textView = binding.tvSaved
         val spannableString = SpannableString(textView.text)
-        spannableString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        spannableString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.signature_yellow)), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         textView.text = spannableString
 
 
