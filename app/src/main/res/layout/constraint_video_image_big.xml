@@ -25,7 +25,9 @@
         android:background="@drawable/apply_video_title_background"
         app:layout_constraintBottom_toBottomOf="@+id/iv_thumbnail"
         app:layout_constraintEnd_toEndOf="@+id/iv_thumbnail"
-        app:layout_constraintStart_toStartOf="@+id/iv_thumbnail">
+        app:layout_constraintStart_toStartOf="@+id/iv_thumbnail"
+        android:clipToOutline="true"
+        >
 
         <TextView
             android:id="@+id/tv_video_title"
