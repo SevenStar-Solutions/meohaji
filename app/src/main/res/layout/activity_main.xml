@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1A1B1F"
     tools:context=".MainActivity">
 
     <TextView
@@ -11,11 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="모하지"
+        android:textColor="#FFD80B"
+        android:fontFamily="@font/moyamoya"
         android:textStyle="bold"
         android:textSize="32sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:padding="10dp"/>
+        android:padding="15dp"/>
 
     <FrameLayout
         android:id="@+id/fl_mainContainer"
