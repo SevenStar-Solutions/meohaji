@@ -36,7 +36,7 @@ class MyPageFragment : Fragment() {
         val textView = binding.tvSaved
         val spannableString = SpannableString(textView.text)
 //        spannableString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.signature_yellow)), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.yellow_background)), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         textView.text = spannableString
 
 
@@ -48,6 +48,8 @@ class MyPageFragment : Fragment() {
 
         binding.btnEditName.setOnClickListener {
 //            val dialog = Dialog(context).apply { setContentView(R.layout) }
+            /** 프로필 사진, 사용자 이름 추가 기능 위치
+             ** 다이얼로그 생성하고 사용하기 커스텀 or 기본*/
         }
     }
 

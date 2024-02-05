@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkFragmentLocation() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.frame_main)
         when (currentFragment?.id) {
-            R.id.fl_searchFrag -> "Search"
+            R.id.rv_seachfragment_recyclerview -> "Search"
             R.id.fl_homeFrag -> "Home"
             R.id.fl_myPageFrag -> "MyPage"
             else -> null
