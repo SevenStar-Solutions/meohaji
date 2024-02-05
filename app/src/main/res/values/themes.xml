@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Meohaji" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:textColor">@android:color/white</item>
+        <item name="colorPrimary">#1A1B1F</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="Theme.Meohaji" parent="Base.Theme.Meohaji" />
