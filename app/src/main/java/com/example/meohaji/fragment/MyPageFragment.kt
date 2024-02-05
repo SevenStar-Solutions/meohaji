@@ -1,17 +1,24 @@
 package com.example.meohaji.fragment
 
+import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentMyPageBinding
 import com.example.meohaji.databinding.FragmentSearchBinding
+import java.nio.file.Files.find
 
 class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
@@ -25,7 +32,21 @@ class MyPageFragment : Fragment() {
 
         overrideBackAction()
 
+        val textView = binding.tvSaved
+        val spannableString = SpannableString(textView.text)
+        spannableString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        textView.text = spannableString
+
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnEditName.setOnClickListener {
+//            val dialog = Dialog(context).apply { setContentView(R.layout) }
+        }
     }
 
     private fun overrideBackAction() {

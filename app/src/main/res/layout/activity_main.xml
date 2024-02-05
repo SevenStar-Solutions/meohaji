@@ -7,6 +7,7 @@
     android:background="#1A1B1F"
     tools:context=".MainActivity">
 
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
@@ -20,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="머하지"
+            android:fontFamily="@font/moyamoya"
             android:textSize="26sp"
-            android:textStyle="bold"
             android:textColor="#FFD80B"/>
     </androidx.appcompat.widget.Toolbar>
 
