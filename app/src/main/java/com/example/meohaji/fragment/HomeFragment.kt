@@ -158,37 +158,37 @@ class HomeFragment : Fragment() {
     private val dummy2 = listOf<CategoryChannel>(
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         ),
         CategoryChannel(
             id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            title = "쿠팡플레이 스포츠",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
             thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
         )
@@ -201,7 +201,7 @@ class HomeFragment : Fragment() {
             channelTitle = "쿠팡플레이 스포츠",
             title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+            thumbnail = "https://i.ytimg.com/vi/2SHg5ASsTN0/mqdefault.jpg"
         ),
         CategoryVideo(
             id = "kW_z-NMuZIU",
@@ -209,7 +209,7 @@ class HomeFragment : Fragment() {
             channelTitle = "쿠팡플레이 스포츠",
             title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
             description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
+            thumbnail = "https://i.ytimg.com/vi/2SHg5ASsTN0/mqdefault.jpg"
         )
     )
 }
