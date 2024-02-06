@@ -39,9 +39,12 @@
 
             <Spinner
                 android:id="@+id/spinner_home_category"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:overlapAnchor="false"
+                android:background="@drawable/apply_spinner_background"
+                android:popupBackground="@color/black_background"
                 app:layout_constraintStart_toStartOf="@+id/rv_home_most_popular_video"
                 app:layout_constraintTop_toBottomOf="@+id/rv_home_most_popular_video" />
 
@@ -80,6 +83,8 @@
                 android:id="@+id/spinner_home_sort_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/apply_spinner_background"
+                android:popupBackground="@color/black_background"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_home_category_video"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_home_category_video" />

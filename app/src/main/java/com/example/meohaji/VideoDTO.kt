@@ -24,7 +24,9 @@ data class Item (
     @SerializedName("id")
     val id: String,
     @SerializedName("snippet")
-    val snippet: Snippet
+    val snippet: Snippet,
+    @SerializedName("statistics")
+    val statistics: Statistics
 )
 
 enum class Kind(
@@ -106,6 +108,17 @@ data class Default (
     val width: Long,
     @SerializedName("height")
     val height: Long
+)
+
+data class Statistics (
+    @SerializedName("viewCount")
+    val viewCount: String,
+    @SerializedName("likeCount")
+    val likeCount: String,
+    @SerializedName("favoriteCount")
+    val favoriteCount: String,
+    @SerializedName("commentCount")
+    val commentCount: String
 )
 
 data class PageInfo (
