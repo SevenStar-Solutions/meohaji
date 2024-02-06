@@ -1,5 +1,6 @@
 package com.example.meohaji.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
 import com.example.meohaji.SeachAdapter
@@ -27,6 +30,15 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //        return inflater.inflate(R.layout.fragment_search, container, false)
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
+
+        binding.etSeachfragmentSeach.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                /** 여기다 검색 기능 추가하시면 됩니다 */
+                hideSoftKeyBoard()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
 
         overrideBackAction()
 
@@ -79,6 +91,35 @@ class SearchFragment : Fragment() {
             score = "1",
             favorit = false
         ),
+        SeachList(
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg",
+            channel = "쿠팡플레이 스포츠",
+            time = "2024-02-02T21:30:04Z",
+            score = "1",
+            favorit = false
+        ),
+        SeachList(
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg",
+            channel = "쿠팡플레이 스포츠",
+            time = "2024-02-02T21:30:04Z",
+            score = "1",
+            favorit = false
+        ),
+        SeachList(
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg",
+            channel = "쿠팡플레이 스포츠",
+            time = "2024-02-02T21:30:04Z",
+            score = "1",
+            favorit = false
+        )
     )
+    private fun hideSoftKeyBoard() {
+        val inputMethodManager =
+            view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
 
 }

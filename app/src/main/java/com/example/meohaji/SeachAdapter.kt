@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.meohaji.databinding.ConstraintVideoImageBigBinding
+import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
 
 class SeachAdapter(private val mContext: Context) :
 
@@ -24,7 +24,7 @@ class SeachAdapter(private val mContext: Context) :
         }
     }) {
 
-    inner class ItemViewHolder(val binding: ConstraintVideoImageBigBinding) :
+    inner class ItemViewHolder(val binding: LayoutVideoByCategoryBigBinding) :
         RecyclerView.ViewHolder(binding.root){
         val image = binding.ivThumbnail
         val title = binding.tvVideoTitle
@@ -44,7 +44,7 @@ class SeachAdapter(private val mContext: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeachAdapter.ItemViewHolder {
         return ItemViewHolder(
-            ConstraintVideoImageBigBinding.inflate(
+            LayoutVideoByCategoryBigBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

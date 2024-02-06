@@ -1,5 +1,6 @@
 package com.example.meohaji
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Video (
@@ -23,7 +24,9 @@ data class Item (
     @SerializedName("id")
     val id: String,
     @SerializedName("snippet")
-    val snippet: Snippet
+    val snippet: Snippet,
+    @SerializedName("statistics")
+    val statistics: Statistics
 )
 
 enum class Kind(
@@ -107,9 +110,26 @@ data class Default (
     val height: Long
 )
 
+data class Statistics (
+    @SerializedName("viewCount")
+    val viewCount: String,
+    @SerializedName("likeCount")
+    val likeCount: String,
+    @SerializedName("favoriteCount")
+    val favoriteCount: String,
+    @SerializedName("commentCount")
+    val commentCount: String
+)
+
 data class PageInfo (
     @SerializedName("totalResults")
     val totalResults: Long,
     @SerializedName("resultsPerPage")
     val resultsPerPage: Long
+)
+
+/** 마이페이지 내 저장 */
+data class MyInfo (
+    val name: String?,
+    val pic: Uri?
 )

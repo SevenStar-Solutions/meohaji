@@ -7,16 +7,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.example.meohaji.BuildConfig
 import com.example.meohaji.CategoryChannel
 import com.example.meohaji.CategoryChannelAdapter
 import com.example.meohaji.CategoryVideo
 import com.example.meohaji.CategoryVideoAdapter
 import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.MostPopularVideoAdapter
+import com.example.meohaji.NetworkClient.apiService
+import com.example.meohaji.SortOrder
+import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.round
 
 class HomeFragment : Fragment() {
 
@@ -38,38 +50,20 @@ class HomeFragment : Fragment() {
     }
 
     private val categoryList = listOf(
-        "Film & Animation",
-        "Autos & Vehicles",
-        "Music",
-        "Pets & Animals",
-        "Sports",
-        "Short Movies",
-        "Travel & Events",
-        "Gaming",
-        "Videoblogging",
-        "People & Blogs",
-        "Comedy",
-        "Entertainment",
-        "News & Politics",
-        "Howto & Style",
-        "Education",
-        "Science & Technology",
-        "Nonprofits & Activism",
-        "Movies",
-        "Anime/Animation",
-        "Action/Adventure",
-        "Classics",
-        "Comedy",
-        "Documentary",
-        "Drama",
-        "Family",
-        "Foreign",
-        "Horror",
-        "Sci-Fi/Fantasy",
-        "Thriller",
-        "Shorts",
-        "Shows",
-        "Trailers"
+        Pair("영화 & 애니메이션", 1),
+        Pair("자동차 & 탈 것", 2),
+        Pair("음악", 10),
+        Pair("애완동물 & 동물", 15),
+        Pair("스포츠", 17),
+        Pair("여행 & 행사", 19),
+        Pair("게임", 20),
+        Pair("일상 & 브이로그", 22),
+        Pair("코미디", 23),
+        Pair("엔터테인먼트", 24),
+        Pair("뉴스 & 정치", 25),
+        Pair("정보 & 스타일", 26),
+        Pair("교육", 27),
+        Pair("과학 & 기술", 28),
     )
 
     private val sortList = listOf(
@@ -79,8 +73,21 @@ class HomeFragment : Fragment() {
         "최신 순"
     )
 
+    private val mostPopularVideoList = arrayListOf<MostPopularVideo>()
+    private val _mostPopularVideos = MutableLiveData<List<MostPopularVideo>>()
+    private val mostPopularVideos: LiveData<List<MostPopularVideo>> get() = _mostPopularVideos
+
+    private val videoByCategoryList = arrayListOf<CategoryVideo>()
+    private val _videoByCategory = MutableLiveData<List<CategoryVideo>>()
+    private val videoByCategory: LiveData<List<CategoryVideo>> get() = _videoByCategory
+
+    private val channelByCategoryList = arrayListOf<CategoryChannel>()
+    private val _channelByCategory = MutableLiveData<List<CategoryChannel>>()
+    private val channelByCategory: LiveData<List<CategoryChannel>> get() = _channelByCategory
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         overrideBackAction()
@@ -90,34 +97,216 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        communicateMostPopularVideos()
 
         binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
-        mostPopularVideoAdapter.submitList(dummy)
+        mostPopularVideoAdapter.videoClick = object : MostPopularVideoAdapter.MostPopularVideoClick {
+            override fun onClick(videoData: MostPopularVideo) {
+
+            }
+
+        }
 
         binding.rvHomeCategoryChannel.adapter = categoryChannelAdapter
-        categoryChannelAdapter.submitList(dummy2)
 
         binding.rvHomeCategoryVideo.adapter = categoryVideoAdapter
-        categoryVideoAdapter.submitList(dummy3)
+        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+            override fun onClick(videoData: CategoryVideo) {
+
+            }
+        }
 
         val adapter1 = ArrayAdapter(
             requireContext(),
-            com.bumptech.glide.R.layout.support_simple_spinner_dropdown_item,
-            categoryList
+            com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
+            YoutubeCategory.entries.map { it.str }
         )
         binding.spinnerHomeCategory.adapter = adapter1
 
         val adapter2 = ArrayAdapter(
             requireContext(),
-            com.bumptech.glide.R.layout.support_simple_spinner_dropdown_item,
-            sortList
+            com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
+            SortOrder.entries.map { it.str }
         )
         binding.spinnerHomeSortVideo.adapter = adapter2
+
+        binding.spinnerHomeCategory.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    communicateVideoByCategory(YoutubeCategory.entries[p2].id)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+
+        binding.spinnerHomeSortVideo.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    when (p2) {
+                        0 -> {
+                            videoByCategoryList.sortByDescending { it.recommendScore }
+                        }
+
+                        1 -> {
+                            videoByCategoryList.sortByDescending { it.viewCount }
+                        }
+
+                        2 -> {
+                            videoByCategoryList.sortByDescending { it.likeCount }
+                        }
+
+                        else -> {
+                            videoByCategoryList.sortBy { it.publishedAt }
+                        }
+                    }
+
+                    _videoByCategory.value = videoByCategoryList
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+
+        mostPopularVideos.observe(viewLifecycleOwner) {
+            mostPopularVideoAdapter.submitList(it.toList())
+        }
+
+        videoByCategory.observe(viewLifecycleOwner) {
+            categoryVideoAdapter.submitList(it.toList())
+        }
+
+        channelByCategory.observe(viewLifecycleOwner) {
+            categoryChannelAdapter.submitList(it.toList())
+        }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    private fun communicateMostPopularVideos() {
+        CoroutineScope(Dispatchers.Main).launch {
+            runCatching {
+                val videos = getMostPopularVideos()
+                mostPopularVideoList.clear()
+                videos.items.forEach { item ->
+                    mostPopularVideoList.add(
+                        MostPopularVideo(
+                            item.id,
+                            item.snippet.publishedAt,
+                            item.snippet.channelTitle,
+                            item.snippet.title,
+                            item.snippet.description,
+                            item.snippet.thumbnails.medium.url,
+                            item.statistics.viewCount.toInt(),
+                            item.statistics.likeCount.toInt(),
+                            item.statistics.commentCount.toInt(),
+                            calRecommendScore(
+                                item.snippet.description,
+                                item.statistics.viewCount.toInt(),
+                                item.statistics.likeCount.toInt(),
+                                item.statistics.commentCount.toInt()
+                            )
+                        )
+                    )
+                }
+                _mostPopularVideos.value = mostPopularVideoList
+            }
+        }
+    }
+
+    private fun communicateVideoByCategory(id: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            runCatching {
+                val videos = getVideoByCategory(id)
+                val channelIds = StringBuilder()
+                videoByCategoryList.clear()
+                channelByCategoryList.clear()
+                videos.items.forEach { item ->
+                    videoByCategoryList.add(
+                        CategoryVideo(
+                            item.id,
+                            item.snippet.publishedAt,
+                            item.snippet.channelTitle,
+                            item.snippet.title,
+                            item.snippet.description,
+                            item.snippet.thumbnails.medium.url,
+                            item.statistics.viewCount.toInt(),
+                            item.statistics.likeCount.toInt(),
+                            item.statistics.commentCount.toInt(),
+                            calRecommendScore(
+                                item.snippet.description,
+                                item.statistics.viewCount.toInt(),
+                                item.statistics.likeCount.toInt(),
+                                item.statistics.commentCount.toInt()
+                            )
+                        )
+                    )
+                    channelIds.append(item.snippet.channelID).append(",")
+                }
+
+                val channels = getChannelByCategory(channelIds.toString())
+                channels.items.forEach { item ->
+                    channelByCategoryList.add(
+                        CategoryChannel(
+                            item.id,
+                            item.snippet.title,
+                            item.snippet.thumbnails.medium.url
+                        )
+                    )
+                }
+
+                _videoByCategory.value = videoByCategoryList.sortedByDescending { it.recommendScore }
+                _channelByCategory.value = channelByCategoryList
+            }
+        }
+    }
+
+    private suspend fun getMostPopularVideos() = withContext(Dispatchers.IO) {
+        apiService.mostPopularVideos(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            "kr"
+        )
+    }
+
+    private suspend fun getVideoByCategory(id: String) = withContext(Dispatchers.IO) {
+        apiService.videoByCategory(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            10,
+            "kr",
+            id
+        )
+    }
+
+    private suspend fun getChannelByCategory(id: String) = withContext(Dispatchers.IO) {
+        apiService.channelByCategory(BuildConfig.YOUTUBE_API_KEY, "snippet,statistics", id)
+    }
+
+    fun calRecommendScore(
+        description: String,
+        viewCount: Int,
+        likeCount: Int,
+        commentCount: Int
+    ): Double {
+        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
+        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
+        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
+        val isShorts = description.contains("shorts")
+
+        var totalScore =
+            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
+        totalScore = round(totalScore * 10) / 10
+        return if (totalScore > 5.0) 5.0 else totalScore
     }
 
     private fun overrideBackAction() {
@@ -135,81 +324,4 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
-    private val dummy = listOf<MostPopularVideo>(
-        MostPopularVideo(
-            id = "kW_z-NMuZIU",
-            publishedAt = "2024-02-02T21:30:04Z",
-            channelTitle = "쿠팡플레이 스포츠",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        MostPopularVideo(
-            id = "kW_z-NMuZIU",
-            publishedAt = "2024-02-02T21:30:04Z",
-            channelTitle = "쿠팡플레이 스포츠",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        )
-    )
-
-    private val dummy2 = listOf<CategoryChannel>(
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryChannel(
-            id = "kW_z-NMuZIU",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        )
-    )
-
-    private val dummy3 = listOf<CategoryVideo>(
-        CategoryVideo(
-            id = "kW_z-NMuZIU",
-            publishedAt = "2024-02-02T21:30:04Z",
-            channelTitle = "쿠팡플레이 스포츠",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        ),
-        CategoryVideo(
-            id = "kW_z-NMuZIU",
-            publishedAt = "2024-02-02T21:30:04Z",
-            channelTitle = "쿠팡플레이 스포츠",
-            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
-            description = "쿠팡플레이에서 2023 AFC 카타르 아시안컵 생중계와 풀 하이라이트",
-            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg"
-        )
-    )
 }
