@@ -13,16 +13,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.fragment.app.commit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.meohaji.CategoryChannel
-import com.example.meohaji.CategoryChannelAdapter
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.CategoryVideoAdapter
-import com.example.meohaji.MostPopularVideo
-import com.example.meohaji.MostPopularVideoAdapter
+import com.example.meohaji.*
+import com.example.meohaji.MyAPIKeys.MY_API_KEY
 import com.example.meohaji.NetworkClient.apiService
-import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -141,16 +137,25 @@ class HomeFragment : Fragment() {
             categoryChannelAdapter.submitList(it.toList())
         }
 
-        // MostPopularVideoAdapter에서 interface로 받은 데이터를 DetailFragment로 넘기는 뷰뷴
+        // VideoAdapter에서 interface로 받은 데이터를 DetailFragment로 넘기는 뷰뷴
         mostPopularVideoAdapter.goDetail = object : GoDetail {
             override fun sendData(v: View, dummy: DummyDetail) {
-                val detailFragment = DetailFragment.newInstance(dummy)
                     requireActivity().supportFragmentManager.commit {
-                        replace(R.id.frame_main,detailFragment)
+                        replace(R.id.frame_main,DetailFragment.newInstance(dummy))
                         setReorderingAllowed(true)
                         addToBackStack(null)
                     }
-                Log.i("This is HomeFragment","Adapter Interface : $dummy")
+                Log.i("This is HomeFragment","MostPopularVideoAdapter Interface : $dummy")
+            }
+        }
+        categoryVideoAdapter.goDetail = object : GoDetail {
+            override fun sendData(v: View, dummy: DummyDetail) {
+                requireActivity().supportFragmentManager.commit {
+                    replace(R.id.frame_main,DetailFragment.newInstance(dummy))
+                    setReorderingAllowed(true)
+                    addToBackStack(null)
+                }
+                Log.i("This is HomeFragment","CategoryVideoAdapter Interface : $dummy")
             }
         }
     }
@@ -226,16 +231,17 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // MY_API_KEY란 Object를 만들고, 키를 입력함. / MY_API_KEY는 .gitignore에 추가함
     private suspend fun getMostPopularVideos() = withContext(Dispatchers.IO) {
-        apiService.mostPopularVideos("본인 API 키 채우기", "snippet,statistics", "mostPopular", "kr")
+        apiService.mostPopularVideos(MY_API_KEY, "snippet,statistics", "mostPopular", "kr")
     }
 
     private suspend fun getVideoByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.videoByCategory("본인 API 키 채우기", "snippet,statistics", "mostPopular", 10, "kr", id)
+        apiService.videoByCategory(MY_API_KEY, "snippet,statistics", "mostPopular", 10, "kr", id)
     }
 
     private suspend fun getChannelByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.channelByCategory("본인 API 키 채우기", "snippet,statistics", id)
+        apiService.channelByCategory(MY_API_KEY, "snippet,statistics", id)
     }
 
     private fun overrideBackAction() {

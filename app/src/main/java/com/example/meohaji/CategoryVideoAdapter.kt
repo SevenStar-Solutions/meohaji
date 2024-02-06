@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
+import com.example.meohaji.fragment.DummyDetail
+import com.example.meohaji.fragment.GoDetail
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -50,6 +52,12 @@ class CategoryVideoAdapter(private val context: Context): ListAdapter<CategoryVi
             tvVideoTitle.text = item.title
             tvChannelName.text = item.channelTitle
             tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
+
+            // 인터페이스에 DummyDetail이라는 data class의 값을 담음
+            itemView.setOnClickListener {
+                goDetail?.sendData(it, DummyDetail(item.title,item.thumbnail, item.likeCount, item.viewCount, item.commentCount, item.publishedAt, item.description))
+            }
         }
     }
+    var goDetail: GoDetail? = null
 }

@@ -47,10 +47,9 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
 
             // 인터페이스에 DummyDetail이라는 data class의 값을 담음
             itemView.setOnClickListener {
-                goDetail?.sendData(it, DummyDetail(item.title,item.thumbnail, 0, 0, 0, item.publishedAt, item.description))
+                goDetail?.sendData(it, DummyDetail(item.title,item.thumbnail, item.likeCount, item.viewCount, item.commentCount, item.publishedAt, item.description))
             }
         }
     }
-
     var goDetail: GoDetail? = null
 }
