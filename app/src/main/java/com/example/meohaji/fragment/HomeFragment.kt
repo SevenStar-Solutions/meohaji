@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.meohaji.BuildConfig
 import com.example.meohaji.CategoryChannel
 import com.example.meohaji.CategoryChannelAdapter
 import com.example.meohaji.CategoryVideo
@@ -212,15 +213,15 @@ class HomeFragment : Fragment() {
     }
 
     private suspend fun getMostPopularVideos() = withContext(Dispatchers.IO) {
-        apiService.mostPopularVideos("본인 API 키 채우기", "snippet,statistics", "mostPopular", "kr")
+        apiService.mostPopularVideos(BuildConfig.YOUTUBE_API_KEY, "snippet,statistics", "mostPopular", "kr")
     }
 
     private suspend fun getVideoByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.videoByCategory("본인 API 키 채우기", "snippet,statistics", "mostPopular", 10, "kr", id)
+        apiService.videoByCategory(BuildConfig.YOUTUBE_API_KEY, "snippet,statistics", "mostPopular", 10, "kr", id)
     }
 
     private suspend fun getChannelByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.channelByCategory("본인 API 키 채우기", "snippet,statistics", id)
+        apiService.channelByCategory(BuildConfig.YOUTUBE_API_KEY, "snippet,statistics", id)
     }
 
     private fun overrideBackAction() {
