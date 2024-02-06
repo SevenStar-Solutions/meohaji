@@ -29,6 +29,12 @@ class CategoryVideoAdapter(private val context: Context) :
         }
     ) {
 
+        interface CategoryVideoClick {
+            fun onClick(videoData: CategoryVideo)
+        }
+
+    var videoClick: CategoryVideoClick? = null
+
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
     val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
@@ -57,6 +63,10 @@ class CategoryVideoAdapter(private val context: Context) :
             tvChannelName.text = item.channelTitle
             tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
             textView4.text = item.recommendScore.toString()
+
+            itemView.setOnClickListener {
+                videoClick?.onClick(item)
+            }
         }
     }
 }
