@@ -16,14 +16,24 @@ import androidx.activity.addCallback
 import androidx.fragment.app.commit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.meohaji.BuildConfig
+import com.example.meohaji.CategoryChannel
+import com.example.meohaji.CategoryChannelAdapter
+import com.example.meohaji.CategoryVideo
+import com.example.meohaji.CategoryVideoAdapter
+import com.example.meohaji.MostPopularVideo
+import com.example.meohaji.MostPopularVideoAdapter
 import com.example.meohaji.*
 import com.example.meohaji.MyAPIKeys.MY_API_KEY
 import com.example.meohaji.NetworkClient.apiService
+import com.example.meohaji.SortOrder
+import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.round
 
 class HomeFragment : Fragment() {
 
@@ -110,20 +120,51 @@ class HomeFragment : Fragment() {
         val adapter2 = ArrayAdapter(
             requireContext(),
             com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
-            sortList
+            SortOrder.entries.map { it.str }
         )
         binding.spinnerHomeSortVideo.adapter = adapter2
 
-        binding.spinnerHomeCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                communicateVideoByCategory(YoutubeCategory.entries[p2].id)
+        binding.spinnerHomeCategory.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    communicateVideoByCategory(YoutubeCategory.entries[p2].id)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
+        binding.spinnerHomeSortVideo.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    when (p2) {
+                        0 -> {
+                            videoByCategoryList.sortByDescending { it.recommendScore }
+                        }
 
-        }
+                        1 -> {
+                            videoByCategoryList.sortByDescending { it.viewCount }
+                        }
+
+                        2 -> {
+                            videoByCategoryList.sortByDescending { it.likeCount }
+                        }
+
+                        else -> {
+                            videoByCategoryList.sortBy { it.publishedAt }
+                        }
+                    }
+
+                    _videoByCategory.value = videoByCategoryList
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
+            }
 
         mostPopularVideos.observe(viewLifecycleOwner) {
             mostPopularVideoAdapter.submitList(it.toList())
@@ -181,7 +222,13 @@ class HomeFragment : Fragment() {
                             item.snippet.thumbnails.medium.url,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount.toInt(),
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount.toInt(),
+                            calRecommendScore(
+                                item.snippet.description,
+                                item.statistics.viewCount.toInt(),
+                                item.statistics.likeCount.toInt(),
+                                item.statistics.commentCount.toInt()
+                            )
                         )
                     )
                 }
@@ -208,7 +255,13 @@ class HomeFragment : Fragment() {
                             item.snippet.thumbnails.medium.url,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount.toInt(),
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount.toInt(),
+                            calRecommendScore(
+                                item.snippet.description,
+                                item.statistics.viewCount.toInt(),
+                                item.statistics.likeCount.toInt(),
+                                item.statistics.commentCount.toInt()
+                            )
                         )
                     )
                     channelIds.append(item.snippet.channelID).append(",")
@@ -225,23 +278,51 @@ class HomeFragment : Fragment() {
                     )
                 }
 
-                _videoByCategory.value = videoByCategoryList
+                _videoByCategory.value = videoByCategoryList.sortedByDescending { it.recommendScore }
                 _channelByCategory.value = channelByCategoryList
             }
         }
     }
 
-    // MY_API_KEY란 Object를 만들고, 키를 입력함. / MY_API_KEY는 .gitignore에 추가함
     private suspend fun getMostPopularVideos() = withContext(Dispatchers.IO) {
-        apiService.mostPopularVideos(MY_API_KEY, "snippet,statistics", "mostPopular", "kr")
+        apiService.mostPopularVideos(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            "kr"
+        )
     }
 
     private suspend fun getVideoByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.videoByCategory(MY_API_KEY, "snippet,statistics", "mostPopular", 10, "kr", id)
+        apiService.videoByCategory(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            10,
+            "kr",
+            id
+        )
     }
 
     private suspend fun getChannelByCategory(id: String) = withContext(Dispatchers.IO) {
-        apiService.channelByCategory(MY_API_KEY, "snippet,statistics", id)
+        apiService.channelByCategory(BuildConfig.YOUTUBE_API_KEY, "snippet,statistics", id)
+    }
+
+    fun calRecommendScore(
+        description: String,
+        viewCount: Int,
+        likeCount: Int,
+        commentCount: Int
+    ): Double {
+        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
+        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
+        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
+        val isShorts = description.contains("shorts")
+
+        var totalScore =
+            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
+        totalScore = round(totalScore * 10) / 10
+        return if (totalScore > 5.0) 5.0 else totalScore
     }
 
     private fun overrideBackAction() {

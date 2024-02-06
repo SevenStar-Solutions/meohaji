@@ -13,18 +13,23 @@ import com.example.meohaji.fragment.GoDetail
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.round
 
-class CategoryVideoAdapter(private val context: Context): ListAdapter<CategoryVideo, CategoryVideoAdapter.CategoryVideoViewHolder>(
-    object : DiffUtil.ItemCallback<CategoryVideo>() {
-        override fun areItemsTheSame(oldItem: CategoryVideo, newItem: CategoryVideo): Boolean {
-            return oldItem.id == newItem.id
-        }
+class CategoryVideoAdapter(private val context: Context) :
+    ListAdapter<CategoryVideo, CategoryVideoAdapter.CategoryVideoViewHolder>(
+        object : DiffUtil.ItemCallback<CategoryVideo>() {
+            override fun areItemsTheSame(oldItem: CategoryVideo, newItem: CategoryVideo): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-        override fun areContentsTheSame(oldItem: CategoryVideo, newItem: CategoryVideo): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(
+                oldItem: CategoryVideo,
+                newItem: CategoryVideo
+            ): Boolean {
+                return oldItem == newItem
+            }
         }
-    }
-) {
+    ) {
 
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
     val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
@@ -43,7 +48,8 @@ class CategoryVideoAdapter(private val context: Context): ListAdapter<CategoryVi
         holder.onBind(currentList[position])
     }
 
-    inner class CategoryVideoViewHolder(private val binding: LayoutVideoByCategoryBigBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class CategoryVideoViewHolder(private val binding: LayoutVideoByCategoryBigBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun onBind(item: CategoryVideo) = with(binding) {
             Glide.with(context)
                 .load(item.thumbnail)
@@ -52,6 +58,7 @@ class CategoryVideoAdapter(private val context: Context): ListAdapter<CategoryVi
             tvVideoTitle.text = item.title
             tvChannelName.text = item.channelTitle
             tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
+            textView4.text = item.recommendScore.toString()
 
             // 인터페이스에 DummyDetail이라는 data class의 값을 담음
             itemView.setOnClickListener {
