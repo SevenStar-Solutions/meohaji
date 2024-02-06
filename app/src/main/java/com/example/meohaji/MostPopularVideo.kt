@@ -9,5 +9,6 @@ data class MostPopularVideo(
     val thumbnail: String,
     val viewCount: Int,
     val likeCount: Int,
-    val commentCount: Int
+    val commentCount: Int,
+    val recommendScore: Double
 )
