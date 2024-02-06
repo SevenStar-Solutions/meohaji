@@ -22,62 +22,60 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarMain)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        setFragment(HomeFragment())
+        binding.viewPagerMain.adapter = ViewPagerAdapter(this)
+        binding.viewPagerMain.isUserInputEnabled = false
+        binding.viewPagerMain.setCurrentItem(1, false)
 
         with(binding) {
             btnTestLeft.setOnClickListener {
-                checkFragmentLocation()
-                moveToSearchFrag()
+                viewPagerMain.currentItem = 0
             }
             btnTestMiddle.setOnClickListener {
-                checkFragmentLocation()
-                moveToHomeFrag()
+                viewPagerMain.currentItem = 1
             }
             btnTestRight.setOnClickListener {
-                checkFragmentLocation()
-                moveToMyPageFrag()
+                viewPagerMain.currentItem = 2
             }
 
         } //end of with binding!!
     } //end of onCreate!!
 
 
-    private fun setFragment(frag: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(binding.frameMain.id, frag)
-            .addToBackStack(null)
-            .commit()
-    }
+//    private fun setFragment(frag: Fragment) {
+//        supportFragmentManager.beginTransaction()
+//            .replace(binding.frameMain.id, frag)
+//            .addToBackStack(null)
+//            .commit()
+//    }
+//
+//    private fun checkFragmentLocation() {
+//        val currentFragment = supportFragmentManager.findFragmentById(R.id.frame_main)
+//        when (currentFragment?.id) {
+//            R.id.rv_seachfragment_recyclerview -> "Search"
+//            R.id.fl_homeFrag -> "Home"
+//            R.id.fl_myPageFrag -> "MyPage"
+//            else -> null
+//        }
+//    }
+//    private fun moveToSearchFrag() {
+//        if (checkFragmentLocation().toString() != "Search") {
+//            setFragment(SearchFragment())
+////            val spotlightON = ObjectAnimator.ofFloat(binding.btnTestLeft, "alpha", 1f, 0.5f).apply {
+////                duration = 200
+////                start()
+////            }
+//        }
+//    }
 
-    private fun checkFragmentLocation() {
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.frame_main)
-        when (currentFragment?.id) {
-            R.id.rv_seachfragment_recyclerview -> "Search"
-            R.id.fl_homeFrag -> "Home"
-            R.id.fl_myPageFrag -> "MyPage"
-            else -> null
-        }
-    }
-
-    private fun moveToSearchFrag() {
-        if (checkFragmentLocation().toString() != "Search") {
-            setFragment(SearchFragment())
-//            val spotlightON = ObjectAnimator.ofFloat(binding.btnTestLeft, "alpha", 1f, 0.5f).apply {
-//                duration = 200
-//                start()
-//            }
-        }
-    }
-
-    private fun moveToHomeFrag() {
-        if (checkFragmentLocation().toString() != "Home") {
-            setFragment(HomeFragment())
-        }
-    }
-
-    private fun moveToMyPageFrag() {
-        if (checkFragmentLocation().toString() != "MyPage") {
-            setFragment(MyPageFragment())
-        }
-    }
+//    private fun moveToHomeFrag() {
+//        if (checkFragmentLocation().toString() != "Home") {
+//            setFragment(HomeFragment())
+//        }
+//    }
+//
+//    private fun moveToMyPageFrag() {
+//        if (checkFragmentLocation().toString() != "MyPage") {
+//            setFragment(MyPageFragment())
+//        }
+//    }
 }
