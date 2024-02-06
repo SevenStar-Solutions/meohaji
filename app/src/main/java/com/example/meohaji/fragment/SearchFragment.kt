@@ -9,22 +9,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
-import com.example.meohaji.R
+import com.example.meohaji.SeachAdapter
+import com.example.meohaji.SeachList
 import com.example.meohaji.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
-    private lateinit var binding: FragmentSearchBinding
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private var backPressedOnce = false
+    private val adapter: SeachAdapter by lazy {
+        SeachAdapter(requireContext())
+    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //        return inflater.inflate(R.layout.fragment_search, container, false)
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         overrideBackAction()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.rvSeachRecyclerview.adapter= adapter
+        adapter.submitList(dummy)
+
+
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun overrideBackAction() {
@@ -42,5 +61,24 @@ class SearchFragment : Fragment() {
             }
         }
     }
+
+    private val dummy = listOf<SeachList>(
+        SeachList(
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg",
+            channel = "쿠팡플레이 스포츠",
+            time = "2024-02-02T21:30:04Z",
+            score = "1",
+            favorit = false
+        ),
+        SeachList(
+            title = "[2023 AFC 카타르 아시안컵] 2023 AFC 카타르 아시안컵 호주 VS 대한민국 풀 하이라이트",
+            thumbnail = "https://i.ytimg.com/vi/kW_z-NMuZIU/mqdefault.jpg",
+            channel = "쿠팡플레이 스포츠",
+            time = "2024-02-02T21:30:04Z",
+            score = "1",
+            favorit = false
+        ),
+    )
 
 }
