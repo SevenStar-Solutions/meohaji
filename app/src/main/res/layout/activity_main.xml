@@ -26,8 +26,15 @@
             android:textColor="#FFD80B"/>
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
-        android:id="@+id/frame_main"
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frame_main"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />-->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
