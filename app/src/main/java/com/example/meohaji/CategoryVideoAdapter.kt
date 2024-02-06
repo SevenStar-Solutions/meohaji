@@ -56,29 +56,7 @@ class CategoryVideoAdapter(private val context: Context) :
             tvVideoTitle.text = item.title
             tvChannelName.text = item.channelTitle
             tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
-            textView4.text = calRecomandScore(
-                item.description,
-                item.viewCount,
-                item.likeCount,
-                item.commentCount
-            )
+            textView4.text = item.recommendScore.toString()
         }
-    }
-
-    fun calRecomandScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): String {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) "5.0" else totalScore.toString()
     }
 }
