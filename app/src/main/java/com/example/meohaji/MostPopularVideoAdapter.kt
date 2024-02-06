@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.LayoutMostPopularVideoBinding
+import com.example.meohaji.fragment.DummyDetail
+import com.example.meohaji.fragment.GoDetail
 
 class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPopularVideo, MostPopularVideoAdapter.MostPopularVideoViewHolder>(
     object : DiffUtil.ItemCallback<MostPopularVideo>() {
@@ -42,6 +44,13 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
                 .into(ivMostPopularVideoThumbnail)
 
             tvMostPopularVideoTitle.text = item.title
+
+            // 인터페이스에 DummyDetail이라는 data class의 값을 담음
+            itemView.setOnClickListener {
+                goDetail?.sendData(it, DummyDetail(item.title,item.thumbnail, 0, 0, 0, item.publishedAt, item.description))
+            }
         }
     }
+
+    var goDetail: GoDetail? = null
 }

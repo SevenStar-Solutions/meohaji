@@ -1,8 +1,10 @@
 package com.example.meohaji.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +12,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
-import com.example.meohaji.CategoryChannel
-import com.example.meohaji.CategoryChannelAdapter
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.CategoryVideoAdapter
-import com.example.meohaji.MostPopularVideo
-import com.example.meohaji.MostPopularVideoAdapter
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResult
+import com.example.meohaji.*
 import com.example.meohaji.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -113,6 +113,19 @@ class HomeFragment : Fragment() {
             sortList
         )
         binding.spinnerHomeSortVideo.adapter = adapter2
+
+        // MostPopularVideoAdapter에서 interface로 받은 데이터를 DetailFragment로 넘기는 뷰뷴
+        mostPopularVideoAdapter.goDetail = object : GoDetail {
+            override fun sendData(v: View, dummy: DummyDetail) {
+                val detailFragment = DetailFragment.newInstance(dummy)
+                    requireActivity().supportFragmentManager.commit {
+                        replace(R.id.frame_main,detailFragment)
+                        setReorderingAllowed(true)
+                        addToBackStack(null)
+                    }
+                Log.i("This is HomeFragment","Adapter Interface : $dummy")
+            }
+        }
     }
 
     override fun onDestroyView() {
