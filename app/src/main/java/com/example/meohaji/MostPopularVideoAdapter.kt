@@ -22,6 +22,12 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
         }
     }
 ) {
+    interface MostPopularVideoClick {
+        fun onClick(videoData: MostPopularVideo)
+    }
+
+    var videoClick: MostPopularVideoClick? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MostPopularVideoViewHolder {
         return MostPopularVideoViewHolder(
@@ -44,6 +50,10 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
                 .into(ivMostPopularVideoThumbnail)
 
             tvMostPopularVideoTitle.text = item.title
+
+            itemView.setOnClickListener {
+                videoClick?.onClick(item)
+            }
 
             // 인터페이스에 DummyDetail이라는 data class의 값을 담음
             itemView.setOnClickListener {

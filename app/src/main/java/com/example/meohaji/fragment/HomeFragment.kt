@@ -105,10 +105,21 @@ class HomeFragment : Fragment() {
         communicateMostPopularVideos()
 
         binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
+        mostPopularVideoAdapter.videoClick = object : MostPopularVideoAdapter.MostPopularVideoClick {
+            override fun onClick(videoData: MostPopularVideo) {
+
+            }
+
+        }
 
         binding.rvHomeCategoryChannel.adapter = categoryChannelAdapter
 
         binding.rvHomeCategoryVideo.adapter = categoryVideoAdapter
+        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+            override fun onClick(videoData: CategoryVideo) {
+
+            }
+        }
 
         val adapter1 = ArrayAdapter(
             requireContext(),

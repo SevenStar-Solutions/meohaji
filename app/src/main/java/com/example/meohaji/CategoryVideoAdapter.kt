@@ -31,6 +31,12 @@ class CategoryVideoAdapter(private val context: Context) :
         }
     ) {
 
+        interface CategoryVideoClick {
+            fun onClick(videoData: CategoryVideo)
+        }
+
+    var videoClick: CategoryVideoClick? = null
+
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
     val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
@@ -60,11 +66,9 @@ class CategoryVideoAdapter(private val context: Context) :
             tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
             textView4.text = item.recommendScore.toString()
 
-            // 인터페이스에 DummyDetail이라는 data class의 값을 담음
             itemView.setOnClickListener {
-                goDetail?.sendData(it, DummyDetail(item.title,item.thumbnail, item.likeCount, item.viewCount, item.commentCount, item.publishedAt, item.description))
+                videoClick?.onClick(item)
             }
         }
     }
-    var goDetail: GoDetail? = null
 }
