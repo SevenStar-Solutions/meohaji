@@ -102,14 +102,14 @@ class HomeFragment : Fragment() {
 
         val adapter1 = ArrayAdapter(
             requireContext(),
-            com.bumptech.glide.R.layout.support_simple_spinner_dropdown_item,
+            com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
             categoryList
         )
         binding.spinnerHomeCategory.adapter = adapter1
 
         val adapter2 = ArrayAdapter(
             requireContext(),
-            com.bumptech.glide.R.layout.support_simple_spinner_dropdown_item,
+            com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
             sortList
         )
         binding.spinnerHomeSortVideo.adapter = adapter2
