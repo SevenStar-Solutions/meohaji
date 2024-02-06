@@ -1,5 +1,6 @@
 package com.example.meohaji
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Video (
@@ -112,4 +113,10 @@ data class PageInfo (
     val totalResults: Long,
     @SerializedName("resultsPerPage")
     val resultsPerPage: Long
+)
+
+/** 마이페이지 내 저장 */
+data class MyInfo (
+    val name: String?,
+    val pic: Uri?
 )
