@@ -11,7 +11,6 @@ import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.round
 
 class CategoryVideoAdapter(private val context: Context) :
     ListAdapter<CategoryVideo, CategoryVideoAdapter.CategoryVideoViewHolder>(
@@ -29,9 +28,9 @@ class CategoryVideoAdapter(private val context: Context) :
         }
     ) {
 
-        interface CategoryVideoClick {
-            fun onClick(videoData: CategoryVideo)
-        }
+    interface CategoryVideoClick {
+        fun onClick(videoData: CategoryVideo)
+    }
 
     var videoClick: CategoryVideoClick? = null
 
