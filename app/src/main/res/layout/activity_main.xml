@@ -48,35 +48,115 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />
 
-    <Button
+
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_main"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginHorizontal="10dp"
+        android:clickable="false"
+        android:layout_marginBottom="-40dp"
+        app:cardBackgroundColor="#24262A"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:strokeColor="#33FFFFFF"
+        app:strokeWidth="0.5dp"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testLeft"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        android:layout_marginStart="25dp"
+        android:text="Home"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_testMiddle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search"
+            android:layout_margin="18dp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/btn_testMiddle"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
         android:text="Home"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="30dp">
 
-    <Button
-        android:id="@+id/btn_testLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:text="Search"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toStartOf="@id/btn_testMiddle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_home"
+            android:layout_margin="18dp"/>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/btn_testRight"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:text="MyPage"
-        android:layout_marginStart="20dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="10dp"
+        android:layout_marginEnd="25dp"
+        android:text="Home"
         app:layout_constraintStart_toEndOf="@id/btn_testMiddle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_mypage"
+            android:layout_margin="18dp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/iv_soptlight"
+        android:layout_width="140dp"
+        android:layout_height="180dp"
+
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_soptlight"
+        android:elevation="15dp"
+        android:alpha="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="-45dp"/>
+
+
+
+<!--    <com.google.android.material.shadow.ShadowView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="100dp"-->
+<!--        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize16"-->
+<!--    app:shadowColor="@color/shadow_color" -->
+<!--    app:shadowElevation="8dp" -->
+<!--    app:shadowRadius="4dp" />-->
+
+
+
+
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

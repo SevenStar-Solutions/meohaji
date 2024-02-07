@@ -1,8 +1,7 @@
 package com.example.meohaji
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.meohaji.ViewPagerAdapter
+import androidx.appcompat.app.AppCompatActivity
 import com.example.meohaji.databinding.ActivityMainBinding
 
 
@@ -11,6 +10,8 @@ class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private val btnOn : Float = 1f
+    private val btnOff : Float = 0.5f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +26,38 @@ class MainActivity : AppCompatActivity() {
 
         with(binding) {
             btnTestLeft.setOnClickListener {
-                viewPagerMain.currentItem = 0
+                val currentItem = viewPagerMain.currentItem
+                if (currentItem != 0) {
+                    viewPagerMain.currentItem = 0
+                    ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
+                    ivSoptlight.pivotY = ivSoptlight.height.toFloat()
+                    // 이미지 뷰를 -45도 회전하여 상단이 좌측을 향하도록 함
+                    ivSoptlight.rotation = -50f
+                }
             }
             btnTestMiddle.setOnClickListener {
-                viewPagerMain.currentItem = 1
+                val currentItem = viewPagerMain.currentItem
+                if (currentItem != 1) {
+                    viewPagerMain.currentItem = 1
+                    // 이미지 뷰의 회전을 초기화하여 상단이 직선을 향하도록 함
+                    ivSoptlight.rotation = 0f
+                }
             }
             btnTestRight.setOnClickListener {
-                viewPagerMain.currentItem = 2
+                val currentItem = viewPagerMain.currentItem
+                if (currentItem != 2) {
+                    viewPagerMain.currentItem = 2
+                    // 이미지 뷰의 중심을 하단 중앙으로 이동
+                    ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
+                    ivSoptlight.pivotY = ivSoptlight.height.toFloat()
+                    // 이미지 뷰를 45도 회전하여 상단이 우측을 향하도록 함
+                    ivSoptlight.rotation = 50f
+                }
             }
+            //현재 아이템 인덱스 구하기
+            //val currentItem = viewPagerMain.currentItem
+
+
 
         } //end of with binding!!
     } //end of onCreate!!
