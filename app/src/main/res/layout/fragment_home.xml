@@ -8,102 +8,112 @@
     android:background="#1A1B1F"
     tools:context=".fragment.HomeFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
 
-            <TextView
-                android:id="@+id/tv_home_most_popular_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="지금 가장 인기있는 영상 TOP5"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_home_most_popular_video"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:text="가장 인기있는 영상"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_home_most_popular_video"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="@+id/tv_home_most_popular_video"
-                app:layout_constraintTop_toBottomOf="@+id/tv_home_most_popular_video" />
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/rv_home_most_popular_video"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/tv_home_most_popular_video"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/tv_home_most_popular_video" />-->
 
-            <Spinner
-                android:id="@+id/spinner_home_category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:overlapAnchor="false"
-                android:background="@drawable/apply_spinner_background"
-                android:popupBackground="@color/black_background"
-                app:layout_constraintStart_toStartOf="@+id/rv_home_most_popular_video"
-                app:layout_constraintTop_toBottomOf="@+id/rv_home_most_popular_video" />
+<!--            <Spinner-->
+<!--                android:id="@+id/spinner_home_category"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:overlapAnchor="false"-->
+<!--                android:background="@drawable/apply_spinner_background"-->
+<!--                android:popupBackground="@color/black_background"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/rv_home_most_popular_video"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/rv_home_most_popular_video" />-->
 
-            <TextView
-                android:id="@+id/tv_home_category_channel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="해당 카테고리 채널"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/spinner_home_category"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_home_category" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_home_category_channel"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="채널"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/spinner_home_category"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/spinner_home_category" />-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_home_category_channel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="@+id/tv_home_most_popular_video"
-                app:layout_constraintTop_toBottomOf="@+id/tv_home_category_channel" />
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/rv_home_category_channel"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/tv_home_most_popular_video"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/tv_home_category_channel" />-->
 
-            <TextView
-                android:id="@+id/tv_home_category_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="카테고리 인기 영상"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/spinner_home_category"
-                app:layout_constraintTop_toBottomOf="@+id/rv_home_category_channel" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_home_category_video"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:text="영상"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/spinner_home_category"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/rv_home_category_channel" />-->
 
-            <Spinner
-                android:id="@+id/spinner_home_sort_video"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/apply_spinner_background"
-                android:popupBackground="@color/black_background"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_home_category_video"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_home_category_video" />
+<!--            <Spinner-->
+<!--                android:id="@+id/spinner_home_sort_video"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@drawable/apply_spinner_background"-->
+<!--                android:popupBackground="@color/black_background"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/tv_home_category_video"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/tv_home_category_video" />-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_home_category_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_home_category_video" />
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/rv_home_category_video"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:orientation="vertical"-->
+<!--                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/tv_home_category_video" />-->
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                app:layout_constraintTop_toBottomOf="@+id/rv_home_category_video" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="80dp"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/rv_home_category_video" />-->
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--    </ScrollView>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
