@@ -33,9 +33,9 @@ class SeachAdapter(private val mContext: Context) :
         val score = binding.textView4
             fun bind(seachList: SeachList){
                 title.text = getItem(adapterPosition).title
-                channel.text = getItem(adapterPosition).channel
-                time.text = getItem(adapterPosition).time
-                score.text = getItem(adapterPosition).score
+                channel.text = getItem(adapterPosition).channelTitle
+                time.text = getItem(adapterPosition).publishedAt
+//                score.text = getItem(adapterPosition).score
                 Glide.with(image)
                     .load(seachList.thumbnail)
                     .into(image)
