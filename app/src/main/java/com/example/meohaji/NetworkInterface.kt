@@ -1,7 +1,9 @@
 package com.example.meohaji
 
+import com.example.meohaji.home.Channel
+import com.example.meohaji.home.Video
 import retrofit2.Call
-import com.example.meohaji.Search.SearchResult
+import com.example.meohaji.search.SearchResult
 import retrofit2.http.GET
 import retrofit2.http.Query
 

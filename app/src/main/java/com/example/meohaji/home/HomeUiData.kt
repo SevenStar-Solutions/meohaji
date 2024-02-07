@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 sealed class HomeUiData {
     data class Title(

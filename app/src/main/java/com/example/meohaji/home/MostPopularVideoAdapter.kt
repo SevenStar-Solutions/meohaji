@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 import android.content.Context
 import android.view.LayoutInflater
