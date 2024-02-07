@@ -1,8 +1,6 @@
-package com.example.meohaji
+package com.example.meohaji.search
 
-import retrofit2.http.Query
-
-data class SeachList(
+data class SearchList(
     val title: String,
     var thumbnail: String,
     val channelTitle: String,

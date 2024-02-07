@@ -1,12 +1,8 @@
-package com.example.meohaji
+package com.example.meohaji.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.example.meohaji.databinding.ActivityMainBinding
-import com.example.meohaji.fragment.HomeFragment
-import com.example.meohaji.fragment.MyPageFragment
-import com.example.meohaji.fragment.SearchFragment
 
 
 class MainActivity : AppCompatActivity() {

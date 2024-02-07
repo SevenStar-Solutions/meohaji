@@ -1,4 +1,4 @@
-package com.example.meohaji.fragment
+package com.example.meohaji.home
 
 import android.os.Bundle
 import android.os.Handler
@@ -13,19 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.meohaji.BuildConfig
-import com.example.meohaji.CategoryChannel
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.Channel
-import com.example.meohaji.HomeAdapter
-import com.example.meohaji.HomeUiData
-import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.NetworkClient.apiService
-import com.example.meohaji.SortOrder
-import com.example.meohaji.Video
-import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
-import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
-import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
+import com.example.meohaji.detail.DetailFragment
+import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
+import com.example.meohaji.detail.DetailTags.DETAIL_MOST
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -1,10 +1,9 @@
-package com.example.meohaji.fragment
+package com.example.meohaji.search
 
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,31 +15,25 @@ import androidx.activity.addCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.meohaji.BuildConfig
-import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.NetworkClient
-import com.example.meohaji.SeachAdapter
-import com.example.meohaji.SeachList
 import com.example.meohaji.databinding.FragmentSearchBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private var backPressedOnce = false
-    private val searchAdapter: SeachAdapter by lazy {
-        SeachAdapter(requireContext())
+    private val searchAdapter: SearchAdapter by lazy {
+        SearchAdapter(requireContext())
     }
 
-    private val searchVideoList = arrayListOf<SeachList>()
-    private val _searchVideoList = MutableLiveData<List<SeachList>>()
-    private val searchVideo : LiveData<List<SeachList>> get()= _searchVideoList
+    private val searchVideoList = arrayListOf<SearchList>()
+    private val _searchVideoList = MutableLiveData<List<SearchList>>()
+    private val searchVideo : LiveData<List<SearchList>> get()= _searchVideoList
 
     private lateinit var mContext: Context
     override fun onAttach(context: Context) {
@@ -134,7 +127,7 @@ class SearchFragment : Fragment() {
                 searchVideoList.clear()
                 videos.items.forEach { item ->
                     searchVideoList.add(
-                        SeachList(
+                        SearchList(
                             item.snippet.title,
                             item.snippet.thumbnails.high.url,
                             item.snippet.channelTitle,

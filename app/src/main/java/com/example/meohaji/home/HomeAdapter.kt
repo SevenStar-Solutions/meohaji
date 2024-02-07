@@ -1,7 +1,6 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.example.meohaji.databinding.SetSelectCategoryBinding
 import com.example.meohaji.databinding.SetThemeTitleBinding
 import com.example.meohaji.databinding.SetThemeTitleWithSpinnerBinding
 import com.example.meohaji.databinding.SetVideoByCategoryBinding
-import com.example.meohaji.fragment.DetailTags
 import com.google.android.material.R
 import java.text.SimpleDateFormat
 import java.util.Date
