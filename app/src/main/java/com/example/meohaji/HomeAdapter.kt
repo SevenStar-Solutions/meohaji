@@ -15,6 +15,7 @@ import com.example.meohaji.databinding.SetChannelByCategoryBinding
 import com.example.meohaji.databinding.SetMostPopularVideoBinding
 import com.example.meohaji.databinding.SetSelectCategoryBinding
 import com.example.meohaji.databinding.SetThemeTitleBinding
+import com.example.meohaji.databinding.SetThemeTitleWithSpinnerBinding
 import com.example.meohaji.databinding.SetVideoByCategoryBinding
 import com.example.meohaji.fragment.DetailTags
 import com.google.android.material.R
@@ -34,9 +35,9 @@ class HomeAdapter(private val context: Context) :
 
     }) {
 
-        interface CommunicateVideoByCategory {
-            fun call(id: String)
-        }
+    interface CommunicateVideoByCategory {
+        fun call(id: String, sortOrder: Int)
+    }
 
     interface DetailMostPopularVideo {
         fun move(videoData: MostPopularVideo)
@@ -46,11 +47,17 @@ class HomeAdapter(private val context: Context) :
         fun move(videoData: CategoryVideo)
     }
 
+    interface SortCategoryVideo {
+        fun sort(order: Int)
+    }
+
     var communicateVideoByCategory: CommunicateVideoByCategory? = null
     var detailMostPopularVideo: DetailMostPopularVideo? = null
     var detailCategoryVideo: DetailCategoryVideo? = null
+    var sortCategoryVideo: SortCategoryVideo? = null
 
     private var categorySpinnerIdx = 0
+    private var sortSpinnerIdx = 0
 
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
     val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
@@ -97,9 +104,19 @@ class HomeAdapter(private val context: Context) :
                 )
             }
 
-            else -> {
+            TITLE -> {
                 TitleViewHolder(
                     SetThemeTitleBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> {
+                TitleWithViewHolder(
+                    SetThemeTitleWithSpinnerBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -117,8 +134,8 @@ class HomeAdapter(private val context: Context) :
             is HomeUiData.MostPopularVideos -> (holder as MostPopularVideoViewHolder).bind(
                 currentList[position] as HomeUiData.MostPopularVideos
             )
-
             is HomeUiData.Spinner -> (holder as SpinnerViewHolder).bind(currentList[position] as HomeUiData.Spinner)
+            is HomeUiData.TitleWithSpinner -> (holder as TitleWithViewHolder).bind(currentList[position] as HomeUiData.TitleWithSpinner)
         }
     }
 
@@ -129,6 +146,7 @@ class HomeAdapter(private val context: Context) :
             is HomeUiData.MostPopularVideos -> POPULARVIDEO
             is HomeUiData.Spinner -> SPINNER
             is HomeUiData.Title -> TITLE
+            is HomeUiData.TitleWithSpinner -> TITLE_SPINNER
         }
     }
 
@@ -138,6 +156,7 @@ class HomeAdapter(private val context: Context) :
         private const val POPULARVIDEO = 3
         private const val SPINNER = 4
         private const val TITLE = 5
+        private const val TITLE_SPINNER = 6
     }
 
     inner class CategoryChannelViewHolder(private val binding: SetChannelByCategoryBinding) :
@@ -173,29 +192,35 @@ class HomeAdapter(private val context: Context) :
             val mostPopularVideoAdapter = MostPopularVideoAdapter(context)
             binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
             mostPopularVideoAdapter.submitList(item.list.toList())
-            mostPopularVideoAdapter.videoClick = object : MostPopularVideoAdapter.MostPopularVideoClick {
-                override fun onClick(videoData: MostPopularVideo) {
-                    detailMostPopularVideo?.move(videoData)
+            mostPopularVideoAdapter.videoClick =
+                object : MostPopularVideoAdapter.MostPopularVideoClick {
+                    override fun onClick(videoData: MostPopularVideo) {
+                        detailMostPopularVideo?.move(videoData)
+                    }
                 }
-            }
         }
     }
 
     inner class SpinnerViewHolder(private val binding: SetSelectCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Spinner) {
-            val adapter1 = ArrayAdapter(
+            val adapter = ArrayAdapter(
                 context,
                 R.layout.support_simple_spinner_dropdown_item,
                 item.categories
             )
-            binding.spinnerHomeCategory.adapter = adapter1
+            binding.spinnerHomeCategory.adapter = adapter
 
             binding.spinnerHomeCategory.setSelection(categorySpinnerIdx)
             binding.spinnerHomeCategory.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        if (categorySpinnerIdx != p2) communicateVideoByCategory?.call(YoutubeCategory.entries[p2].id)
+                        if (categorySpinnerIdx != p2) {
+                            communicateVideoByCategory?.call(
+                                YoutubeCategory.entries[p2].id,
+                                sortSpinnerIdx
+                            )
+                        }
 
                         categorySpinnerIdx = p2
                     }
@@ -211,6 +236,33 @@ class HomeAdapter(private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Title) {
             binding.tvHomeTitle.text = item.title
+        }
+    }
+
+    inner class TitleWithViewHolder(private val binding: SetThemeTitleWithSpinnerBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: HomeUiData.TitleWithSpinner) {
+            binding.tvHomeTitle2.text = item.title
+
+            val adapter = ArrayAdapter(
+                context,
+                R.layout.support_simple_spinner_dropdown_item,
+                item.categories
+            )
+            binding.spinnerHomeSortVideo.adapter = adapter
+
+            binding.spinnerHomeSortVideo.setSelection(sortSpinnerIdx)
+            binding.spinnerHomeSortVideo.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                        if (sortSpinnerIdx != p2) sortCategoryVideo?.sort(p2)
+                        sortSpinnerIdx = p2
+                    }
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        TODO("Not yet implemented")
+                    }
+                }
         }
     }
 }
