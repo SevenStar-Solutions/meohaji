@@ -39,6 +39,7 @@ class DetailFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         homeFragment = HomeFragment()
         mainActivity = context as MainActivity
+        isCancelable = true
 
         arguments?.let {
             Log.i("This is DetailFragment","onCreate/keyString : $keyString")
@@ -93,11 +94,16 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param1?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = df.format(param1?.likeCount)
-            tvDetailCountView.text = df.format(param1?.viewCount)
+//            tvDetailCountLike.text = df.format(param1?.likeCount)
+//            tvDetailCountView.text = df.format(param1?.viewCount)
+            tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
+            tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
             tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
-            tvDetailTextDescription.text = param1?.description
+            tvDetailTextDescription.text = when(param1?.description) {
+                "" -> "내용이 없습니다."
+                else -> param1?.description
+            }
 
             btnDetailSaveData.setOnClickListener{
                 Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
@@ -114,11 +120,16 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param2?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = df.format(param2?.likeCount)
-            tvDetailCountView.text = df.format(param2?.viewCount)
+//            tvDetailCountLike.text = df.format(param2?.likeCount)
+//            tvDetailCountView.text = df.format(param2?.viewCount)
+            tvDetailCountLike.text = setCount(param2?.likeCount!!.toLong())
+            tvDetailCountView.text = setCount(param2?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param2?.recommendScore}/5.0"
             tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param2?.publishedAt))}"
-            tvDetailTextDescription.text = param2?.description
+            tvDetailTextDescription.text = when(param2?.description) {
+                "" -> "내용이 없습니다."
+                else -> param2?.description
+            }
 
             btnDetailSaveData.setOnClickListener{
                 Toast.makeText(mainActivity,"saved! : ${param2?.title}", Toast.LENGTH_SHORT).show()
@@ -133,6 +144,21 @@ class DetailFragment : DialogFragment() {
         super.onDestroyView()
         _binding = null
         keyString = null
+    }
+
+    private fun setCount(count: Long):String {
+        var ans = ""
+        Log.i("This is DetailFragment","setCount : $count")
+        if(count / 10000L <= 0L) {
+            ans = "$count"
+        } else if(count / 10000L > 0L) {
+            ans = if((count / 10000L) / 10000L <= 0L) {
+                "${count/10000L}.${(count%10000L).toString().first()}만"
+            } else {
+                "${(count/10000L)/10000L}.${((count/10000L)%10000L).toString().first()}억"
+            }
+        }
+        return ans
     }
 }
 

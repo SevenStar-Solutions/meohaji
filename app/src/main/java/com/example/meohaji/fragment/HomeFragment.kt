@@ -1,5 +1,6 @@
 package com.example.meohaji.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,37 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.meohaji.*
-import com.example.meohaji.BuildConfig
-import com.example.meohaji.CategoryChannel
-import com.example.meohaji.CategoryChannelAdapter
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.CategoryVideoAdapter
-import com.example.meohaji.Channel
-import com.example.meohaji.HomeAdapter
-import com.example.meohaji.HomeUiData
-import com.example.meohaji.MostPopularVideo
-import com.example.meohaji.MostPopularVideoAdapter
 import com.example.meohaji.NetworkClient.apiService
-import com.example.meohaji.SeachAdapter
-import com.example.meohaji.SeachList
-import com.example.meohaji.Video
-import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
-import com.google.android.material.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -135,7 +117,7 @@ class HomeFragment : Fragment() {
 
         homeAdapter.detailMostPopularVideo = object : HomeAdapter.DetailMostPopularVideo {
             override fun move(videoData: MostPopularVideo) {
-                setDetailFragment(videoData, DETAIL_MOST)
+                context?.setDetailFragment(videoData, DETAIL_MOST, DetailFragment())
                 Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
             }
 
@@ -143,7 +125,7 @@ class HomeFragment : Fragment() {
 
         homeAdapter.detailCategoryVideo = object : HomeAdapter.DetailCategoryVideo {
             override fun move(videoData: CategoryVideo) {
-                setDetailFragment(videoData, DETAIL_CATEGORY)
+                context?.setDetailFragment(videoData, DETAIL_CATEGORY, DetailFragment())
                 Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
             }
         }
@@ -337,8 +319,19 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setDetailFragment(item: Parcelable1, key: String) {
+    private fun Context.setDetailFragment(item: Parcelable1, key: String, dialogFragment: DetailFragment) {
         val dialog = DetailFragment.newInstance(item,key)
         dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
+
+        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val rect = windowManager.currentWindowMetrics.bounds
+        val window = dialogFragment.dialog?.window
+        val layoutParams = WindowManager.LayoutParams()
+        val x = (rect.width() * 0.9f).toInt()
+        val y = (rect.height() * 0.9f).toInt()
+        window?.setLayout(x, y)
+        window?.clearFlags(FLAG_DIM_BEHIND)
+
+        Log.i("This is HomeFragment", "setDetail : x : ${window?.setLayout(1000,WindowManager.LayoutParams.WRAP_CONTENT)}")
     }
 }
