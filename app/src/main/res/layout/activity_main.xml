@@ -74,8 +74,6 @@
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_marginBottom="25dp"
-        app:cardForegroundColor="#60000000"
-        app:strokeWidth="0dp"
         android:outlineSpotShadowColor="#C5DC40"
         android:text="Home"
 
@@ -122,8 +120,6 @@
         android:layout_marginBottom="25dp"
         android:foreground="@drawable/apply_ripple_effect_circle"
         android:outlineSpotShadowColor="#C5DC40"
-        app:cardForegroundColor="#60000000"
-        app:strokeWidth="0dp"
         android:text="Home"
         app:cardCornerRadius="35dp"
         app:cardElevation="7dp"
