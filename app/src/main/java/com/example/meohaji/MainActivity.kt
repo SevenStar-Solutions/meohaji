@@ -1,7 +1,12 @@
 package com.example.meohaji
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.example.meohaji.databinding.ActivityMainBinding
 
 
@@ -10,8 +15,8 @@ class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private val btnOn : Float = 1f
-    private val btnOff : Float = 0.5f
+    private val btnOn: Float = 1f
+    private val btnOff: Float = 0.5f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,80 +29,207 @@ class MainActivity : AppCompatActivity() {
         binding.viewPagerMain.isUserInputEnabled = false
         binding.viewPagerMain.setCurrentItem(1, false)
 
+        setInitialSize(binding.btnTestMiddle)
+
         with(binding) {
+
             btnTestLeft.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 0) {
                     viewPagerMain.currentItem = 0
                     ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
                     ivSoptlight.pivotY = ivSoptlight.height.toFloat()
-                    // 이미지 뷰를 -45도 회전하여 상단이 좌측을 향하도록 함
-                    ivSoptlight.rotation = -50f
+                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
+
+                    when (currentItem) {
+                        1 -> spotlight1to0()
+                        2 -> spotlight2to0()
+                    }
                 }
+
             }
+
             btnTestMiddle.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 1) {
                     viewPagerMain.currentItem = 1
-                    // 이미지 뷰의 회전을 초기화하여 상단이 직선을 향하도록 함
-                    ivSoptlight.rotation = 0f
+                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
+
+                    when (currentItem) {
+                        0 -> spotlight0to1()
+                        2 -> spotlight2to1()
+                    }
                 }
+
             }
             btnTestRight.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 2) {
                     viewPagerMain.currentItem = 2
-                    // 이미지 뷰의 중심을 하단 중앙으로 이동
                     ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
                     ivSoptlight.pivotY = ivSoptlight.height.toFloat()
-                    // 이미지 뷰를 45도 회전하여 상단이 우측을 향하도록 함
-                    ivSoptlight.rotation = 50f
-                }
-            }
-            //현재 아이템 인덱스 구하기
-            //val currentItem = viewPagerMain.currentItem
+                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
 
+                    when (currentItem) {
+                        0 -> spotlight0to2()
+                        1 -> spotlight1to2()
+                    }
+                }
+
+            }
 
 
         } //end of with binding!!
     } //end of onCreate!!
 
+    private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
+        val spotlight = binding.ivSoptlight
+        val btn0 = binding.btnTestLeft
+        val btn1 = binding.btnTestMiddle
+        val btn2 = binding.btnTestRight
 
-//    private fun setFragment(frag: Fragment) {
-//        supportFragmentManager.beginTransaction()
-//            .replace(binding.frameMain.id, frag)
-//            .addToBackStack(null)
-//            .commit()
-//    }
-//
-//    private fun checkFragmentLocation() {
-//        val currentFragment = supportFragmentManager.findFragmentById(R.id.frame_main)
-//        when (currentFragment?.id) {
-//            R.id.rv_seachfragment_recyclerview -> "Search"
-//            R.id.fl_homeFrag -> "Home"
-//            R.id.fl_myPageFrag -> "MyPage"
-//            else -> null
-//        }
-//    }
-//    private fun moveToSearchFrag() {
-//        if (checkFragmentLocation().toString() != "Search") {
-//            setFragment(SearchFragment())
-////            val spotlightON = ObjectAnimator.ofFloat(binding.btnTestLeft, "alpha", 1f, 0.5f).apply {
-////                duration = 200
-////                start()
-////            }
-//        }
-//    }
+        val rotationAnimator =
+            ObjectAnimator.ofFloat(spotlight, "rotation", fromRotation, toRotation).apply {
+                duration = 200
+            }
+        ObjectAnimator.ofFloat(spotlight, "alpha", 1f, 0.1f).apply {
+            duration = 50
+            start()
+        }
+//        btn0.setBackgroundDrawable(R.color.black)
+//        btn0.setCardForegroundColor(Drawable(R.color.black))
+//        btn0.setCardForegroundColor()
 
-//    private fun moveToHomeFrag() {
-//        if (checkFragmentLocation().toString() != "Home") {
-//            setFragment(HomeFragment())
-//        }
-//    }
-//
-//    private fun moveToMyPageFrag() {
-//        if (checkFragmentLocation().toString() != "MyPage") {
-//            setFragment(MyPageFragment())
-//        }
-//    }
+        //애니메이션을 변수화 해서 이동이 완료되면 다시 밝히도록 리스너를 추가
+        rotationAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                ObjectAnimator.ofFloat(spotlight, "alpha", 0.1f, 1f).apply {
+                    duration = 200
+                    start()
+                }
+            }
+        })
+
+        rotationAnimator.start()
+    }
+
+    private fun setInitialSize(cardView: CardView) {
+        val layoutParams = cardView.layoutParams
+        val initialWidth = layoutParams.width + 20
+        val initialHeight = layoutParams.height + 20
+        layoutParams.width = initialWidth
+        layoutParams.height = initialHeight
+        cardView.layoutParams = layoutParams
+    }
+
+    private fun animateBtnSizeUp(cardView: CardView) {
+        val initialWidth = cardView.width
+        val initialHeight = cardView.height
+        val targetWidth = initialWidth + 20
+        val targetHeight = initialHeight + 20
+
+        val animator = ValueAnimator.ofFloat(0f, 1f)
+        animator.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Float
+            val width = (initialWidth - (initialWidth - targetWidth) * value).toInt()
+            val height = (initialHeight - (initialHeight - targetHeight) * value).toInt()
+
+            val layoutParams = cardView.layoutParams
+            layoutParams.width = width
+            layoutParams.height = height
+            cardView.layoutParams = layoutParams
+        }
+
+        animator.duration = 200
+        animator.start()
+    }
+
+    private fun animateBtnSizeDown(cardView: CardView) {
+        val initialWidth = cardView.width
+        val initialHeight = cardView.height
+        val targetWidth = initialWidth - 20
+        val targetHeight = initialHeight - 20
+
+        val animator = ValueAnimator.ofFloat(0f, 1f)
+        animator.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Float
+            val width = (initialWidth - (initialWidth - targetWidth) * value).toInt()
+            val height = (initialHeight - (initialHeight - targetHeight) * value).toInt()
+
+            val layoutParams = cardView.layoutParams
+            layoutParams.width = width
+            layoutParams.height = height
+            cardView.layoutParams = layoutParams
+        }
+
+        animator.duration = 200
+        animator.start()
+    }
+
+    private fun spotlight0to1() {
+        animateSpotlight(-40f, 0f)
+        animateBtnSizeDown(binding.btnTestLeft)
+    }
+
+    private fun spotlight0to2() {
+        animateSpotlight(-40f, 40f)
+        animateBtnSizeDown(binding.btnTestLeft)
+    }
+
+    private fun spotlight1to0() {
+        animateSpotlight(0f, -40f)
+        animateBtnSizeDown(binding.btnTestMiddle)
+    }
+
+    private fun spotlight1to2() {
+        animateSpotlight(0f, 40f)
+        animateBtnSizeDown(binding.btnTestMiddle)
+    }
+
+    private fun spotlight2to0() {
+        animateSpotlight(40f, -40f)
+        animateBtnSizeDown(binding.btnTestRight)
+    }
+
+    private fun spotlight2to1() {
+        animateSpotlight(40f, 0f)
+        animateBtnSizeDown(binding.btnTestRight)
+    }
+    /* 이전 코드임
+        private fun spotlight_1to2(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", -50f, 0f).apply {
+                duration = 200
+                start()
+            }
+        }
+        private fun spotlight_1to3(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", -50f, 50f).apply {
+                duration = 200
+                start()
+            }
+        }
+        private fun spotlight_2to1(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 0f, -50f).apply {
+                duration = 200
+                start()
+            }
+        }
+        private fun spotlight_2to3(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 0f, 50f).apply {
+                duration = 200
+                start()
+            }
+        }
+        private fun spotlight_3to1(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 50f, -50f).apply {
+                duration = 200
+                start()
+            }
+        }
+        private fun spotlight_3to2(){
+            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 50f, 0f).apply {
+                duration = 200
+                start()
+            }
+        }*/
 }
