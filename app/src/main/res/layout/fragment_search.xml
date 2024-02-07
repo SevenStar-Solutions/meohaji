@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SeachFragment"
+    tools:context=".fragment.SearchFragment"
     android:background="@color/black_background">
 
     <EditText
@@ -17,7 +17,8 @@
         android:gravity="center_vertical"
         android:inputType="text"
         android:paddingStart="40dp"
-        android:text="asjdflkasjklfd"
+        android:hint="검색어를 입력해주세요"
+        android:textColorHint="#ACACAC"
         android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
