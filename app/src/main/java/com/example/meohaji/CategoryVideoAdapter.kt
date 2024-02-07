@@ -8,12 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
-import com.example.meohaji.fragment.DummyDetail
-import com.example.meohaji.fragment.GoDetail
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.round
 
 class CategoryVideoAdapter(private val context: Context) :
     ListAdapter<CategoryVideo, CategoryVideoAdapter.CategoryVideoViewHolder>(
@@ -31,9 +28,9 @@ class CategoryVideoAdapter(private val context: Context) :
         }
     ) {
 
-        interface CategoryVideoClick {
-            fun onClick(videoData: CategoryVideo)
-        }
+    interface CategoryVideoClick {
+        fun onClick(videoData: CategoryVideo)
+    }
 
     var videoClick: CategoryVideoClick? = null
 

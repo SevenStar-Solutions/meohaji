@@ -1,11 +1,9 @@
 package com.example.meohaji.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,27 +11,20 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.fragment.app.commit
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.meohaji.BuildConfig
-import com.example.meohaji.CategoryChannel
-import com.example.meohaji.CategoryChannelAdapter
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.CategoryVideoAdapter
-import com.example.meohaji.MostPopularVideo
-import com.example.meohaji.MostPopularVideoAdapter
 import com.example.meohaji.*
-import com.example.meohaji.MyAPIKeys.MY_API_KEY
 import com.example.meohaji.NetworkClient.apiService
-import com.example.meohaji.SortOrder
-import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
+import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
+import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.round
+import android.os.Parcelable as Parcelable1
 
 class HomeFragment : Fragment() {
 
@@ -105,12 +96,13 @@ class HomeFragment : Fragment() {
         communicateMostPopularVideos()
 
         binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
-        mostPopularVideoAdapter.videoClick = object : MostPopularVideoAdapter.MostPopularVideoClick {
-            override fun onClick(videoData: MostPopularVideo) {
+        mostPopularVideoAdapter.videoClick =
+            object : MostPopularVideoAdapter.MostPopularVideoClick {
+                override fun onClick(videoData: MostPopularVideo) {
+
+                }
 
             }
-
-        }
 
         binding.rvHomeCategoryChannel.adapter = categoryChannelAdapter
 
@@ -189,25 +181,18 @@ class HomeFragment : Fragment() {
             categoryChannelAdapter.submitList(it.toList())
         }
 
-        // VideoAdapter에서 interface로 받은 데이터를 DetailFragment로 넘기는 뷰뷴
-        mostPopularVideoAdapter.goDetail = object : GoDetail {
-            override fun sendData(v: View, dummy: DummyDetail) {
-                    requireActivity().supportFragmentManager.commit {
-                        replace(R.id.frame_main,DetailFragment.newInstance(dummy))
-                        setReorderingAllowed(true)
-                        addToBackStack(null)
-                    }
-                Log.i("This is HomeFragment","MostPopularVideoAdapter Interface : $dummy")
-            }
-        }
-        categoryVideoAdapter.goDetail = object : GoDetail {
-            override fun sendData(v: View, dummy: DummyDetail) {
-                requireActivity().supportFragmentManager.commit {
-                    replace(R.id.frame_main,DetailFragment.newInstance(dummy))
-                    setReorderingAllowed(true)
-                    addToBackStack(null)
+        // VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분
+        mostPopularVideoAdapter.videoClick =
+            object : MostPopularVideoAdapter.MostPopularVideoClick {
+                override fun onClick(videoData: MostPopularVideo) {
+                    setDetailFragment(videoData, DETAIL_MOST)
+                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
                 }
-                Log.i("This is HomeFragment","CategoryVideoAdapter Interface : $dummy")
+            }
+        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+            override fun onClick(videoData: CategoryVideo) {
+                setDetailFragment(videoData, DETAIL_CATEGORY)
+                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
             }
         }
     }
@@ -350,5 +335,10 @@ class HomeFragment : Fragment() {
                 }, 2000)
             }
         }
+    }
+
+    private fun setDetailFragment(item: Parcelable1, key: String) {
+        val dialog = DetailFragment.newInstance(item,key)
+        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
     }
 }

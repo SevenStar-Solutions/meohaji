@@ -1,4 +1,5 @@
-import java.util.Properties
+import org.jetbrains.kotlin.konan.properties.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -7,7 +8,7 @@ plugins {
 }
 
 val properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
+properties.load(FileInputStream(rootProject.file("local.properties")))
 
 android {
     namespace = "com.example.meohaji"
