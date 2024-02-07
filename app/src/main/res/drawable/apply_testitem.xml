@@ -1,0 +1,14 @@
+<!-- res/drawable/oval_background.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+    <item android:top="10dp" android:bottom="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+</layer-list>

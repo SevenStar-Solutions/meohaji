@@ -7,6 +7,7 @@
     tools:context=".search.SearchFragment"
     android:background="@color/black_background">
 
+
     <EditText
         android:id="@+id/et_seachfragment_seach"
         android:layout_width="0dp"
