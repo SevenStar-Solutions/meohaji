@@ -27,6 +27,7 @@
         android:id="@+id/tv_most_popular_video_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
         android:layout_marginBottom="5dp"
         android:ellipsize="end"
         android:maxLines="1"
