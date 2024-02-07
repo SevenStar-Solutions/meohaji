@@ -20,4 +20,9 @@ sealed class HomeUiData {
     data class Spinner(
         val categories: List<String>
     ): HomeUiData()
+
+    data class TitleWithSpinner(
+        val title: String,
+        val categories: List<String>
+    ): HomeUiData()
 }
