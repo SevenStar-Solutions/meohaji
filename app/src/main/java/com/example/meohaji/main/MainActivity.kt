@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

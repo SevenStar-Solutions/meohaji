@@ -1,11 +1,11 @@
-package com.example.meohaji
+package com.example.meohaji.main
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.meohaji.fragment.HomeFragment
-import com.example.meohaji.fragment.MyPageFragment
-import com.example.meohaji.fragment.SearchFragment
+import com.example.meohaji.home.HomeFragment
+import com.example.meohaji.mypage.MyPageFragment
+import com.example.meohaji.search.SearchFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
 
