@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,10 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.meohaji.*
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.CategoryChannel
 import com.example.meohaji.CategoryChannelAdapter
@@ -30,6 +31,8 @@ import com.example.meohaji.SeachList
 import com.example.meohaji.Video
 import com.example.meohaji.YoutubeCategory
 import com.example.meohaji.databinding.FragmentHomeBinding
+import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
+import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
 import com.google.android.material.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +42,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.math.round
+import android.os.Parcelable as Parcelable1
 
 class HomeFragment : Fragment() {
 
@@ -49,10 +53,6 @@ class HomeFragment : Fragment() {
 
     private val mostPopularVideoAdapter by lazy {
         MostPopularVideoAdapter(requireContext())
-    }
-
-    private val categoryChannelAdapter by lazy {
-        CategoryChannelAdapter(requireContext())
     }
 
     private val categoryVideoAdapter by lazy {
@@ -88,16 +88,10 @@ class HomeFragment : Fragment() {
     )
 
     private val mostPopularVideoList = arrayListOf<MostPopularVideo>()
-//    private val _mostPopularVideos = MutableLiveData<List<MostPopularVideo>>()
-//    private val mostPopularVideos: LiveData<List<MostPopularVideo>> get() = _mostPopularVideos
 
     private val videoByCategoryList = arrayListOf<HomeUiData.CategoryVideos>()
-//    private val _videoByCategory = MutableLiveData<List<CategoryVideo>>()
-//    private val videoByCategory: LiveData<List<CategoryVideo>> get() = _videoByCategory
 
     private val channelByCategoryList = arrayListOf<CategoryChannel>()
-//    private val _channelByCategory = MutableLiveData<List<CategoryChannel>>()
-//    private val channelByCategory: LiveData<List<CategoryChannel>> get() = _channelByCategory
 
     private val list = arrayListOf<HomeUiData>(
         HomeUiData.Title("지금 가장 인기있는 영상 TOP5"),
@@ -139,6 +133,21 @@ class HomeFragment : Fragment() {
             }
         }
 
+        homeAdapter.detailMostPopularVideo = object : HomeAdapter.DetailMostPopularVideo {
+            override fun move(videoData: MostPopularVideo) {
+                setDetailFragment(videoData, DETAIL_MOST)
+                Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
+            }
+
+        }
+
+        homeAdapter.detailCategoryVideo = object : HomeAdapter.DetailCategoryVideo {
+            override fun move(videoData: CategoryVideo) {
+                setDetailFragment(videoData, DETAIL_CATEGORY)
+                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+            }
+        }
+
         clear2.observe(viewLifecycleOwner) {
             if (it) {
                 apiService.channelByCategory(
@@ -173,44 +182,20 @@ class HomeFragment : Fragment() {
             }
         }
 
-//        val adapter2 = ArrayAdapter(
-//            requireContext(),
-//            com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
-//            SortOrder.entries.map { it.str }
-//        )
-//        binding.spinnerHomeSortVideo.adapter = adapter2
-//
-
-//
-//        binding.spinnerHomeSortVideo.onItemSelectedListener =
-//            object : AdapterView.OnItemSelectedListener {
-//                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                    when (p2) {
-//                        0 -> {
-//                            videoByCategoryList.sortByDescending { it.recommendScore }
-//                        }
-//
-//                        1 -> {
-//                            videoByCategoryList.sortByDescending { it.viewCount }
-//                        }
-//
-//                        2 -> {
-//                            videoByCategoryList.sortByDescending { it.likeCount }
-//                        }
-//
-//                        else -> {
-//                            videoByCategoryList.sortBy { it.publishedAt }
-//                        }
-//                    }
-//
-//                    _videoByCategory.value = videoByCategoryList
+//        // VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분
+//        mostPopularVideoAdapter.videoClick =
+//            object : MostPopularVideoAdapter.MostPopularVideoClick {
+//                override fun onClick(videoData: MostPopularVideo) {
+//                    setDetailFragment(videoData, DETAIL_MOST)
+//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
 //                }
-//
-//                override fun onNothingSelected(p0: AdapterView<*>?) {
-//                    TODO("Not yet implemented")
-//                }
-//
 //            }
+//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+//            override fun onClick(videoData: CategoryVideo) {
+//                setDetailFragment(videoData, DETAIL_CATEGORY)
+//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+//            }
+//        }
     }
 
     override fun onDestroyView() {
@@ -350,5 +335,10 @@ class HomeFragment : Fragment() {
                 }, 2000)
             }
         }
+    }
+
+    private fun setDetailFragment(item: Parcelable1, key: String) {
+        val dialog = DetailFragment.newInstance(item,key)
+        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
     }
 }

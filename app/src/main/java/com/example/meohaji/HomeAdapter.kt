@@ -1,6 +1,7 @@
 package com.example.meohaji
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.meohaji.databinding.SetMostPopularVideoBinding
 import com.example.meohaji.databinding.SetSelectCategoryBinding
 import com.example.meohaji.databinding.SetThemeTitleBinding
 import com.example.meohaji.databinding.SetVideoByCategoryBinding
+import com.example.meohaji.fragment.DetailTags
 import com.google.android.material.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -36,7 +38,17 @@ class HomeAdapter(private val context: Context) :
             fun call(id: String)
         }
 
+    interface DetailMostPopularVideo {
+        fun move(videoData: MostPopularVideo)
+    }
+
+    interface DetailCategoryVideo {
+        fun move(videoData: CategoryVideo)
+    }
+
     var communicateVideoByCategory: CommunicateVideoByCategory? = null
+    var detailMostPopularVideo: DetailMostPopularVideo? = null
+    var detailCategoryVideo: DetailCategoryVideo? = null
 
     private var categorySpinnerIdx = 0
 
@@ -149,6 +161,9 @@ class HomeAdapter(private val context: Context) :
             tvUploadDate.text =
                 outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
             textView4.text = item.video.recommendScore.toString()
+            binding.ivThumbnail.setOnClickListener {
+                detailCategoryVideo?.move(item.video)
+            }
         }
     }
 
@@ -158,6 +173,11 @@ class HomeAdapter(private val context: Context) :
             val mostPopularVideoAdapter = MostPopularVideoAdapter(context)
             binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
             mostPopularVideoAdapter.submitList(item.list.toList())
+            mostPopularVideoAdapter.videoClick = object : MostPopularVideoAdapter.MostPopularVideoClick {
+                override fun onClick(videoData: MostPopularVideo) {
+                    detailMostPopularVideo?.move(videoData)
+                }
+            }
         }
     }
 
