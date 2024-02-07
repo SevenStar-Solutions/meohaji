@@ -1,5 +1,9 @@
 package com.example.meohaji
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class CategoryVideo(
     val id: String,
     val publishedAt: String,
@@ -11,4 +15,4 @@ data class CategoryVideo(
     val likeCount: Int,
     val commentCount: Int,
     val recommendScore: Double
-)
+) : Parcelable
