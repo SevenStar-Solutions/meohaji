@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
+import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 
 class SearchAdapter(private val mContext: Context) :
 
@@ -24,13 +24,19 @@ class SearchAdapter(private val mContext: Context) :
         }
     }) {
 
-    inner class ItemViewHolder(val binding: LayoutVideoByCategoryBigBinding) :
+    interface SearchVideoClick {
+        fun onClick(videoData: SearchList)
+    }
+
+    var videoClick: SearchVideoClick? = null
+
+    inner class ItemViewHolder(val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root){
-        val image = binding.ivThumbnail
-        val title = binding.tvVideoTitle
-        val channel = binding.tvChannelName
-        val time = binding.tvUploadDate
-        val score = binding.textView4
+        val image = binding.ivVideoByCategoryItemThumbnail
+        val title = binding.tvVideoByCategoryItemTitle
+        val channel = binding.tvVideoByCategoryItemChannelName
+        val time = binding.tvVideoByCategoryItemUploadDate
+        val score = binding.tvVideoByCategoryItemRecommendScore
             fun bind(searchList: SearchList){
                 title.text = getItem(adapterPosition).title
                 channel.text = getItem(adapterPosition).channelTitle
@@ -44,7 +50,7 @@ class SearchAdapter(private val mContext: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
-            LayoutVideoByCategoryBigBinding.inflate(
+            ItemVideoByCategoryBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

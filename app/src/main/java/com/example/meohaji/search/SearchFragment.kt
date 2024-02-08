@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +19,15 @@ import androidx.lifecycle.MutableLiveData
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
+import com.example.meohaji.detail.DetailFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchFragment : Fragment() {
 
@@ -41,13 +48,12 @@ class SearchFragment : Fragment() {
         mContext = context
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //        return inflater.inflate(R.layout.fragment_search, container, false)
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        binding.etSeachfragmentSeach.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSearchFragmentSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 /** 여기다 검색 기능 추가하시면 됩니다 */
                 hideSoftKeyBoard()
@@ -63,31 +69,65 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvSeachRecyclerview.adapter= searchAdapter
+        binding.rvSearch.adapter= searchAdapter
 //        searchAdapter.submitList(searchVideoList)
         //LiveData로 Adapter에 연결할때
         searchVideo.observe(viewLifecycleOwner){
             searchAdapter.submitList(it.toList())
         }
         //키보드에서 엔터로 검색시작
-        binding.etSeachfragmentSeach.setOnEditorActionListener{ textView, action, event ->
+        binding.etSearchFragmentSearch.setOnEditorActionListener{ textView, action, event ->
             var handled = false
             if (action == EditorInfo.IME_ACTION_DONE) {
                 communicateSearchVideos()
                 handled = true
             }
             handled
+            //키보드 숨기기
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
         }
 
-
-
-
+        /** VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분 */
+//        mostPopularVideoAdapter.videoClick =
+//            object : MostPopularVideoAdapter.MostPopularVideoClick {
+//                override fun onClick(videoData: MostPopularVideo) {
+//                    setDetailFragment(videoData, DETAIL_MOST)
+//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
+//                }
+//            }
+//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+//            override fun onClick(videoData: CategoryVideo) {
+//                setDetailFragment(videoData, DETAIL_CATEGORY)
+//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+//            }
+//        }
+//
+//        mostPopularVideoAdapter.videoClick =
+//            object : MostPopularVideoAdapter.MostPopularVideoClick {
+//                override fun onClick(videoData: MostPopularVideo) {
+//                    setDetailFragment(videoData, DETAIL_MOST)
+//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
+//                }
+//            }
+//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+//            override fun onClick(videoData: CategoryVideo) {
+//                setDetailFragment(videoData, DETAIL_CATEGORY)
+//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+//            }
+//        }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
     }
+
+    /** 프레그먼트 띄우는 함수 */
+//    private fun setDetailFragment(item: Parcelable, key: String) {
+//        val dialog = DetailFragment.newInstance(item,key)
+//        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
+//    }
 
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -110,7 +150,7 @@ class SearchFragment : Fragment() {
         NetworkClient.apiService.searchByQueryList(
             BuildConfig.YOUTUBE_API_KEY,
             "snippet",
-            1,
+            10,
             "date",
             query,
             "kr",
@@ -122,14 +162,14 @@ class SearchFragment : Fragment() {
     private fun communicateSearchVideos() {
         CoroutineScope(Dispatchers.Main).launch {
             runCatching {
-                val search = binding.etSeachfragmentSeach.text.toString()
+                val search = binding.etSearchFragmentSearch.text.toString()
                 val videos = searchByQueryList(query = search)
                 searchVideoList.clear()
                 videos.items.forEach { item ->
                     searchVideoList.add(
                         SearchList(
                             item.snippet.title,
-                            item.snippet.thumbnails.high.url,
+                            item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
                             item.snippet.publishedAt,
                         )
