@@ -29,6 +29,10 @@ import java.time.format.DateTimeFormatter
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+interface BtnClick {
+    fun click()
+}
+
 class DetailFragment : DialogFragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -38,6 +42,8 @@ class DetailFragment : DialogFragment() {
 
     private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
+
+    var btnClick: BtnClick? = null
 
     private val df = DecimalFormat("#,###")
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
@@ -129,7 +135,8 @@ class DetailFragment : DialogFragment() {
 
             btnDetailSaveData.setOnClickListener{
                 saveData(param1!!)
-                Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
+                btnClick?.click()
+                //Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
                 Toast.makeText(mainActivity,"share! : ${param1?.title}", Toast.LENGTH_SHORT).show()

@@ -5,17 +5,22 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.meohaji.databinding.ActivityMainBinding
+import com.example.meohaji.home.BtnClick2
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BtnClick2 {
 
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val btnOn: Float = 1f
     private val btnOff: Float = 0.5f
+
+    private val adapter = ViewPagerAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +29,10 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarMain)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        binding.viewPagerMain.adapter = ViewPagerAdapter(this)
+        binding.viewPagerMain.adapter = adapter
         binding.viewPagerMain.isUserInputEnabled = false
         binding.viewPagerMain.setCurrentItem(1, false)
+        binding.viewPagerMain.offscreenPageLimit = 1
 
         setInitialSize(binding.btnTestMiddle)
 
@@ -193,6 +199,10 @@ class MainActivity : AppCompatActivity() {
     private fun spotlight2to1() {
         animateSpotlight(40f, 0f)
         animateBtnSizeDown(binding.btnTestRight)
+    }
+
+    override fun click() {
+        adapter.notifyChangeData()
     }
     /* 이전 코드임
         private fun spotlight_1to2(){
