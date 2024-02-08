@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.meohaji.databinding.SetChannelByCategoryBinding
-import com.example.meohaji.databinding.SetMostPopularVideoBinding
-import com.example.meohaji.databinding.SetSelectCategoryBinding
-import com.example.meohaji.databinding.SetThemeTitleBinding
-import com.example.meohaji.databinding.SetThemeTitleWithSpinnerBinding
-import com.example.meohaji.databinding.SetVideoByCategoryBinding
+import com.example.meohaji.databinding.ItemVideoByCategoryBinding
+import com.example.meohaji.databinding.LayoutChannelByCategoryBinding
+import com.example.meohaji.databinding.LayoutMostPopularVideoBinding
+import com.example.meohaji.databinding.LayoutSelectCategoryBinding
+import com.example.meohaji.databinding.LayoutThemeTitleBinding
+import com.example.meohaji.databinding.LayoutThemeTitleWithSpinnerBinding
 import com.google.android.material.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -64,7 +64,7 @@ class HomeAdapter(private val context: Context) :
         return when (viewType) {
             CHANNEL -> {
                 CategoryChannelViewHolder(
-                    SetChannelByCategoryBinding.inflate(
+                    LayoutChannelByCategoryBinding.inflate(
                         LayoutInflater.from(
                             parent.context
                         ), parent, false
@@ -74,7 +74,7 @@ class HomeAdapter(private val context: Context) :
 
             VIDEO -> {
                 CategoryVideoViewHolder(
-                    SetVideoByCategoryBinding.inflate(
+                    ItemVideoByCategoryBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -84,7 +84,7 @@ class HomeAdapter(private val context: Context) :
 
             POPULARVIDEO -> {
                 MostPopularVideoViewHolder(
-                    SetMostPopularVideoBinding.inflate(
+                    LayoutMostPopularVideoBinding.inflate(
                         LayoutInflater.from(
                             parent.context
                         ), parent, false
@@ -94,7 +94,7 @@ class HomeAdapter(private val context: Context) :
 
             SPINNER -> {
                 SpinnerViewHolder(
-                    SetSelectCategoryBinding.inflate(
+                    LayoutSelectCategoryBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -104,7 +104,7 @@ class HomeAdapter(private val context: Context) :
 
             TITLE -> {
                 TitleViewHolder(
-                    SetThemeTitleBinding.inflate(
+                    LayoutThemeTitleBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -114,7 +114,7 @@ class HomeAdapter(private val context: Context) :
 
             else -> {
                 TitleWithViewHolder(
-                    SetThemeTitleWithSpinnerBinding.inflate(
+                    LayoutThemeTitleWithSpinnerBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -157,34 +157,34 @@ class HomeAdapter(private val context: Context) :
         private const val TITLE_SPINNER = 6
     }
 
-    inner class CategoryChannelViewHolder(private val binding: SetChannelByCategoryBinding) :
+    inner class CategoryChannelViewHolder(private val binding: LayoutChannelByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.CategoryChannels) {
             val categoryChannelAdapter = CategoryChannelAdapter(context)
-            binding.rvHomeCategoryChannel.adapter = categoryChannelAdapter
+            binding.rvHomeChannelByCategory.adapter = categoryChannelAdapter
             categoryChannelAdapter.submitList(item.list.toList())
         }
     }
 
-    inner class CategoryVideoViewHolder(private val binding: SetVideoByCategoryBinding) :
+    inner class CategoryVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.CategoryVideos) = with(binding) {
             Glide.with(context)
                 .load(item.video.thumbnail)
-                .into(ivThumbnail)
+                .into(ivVideoByCategoryItemThumbnail)
 
-            tvVideoTitle.text = item.video.title
-            tvChannelName.text = item.video.channelTitle
-            tvUploadDate.text =
+            tvVideoByCategoryItemTitle.text = item.video.title
+            tvVideoByCategoryItemChannelName.text = item.video.channelTitle
+            tvVideoByCategoryItemUploadDate.text =
                 outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
-            textView4.text = item.video.recommendScore.toString()
-            binding.ivThumbnail.setOnClickListener {
+            tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
+            binding.ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailCategoryVideo?.move(item.video)
             }
         }
     }
 
-    inner class MostPopularVideoViewHolder(private val binding: SetMostPopularVideoBinding) :
+    inner class MostPopularVideoViewHolder(private val binding: LayoutMostPopularVideoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.MostPopularVideos) {
             val mostPopularVideoAdapter = MostPopularVideoAdapter(context)
@@ -199,7 +199,7 @@ class HomeAdapter(private val context: Context) :
         }
     }
 
-    inner class SpinnerViewHolder(private val binding: SetSelectCategoryBinding) :
+    inner class SpinnerViewHolder(private val binding: LayoutSelectCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Spinner) {
             val adapter = ArrayAdapter(
@@ -207,10 +207,10 @@ class HomeAdapter(private val context: Context) :
                 R.layout.support_simple_spinner_dropdown_item,
                 item.categories
             )
-            binding.spinnerHomeCategory.adapter = adapter
+            binding.spinnerHomeSelectCategory.adapter = adapter
 
-            binding.spinnerHomeCategory.setSelection(categorySpinnerIdx)
-            binding.spinnerHomeCategory.onItemSelectedListener =
+            binding.spinnerHomeSelectCategory.setSelection(categorySpinnerIdx)
+            binding.spinnerHomeSelectCategory.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                         if (categorySpinnerIdx != p2) {
@@ -230,17 +230,17 @@ class HomeAdapter(private val context: Context) :
         }
     }
 
-    inner class TitleViewHolder(private val binding: SetThemeTitleBinding) :
+    inner class TitleViewHolder(private val binding: LayoutThemeTitleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Title) {
-            binding.tvHomeTitle.text = item.title
+            binding.tvHomeThemeTitle.text = item.title
         }
     }
 
-    inner class TitleWithViewHolder(private val binding: SetThemeTitleWithSpinnerBinding) :
+    inner class TitleWithViewHolder(private val binding: LayoutThemeTitleWithSpinnerBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.TitleWithSpinner) {
-            binding.tvHomeTitle2.text = item.title
+            binding.tvHomeThemeTitleWithSpinner.text = item.title
 
             val adapter = ArrayAdapter(
                 context,

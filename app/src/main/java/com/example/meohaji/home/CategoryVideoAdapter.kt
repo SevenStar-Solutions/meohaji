@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
+import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,7 +39,7 @@ class CategoryVideoAdapter(private val context: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryVideoViewHolder {
         return CategoryVideoViewHolder(
-            LayoutVideoByCategoryBigBinding.inflate(
+            ItemVideoByCategoryBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -51,17 +51,17 @@ class CategoryVideoAdapter(private val context: Context) :
         holder.onBind(currentList[position])
     }
 
-    inner class CategoryVideoViewHolder(private val binding: LayoutVideoByCategoryBigBinding) :
+    inner class CategoryVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(item: CategoryVideo) = with(binding) {
             Glide.with(context)
                 .load(item.thumbnail)
-                .into(ivThumbnail)
+                .into(ivVideoByCategoryItemThumbnail)
 
-            tvVideoTitle.text = item.title
-            tvChannelName.text = item.channelTitle
-            tvUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
-            textView4.text = item.recommendScore.toString()
+            tvVideoByCategoryItemTitle.text = item.title
+            tvVideoByCategoryItemChannelName.text = item.channelTitle
+            tvVideoByCategoryItemUploadDate.text = outputFormat.format(inputFormat.parse(item.publishedAt) as Date)
+            tvVideoByCategoryItemRecommendScore.text = item.recommendScore.toString()
 
             itemView.setOnClickListener {
                 videoClick?.onClick(item)

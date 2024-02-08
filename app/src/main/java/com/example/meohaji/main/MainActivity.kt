@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.meohaji.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
     private val binding: ActivityMainBinding by lazy {
@@ -37,8 +36,8 @@ class MainActivity : AppCompatActivity() {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 0) {
                     viewPagerMain.currentItem = 0
-                    ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
-                    ivSoptlight.pivotY = ivSoptlight.height.toFloat()
+                    ivSpotLight.pivotX = (ivSpotLight.width / 2).toFloat()
+                    ivSpotLight.pivotY = ivSpotLight.height.toFloat()
                     animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
 
                     when (currentItem) {
@@ -66,8 +65,8 @@ class MainActivity : AppCompatActivity() {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 2) {
                     viewPagerMain.currentItem = 2
-                    ivSoptlight.pivotX = (ivSoptlight.width / 2).toFloat()
-                    ivSoptlight.pivotY = ivSoptlight.height.toFloat()
+                    ivSpotLight.pivotX = (ivSpotLight.width / 2).toFloat()
+                    ivSpotLight.pivotY = ivSpotLight.height.toFloat()
                     animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
 
                     when (currentItem) {
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     } //end of onCreate!!
 
     private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
-        val spotlight = binding.ivSoptlight
+        val spotlight = binding.ivSpotLight
         val btn0 = binding.btnTestLeft
         val btn1 = binding.btnTestMiddle
         val btn2 = binding.btnTestRight
@@ -197,37 +196,37 @@ class MainActivity : AppCompatActivity() {
     }
     /* 이전 코드임
         private fun spotlight_1to2(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", -50f, 0f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", -50f, 0f).apply {
                 duration = 200
                 start()
             }
         }
         private fun spotlight_1to3(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", -50f, 50f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", -50f, 50f).apply {
                 duration = 200
                 start()
             }
         }
         private fun spotlight_2to1(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 0f, -50f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 0f, -50f).apply {
                 duration = 200
                 start()
             }
         }
         private fun spotlight_2to3(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 0f, 50f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 0f, 50f).apply {
                 duration = 200
                 start()
             }
         }
         private fun spotlight_3to1(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 50f, -50f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 50f, -50f).apply {
                 duration = 200
                 start()
             }
         }
         private fun spotlight_3to2(){
-            ObjectAnimator.ofFloat(binding.ivSoptlight, "rotation", 50f, 0f).apply {
+            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 50f, 0f).apply {
                 duration = 200
                 start()
             }

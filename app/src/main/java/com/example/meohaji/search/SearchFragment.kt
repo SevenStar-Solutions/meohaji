@@ -53,7 +53,7 @@ class SearchFragment : Fragment() {
 //        return inflater.inflate(R.layout.fragment_search, container, false)
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        binding.etSeachfragmentSeach.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSearchFragmentSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 /** 여기다 검색 기능 추가하시면 됩니다 */
                 hideSoftKeyBoard()
@@ -69,14 +69,14 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvSeachRecyclerview.adapter= searchAdapter
+        binding.rvSearch.adapter= searchAdapter
 //        searchAdapter.submitList(searchVideoList)
         //LiveData로 Adapter에 연결할때
         searchVideo.observe(viewLifecycleOwner){
             searchAdapter.submitList(it.toList())
         }
         //키보드에서 엔터로 검색시작
-        binding.etSeachfragmentSeach.setOnEditorActionListener{ textView, action, event ->
+        binding.etSearchFragmentSearch.setOnEditorActionListener{ textView, action, event ->
             var handled = false
             if (action == EditorInfo.IME_ACTION_DONE) {
                 communicateSearchVideos()
@@ -85,7 +85,7 @@ class SearchFragment : Fragment() {
             handled
             //키보드 숨기기
             val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.etSeachfragmentSeach.windowToken, 0)
+            imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
         }
 
         /** VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분 */
@@ -162,14 +162,14 @@ class SearchFragment : Fragment() {
     private fun communicateSearchVideos() {
         CoroutineScope(Dispatchers.Main).launch {
             runCatching {
-                val search = binding.etSeachfragmentSeach.text.toString()
+                val search = binding.etSearchFragmentSearch.text.toString()
                 val videos = searchByQueryList(query = search)
                 searchVideoList.clear()
                 videos.items.forEach { item ->
                     searchVideoList.add(
                         SearchList(
                             item.snippet.title,
-                            item.snippet.thumbnails.high.url,
+                            item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
                             item.snippet.publishedAt,
                         )
