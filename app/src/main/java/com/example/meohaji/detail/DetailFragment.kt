@@ -39,6 +39,7 @@ class DetailFragment : DialogFragment() {
     private val binding get() = _binding!!
     private var param1: MostPopularVideo? = null
     private var param2: CategoryVideo? = null
+    private var param3: CategoryVideo? = null
     private var keyString: String? = null
 
     private lateinit var homeFragment: HomeFragment
