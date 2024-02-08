@@ -3,25 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#1A1B1F"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:visibility="visible"
     tools:context=".detail.DetailFragment">
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#0F0F12"
+        android:fillViewport="true"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp">
+            android:layout_gravity="fill_vertical"
+            android:layout_margin="8dp"
+            android:background="#333333">
 
             <TextView
                 android:id="@+id/tv_detail_video_title"
@@ -41,6 +48,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:adjustViewBounds="true"
                 android:background="@drawable/apply_video_image_background"
@@ -54,6 +62,8 @@
                 android:id="@+id/tv_detail_count_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:text="684"
                 android:textSize="22sp"
@@ -61,14 +71,15 @@
                 app:layout_constraintBottom_toBottomOf="@id/tv_detail_count_view"
                 app:layout_constraintEnd_toStartOf="@id/tv_detail_count_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_detail_count_view"
-                tools:layout_editor_absoluteX="39dp" />
+                app:layout_constraintTop_toTopOf="@id/tv_detail_count_view" />
 
             <TextView
                 android:id="@+id/tv_detail_count_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:text="29,564"
                 android:textSize="22sp"
@@ -81,6 +92,8 @@
                 android:id="@+id/tv_detail_count_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:text="4.0/5"
                 android:textSize="22sp"
@@ -88,13 +101,13 @@
                 app:layout_constraintBottom_toBottomOf="@id/tv_detail_count_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_detail_count_view"
-                app:layout_constraintTop_toTopOf="@id/tv_detail_count_view"
-                tools:layout_editor_absoluteX="335dp" />
+                app:layout_constraintTop_toTopOf="@id/tv_detail_count_view" />
 
             <TextView
                 android:id="@+id/tv_detail_text_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="@string/detail_liked"
                 android:textSize="14sp"
@@ -119,6 +132,7 @@
                 android:id="@+id/tv_detail_text_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:drawableStart="@drawable/apply_score_icon_resize"
                 android:gravity="center"
                 android:text="@string/detail_recommended"
@@ -131,7 +145,10 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_detail_save_data"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/apply_video_image_background"
                 android:text="@string/detail_button_save"
                 android:textColor="@color/black"
@@ -139,13 +156,14 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/btn_detail_share"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_detail_text_view"
-                tools:layout_editor_absoluteX="8dp" />
+                app:layout_constraintTop_toBottomOf="@id/tv_detail_text_view" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_detail_share"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/apply_video_image_background"
                 android:text="@string/detail_button_share"
                 android:textColor="@color/black"
@@ -154,13 +172,13 @@
                 app:layout_constraintBottom_toBottomOf="@id/btn_detail_save_data"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/btn_detail_save_data"
-                app:layout_constraintTop_toTopOf="@id/btn_detail_save_data"
-                tools:layout_editor_absoluteX="267dp" />
+                app:layout_constraintTop_toTopOf="@id/btn_detail_save_data" />
 
             <TextView
                 android:id="@+id/tv_detail_upload_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/detail_upload_date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_detail_save_data" />
@@ -169,17 +187,17 @@
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/detail_text_description"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_detail_upload_date"
-                tools:layout_editor_absoluteY="13dp" />
+                app:layout_constraintTop_toBottomOf="@id/tv_detail_upload_date" />
 
             <TextView
                 android:id="@+id/tv_detail_text_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:text="설명"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
