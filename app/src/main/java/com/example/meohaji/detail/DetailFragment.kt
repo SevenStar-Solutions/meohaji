@@ -4,13 +4,13 @@ import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
@@ -91,20 +91,20 @@ class DetailFragment : DialogFragment() {
         when(keyString) {
             DETAIL_MOST -> {
                 when(param1!!.id) {
-                    !in preferences.all.keys -> binding.btnDetailSaveData.text = "저장"
-                    in preferences.all.keys -> binding.btnDetailSaveData.text = "삭제"
+                    !in preferences.all.keys -> saveButton()
+                    in preferences.all.keys -> deleteButton()
                 }
                 p1()
             }
             DETAIL_CATEGORY -> {
                 when(param2!!.id) {
-                    !in preferences.all.keys -> binding.btnDetailSaveData.text = "저장"
-                    in preferences.all.keys -> binding.btnDetailSaveData.text = "삭제"
+                    !in preferences.all.keys -> saveButton()
+                    in preferences.all.keys -> deleteButton()
                 }
                 p2()
             }
         }
-        binding.ivBtnDetailClose.setOnClickListener {
+        binding.ivBtnDetailClose.setOnClickListener {       // X버튼 클릭 시 프래그먼트 닫기
             this.dismiss()
         }
     }
@@ -148,20 +148,17 @@ class DetailFragment : DialogFragment() {
             btnDetailSaveData.setOnClickListener{
                 when(param1!!.id) {
                     !in preferences.all.keys -> {
-                        btnDetailSaveData.text = "삭제"
                         saveData (param1!!)
-                        toast("saved! : ${param1?.title}")
+                        deleteButton()
                     }
                     in preferences.all.keys -> {
-                        btnDetailSaveData.text = "저장"
                         deleteData(param1!!.id)
-                        toast("deleted! : ${param1?.title}")
+                        saveButton()
                     }
                 }
             }
             btnDetailShare.setOnClickListener {
                 shareLink(param1!!)
-                toast("share! : ${param1?.title}")
             }
         }
     }
@@ -184,20 +181,17 @@ class DetailFragment : DialogFragment() {
             btnDetailSaveData.setOnClickListener{
                 when(param2!!.id) {
                     !in preferences.all.keys -> {
-                        btnDetailSaveData.text = "삭제"
+                        deleteButton()
                         saveData (param2!!)
-                        toast("saved! : ${param2?.title}")
                     }
                     in preferences.all.keys -> {
-                        btnDetailSaveData.text = "저장"
                         deleteData(param2!!.id)
-                        toast("deleted! : ${param2?.title}")
+                        saveButton()
                     }
                 }
             }
             btnDetailShare.setOnClickListener {
                 shareLink(param2!!)
-                toast("share! : ${param2?.title}")
             }
         }
     }
@@ -256,7 +250,18 @@ class DetailFragment : DialogFragment() {
         return bookmarks
     }
 
-    private fun shareLink(data:Parcelable) {
+    private fun saveButton() {
+        binding.btnDetailSaveData.text = "저장"
+        binding.btnDetailSaveData.setTextColor(Color.BLACK)
+        binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_save)
+    }
+    private fun deleteButton() {
+        binding.btnDetailSaveData.text = "삭제"
+        binding.btnDetailSaveData.setTextColor(Color.parseColor("#FF4141"))
+        binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_delete)
+    }
+
+    private fun shareLink(data:Parcelable) {       // 수정 필요
         // parcelable 가능한 데이터를 MostPopularVideo 타입으로 형 변환(타입 캐스팅)
         (data as MostPopularVideo)
 
@@ -277,10 +282,6 @@ class DetailFragment : DialogFragment() {
 //        val clip: ClipData = ClipData.newPlainText("VideoUri",url)
 //        clipboard.setPrimaryClip(clip)
 //        toast("클립보드에 복사함.")
-    }
-
-    private fun toast(s: String) {
-        Toast.makeText(mainActivity, s, Toast.LENGTH_SHORT).show()
     }
 }
 
