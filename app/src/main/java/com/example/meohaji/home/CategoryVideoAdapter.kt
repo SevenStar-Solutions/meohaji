@@ -13,15 +13,15 @@ import java.util.Date
 import java.util.Locale
 
 class CategoryVideoAdapter(private val context: Context) :
-    ListAdapter<CategoryVideo, CategoryVideoAdapter.CategoryVideoViewHolder>(
-        object : DiffUtil.ItemCallback<CategoryVideo>() {
-            override fun areItemsTheSame(oldItem: CategoryVideo, newItem: CategoryVideo): Boolean {
+    ListAdapter<VideoForUi, CategoryVideoAdapter.CategoryVideoViewHolder>(
+        object : DiffUtil.ItemCallback<VideoForUi>() {
+            override fun areItemsTheSame(oldItem: VideoForUi, newItem: VideoForUi): Boolean {
                 return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
-                oldItem: CategoryVideo,
-                newItem: CategoryVideo
+                oldItem: VideoForUi,
+                newItem: VideoForUi
             ): Boolean {
                 return oldItem == newItem
             }
@@ -29,7 +29,7 @@ class CategoryVideoAdapter(private val context: Context) :
     ) {
 
     interface CategoryVideoClick {
-        fun onClick(videoData: CategoryVideo)
+        fun onClick(videoData: VideoForUi)
     }
 
     var videoClick: CategoryVideoClick? = null
@@ -53,7 +53,7 @@ class CategoryVideoAdapter(private val context: Context) :
 
     inner class CategoryVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBind(item: CategoryVideo) = with(binding) {
+        fun onBind(item: VideoForUi) = with(binding) {
             Glide.with(context)
                 .load(item.thumbnail)
                 .into(ivVideoByCategoryItemThumbnail)

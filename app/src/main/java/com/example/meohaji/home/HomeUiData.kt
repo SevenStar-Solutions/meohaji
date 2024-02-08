@@ -6,7 +6,7 @@ sealed class HomeUiData {
     ): HomeUiData()
 
     data class MostPopularVideos(
-        val list: List<MostPopularVideo>
+        val list: List<VideoForUi>
     ): HomeUiData()
 
     data class CategoryChannels(
@@ -14,7 +14,7 @@ sealed class HomeUiData {
     ): HomeUiData()
 
     data class CategoryVideos(
-        val video: CategoryVideo
+        val video: VideoForUi
     ): HomeUiData()
 
     data class Spinner(

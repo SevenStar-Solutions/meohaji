@@ -71,13 +71,13 @@ class HomeFragment : Fragment() {
             }
 
             detailMostPopularVideo = object : HomeAdapter.DetailMostPopularVideo {
-                override fun move(videoData: MostPopularVideo) {
+                override fun move(videoData: VideoForUi) {
                     setDetailFragment(videoData, DETAIL_MOST)
                 }
             }
 
             detailCategoryVideo = object : HomeAdapter.DetailCategoryVideo {
-                override fun move(videoData: CategoryVideo) {
+                override fun move(videoData: VideoForUi) {
                     setDetailFragment(videoData, DETAIL_CATEGORY)
                 }
             }

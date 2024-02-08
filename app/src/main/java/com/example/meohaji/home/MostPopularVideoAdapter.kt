@@ -9,19 +9,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.ItemMostPopularVideoBinding
 
-class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPopularVideo, MostPopularVideoAdapter.MostPopularVideoViewHolder>(
-    object : DiffUtil.ItemCallback<MostPopularVideo>() {
-        override fun areItemsTheSame(oldItem: MostPopularVideo, newItem: MostPopularVideo): Boolean {
+class MostPopularVideoAdapter(private val context: Context): ListAdapter<VideoForUi, MostPopularVideoAdapter.MostPopularVideoViewHolder>(
+    object : DiffUtil.ItemCallback<VideoForUi>() {
+        override fun areItemsTheSame(oldItem: VideoForUi, newItem: VideoForUi): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: MostPopularVideo, newItem: MostPopularVideo): Boolean {
+        override fun areContentsTheSame(oldItem: VideoForUi, newItem: VideoForUi): Boolean {
             return oldItem == newItem
         }
     }
 ) {
     interface MostPopularVideoClick {
-        fun onClick(videoData: MostPopularVideo)
+        fun onClick(videoData: VideoForUi)
     }
 
     var videoClick: MostPopularVideoClick? = null
@@ -42,7 +42,7 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
     }
 
     inner class MostPopularVideoViewHolder(private val binding: ItemMostPopularVideoBinding): RecyclerView.ViewHolder(binding.root) {
-        fun onBind(item: MostPopularVideo) = with(binding) {
+        fun onBind(item: VideoForUi) = with(binding) {
             Glide.with(context)
                 .load(item.thumbnail)
                 .into(ivMostPopularVideoItemThumbnail)
