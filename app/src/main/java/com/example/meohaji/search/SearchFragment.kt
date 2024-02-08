@@ -184,12 +184,12 @@ class SearchFragment : Fragment() {
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
                         item.statistics.viewCount.toInt(),
-                        item.statistics.likeCount.toInt(),
+                        item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
                         calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
-                            item.statistics.likeCount.toInt(),
+                            item.statistics.likeCount?.toInt() ?: 0,
                             item.statistics.commentCount.toInt()
                         )
                     )
