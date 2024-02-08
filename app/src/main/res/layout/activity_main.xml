@@ -21,7 +21,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/ima_poop"
+            android:background="@drawable/img_poop"
             android:backgroundTint="@color/yellow_background"
             android:scaleType="fitXY" />
 
@@ -33,13 +33,6 @@
             android:textColor="#FFD80B"
             android:textSize="26sp" />
     </androidx.appcompat.widget.Toolbar>
-
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/frame_main"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />-->
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager_main"
@@ -135,14 +128,14 @@
     </com.google.android.material.card.MaterialCardView>
 
     <ImageView
-        android:id="@+id/iv_soptlight"
+        android:id="@+id/iv_spotLight"
         android:layout_width="140dp"
         android:layout_height="180dp"
         android:layout_marginBottom="-55dp"
         android:alpha="0.8"
         android:elevation="15dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_soptlight"
+        android:src="@drawable/ic_spot_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
