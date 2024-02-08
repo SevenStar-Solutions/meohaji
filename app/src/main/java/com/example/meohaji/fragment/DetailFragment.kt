@@ -1,5 +1,6 @@
 package com.example.meohaji.fragment
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -15,6 +16,8 @@ import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
+import com.example.meohaji.fragment.DetailTags.PREF_KEY
+import com.google.gson.GsonBuilder
 import java.text.DecimalFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -94,8 +97,6 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param1?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-//            tvDetailCountLike.text = df.format(param1?.likeCount)
-//            tvDetailCountView.text = df.format(param1?.viewCount)
             tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
             tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
@@ -106,6 +107,7 @@ class DetailFragment : DialogFragment() {
             }
 
             btnDetailSaveData.setOnClickListener{
+                saveData(param1!!)
                 Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
@@ -120,8 +122,6 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param2?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-//            tvDetailCountLike.text = df.format(param2?.likeCount)
-//            tvDetailCountView.text = df.format(param2?.viewCount)
             tvDetailCountLike.text = setCount(param2?.likeCount!!.toLong())
             tvDetailCountView.text = setCount(param2?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param2?.recommendScore}/5.0"
@@ -132,6 +132,7 @@ class DetailFragment : DialogFragment() {
             }
 
             btnDetailSaveData.setOnClickListener{
+                saveData(param2!!)
                 Toast.makeText(mainActivity,"saved! : ${param2?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
@@ -160,9 +161,25 @@ class DetailFragment : DialogFragment() {
         }
         return ans
     }
+
+    private fun saveData(test:Parcelable) {
+        val preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
+        val editor = preferences.edit()
+        val gson = GsonBuilder().create()
+        when(test) {
+            is MostPopularVideo -> {
+                editor.putString((test as MostPopularVideo).id, gson.toJson((test as MostPopularVideo)))
+            }
+            is CategoryVideo -> {
+                editor.putString((test as CategoryVideo).id, gson.toJson((test as CategoryVideo)))
+            }
+        }
+        editor.apply()
+    }
 }
 
 object DetailTags{
     const val DETAIL_MOST = "MostPopular"
     const val DETAIL_CATEGORY = "Category"
+    const val PREF_KEY = "My Preferences"
 }
