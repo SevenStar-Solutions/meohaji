@@ -61,6 +61,12 @@ class SearchAdapter(private val mContext: Context) :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
+        //클릭이 호출됐을때
+        holder.itemView.setOnClickListener {
+            videoClick?.onClick(item)
+        }
+
+
     }
 
 }

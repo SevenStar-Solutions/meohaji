@@ -140,4 +140,5 @@ class DetailFragment : DialogFragment() {
 object DetailTags{
     const val DETAIL_MOST = "MostPopular"
     const val DETAIL_CATEGORY = "Category"
+    const val DETAIL_SEARCH = "Search"
 }

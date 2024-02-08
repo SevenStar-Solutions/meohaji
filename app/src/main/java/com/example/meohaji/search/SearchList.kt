@@ -1,5 +1,9 @@
 package com.example.meohaji.search
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class SearchList(
     val title: String,
     var thumbnail: String,
@@ -7,4 +11,4 @@ data class SearchList(
     val publishedAt: String,
 //    val score: String,
 //    val favorit: Boolean
-)
+) : Parcelable
