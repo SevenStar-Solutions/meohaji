@@ -18,9 +18,8 @@ import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.detail.DetailTags.DETAIL_MOST
 import com.example.meohaji.detail.DetailTags.PREF_KEY
-import com.example.meohaji.home.CategoryVideo
 import com.example.meohaji.home.HomeFragment
-import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
 import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
@@ -30,17 +29,23 @@ import java.time.format.DateTimeFormatter
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+interface BtnClick {
+    fun click()
+}
+
 class DetailFragment : DialogFragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
-    private var param1: MostPopularVideo? = null
-    private var param2: CategoryVideo? = null
+    private var param1: VideoForUi? = null
+    private var param2: VideoForUi? = null
     private var keyString: String? = null
 
     private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
 
     private lateinit var preferences: SharedPreferences
+    var btnClick: BtnClick? = null
+
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,6 +161,7 @@ class DetailFragment : DialogFragment() {
                         saveButton()
                     }
                 }
+                btnClick?.click()
             }
             btnDetailShare.setOnClickListener {
                 shareLink(param1!!)
@@ -221,11 +227,11 @@ class DetailFragment : DialogFragment() {
         val editor = preferences.edit()
         val gson = GsonBuilder().create()
         when(test) {
-            is MostPopularVideo -> {
-                editor.putString((test as MostPopularVideo).id, gson.toJson((test as MostPopularVideo)))
+            is VideoForUi -> {
+                editor.putString((test as VideoForUi).id, gson.toJson((test as VideoForUi)))
             }
-            is CategoryVideo -> {
-                editor.putString((test as CategoryVideo).id, gson.toJson((test as CategoryVideo)))
+            is VideoForUi -> {
+                editor.putString((test as VideoForUi).id, gson.toJson((test as VideoForUi)))
             }
         }
         editor.apply()
@@ -239,12 +245,12 @@ class DetailFragment : DialogFragment() {
     }
 
     // SharedPreferences에서 데이터 불러오기
-    private fun loadData():ArrayList<MostPopularVideo> {
+    private fun loadData():ArrayList<VideoForUi> {
         val allEntries: Map<String, *> = preferences.all
-        val bookmarks = ArrayList<MostPopularVideo>()
+        val bookmarks = ArrayList<VideoForUi>()
         val gson = GsonBuilder().create()
         for((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, MostPopularVideo::class.java)
+            val item = gson.fromJson(value as String, VideoForUi::class.java)
             bookmarks.add(item)
         }
         return bookmarks
@@ -263,7 +269,7 @@ class DetailFragment : DialogFragment() {
 
     private fun shareLink(data:Parcelable) {       // 수정 필요
         // parcelable 가능한 데이터를 MostPopularVideo 타입으로 형 변환(타입 캐스팅)
-        (data as MostPopularVideo)
+        (data as VideoForUi)
 
         // 전송 인텐트 생성
         val intent = Intent(Intent.ACTION_SEND)
