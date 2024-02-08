@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,7 +29,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
+//검색눌렀을때 키보드 내려가게하기
+//하단 네비게이션 키보드 나타났을때 안올라오게 하기
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
@@ -47,7 +49,6 @@ class SearchFragment : Fragment() {
         super.onAttach(context)
         mContext = context
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,16 +85,50 @@ class SearchFragment : Fragment() {
                 handled = true
             }
             handled
+            //키보드 숨기기
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.etSeachfragmentSeach.windowToken, 0)
         }
 
-
-
-
+        /** VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분 */
+//        mostPopularVideoAdapter.videoClick =
+//            object : MostPopularVideoAdapter.MostPopularVideoClick {
+//                override fun onClick(videoData: MostPopularVideo) {
+//                    setDetailFragment(videoData, DETAIL_MOST)
+//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
+//                }
+//            }
+//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+//            override fun onClick(videoData: CategoryVideo) {
+//                setDetailFragment(videoData, DETAIL_CATEGORY)
+//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+//            }
+//        }
+//
+//        mostPopularVideoAdapter.videoClick =
+//            object : MostPopularVideoAdapter.MostPopularVideoClick {
+//                override fun onClick(videoData: MostPopularVideo) {
+//                    setDetailFragment(videoData, DETAIL_MOST)
+//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
+//                }
+//            }
+//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
+//            override fun onClick(videoData: CategoryVideo) {
+//                setDetailFragment(videoData, DETAIL_CATEGORY)
+//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
+//            }
+//        }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    /** 프레그먼트 띄우는 함수 */
+    private fun setDetailFragment(item: Parcelable, key: String) {
+        val dialog = DetailFragment.newInstance(item,key)
+        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
     }
 
     private fun overrideBackAction() {
@@ -116,8 +151,8 @@ class SearchFragment : Fragment() {
     private suspend fun searchByQueryList(query: String) = withContext(Dispatchers.IO) {
         NetworkClient.apiService.searchByQueryList(
             BuildConfig.YOUTUBE_API_KEY,
-            "snippet",
-            1,
+            "snippet,statistics",
+            10,
             "date",
             query,
             "kr",

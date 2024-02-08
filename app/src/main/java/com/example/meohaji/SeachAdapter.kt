@@ -24,6 +24,12 @@ class SeachAdapter(private val mContext: Context) :
         }
     }) {
 
+    interface SearchVideoClick {
+        fun onClick(videoData: SeachList)
+    }
+
+    var videoClick: SearchVideoClick? = null
+
     inner class ItemViewHolder(val binding: LayoutVideoByCategoryBigBinding) :
         RecyclerView.ViewHolder(binding.root){
         val image = binding.ivThumbnail
