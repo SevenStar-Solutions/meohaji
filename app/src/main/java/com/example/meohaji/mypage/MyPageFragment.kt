@@ -26,6 +26,10 @@ import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
 
+interface MyPageListener {
+    fun onUpdateMyPage()
+}
+
 class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
     private var backPressedOnce = false
@@ -33,6 +37,7 @@ class MyPageFragment : Fragment() {
     private lateinit var dialogImg: ImageView
     private lateinit var myPageAdapter: MyPageAdapter
     private var items: ArrayList<SavedItem> = ArrayList()
+    private var myPageListener: MyPageListener? = null //추가
 
     private val pickImageFromGallery =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -122,6 +127,10 @@ class MyPageFragment : Fragment() {
             items.clear() // 저장된 아이템 리스트를 비웁니다.
             myPageAdapter.notifyDataSetChanged()
         }
+        binding.btnRefreshSavedVideo.setOnClickListener {
+            items = Utils.getPrefBookmarkItems(requireContext())
+            myPageAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun overrideBackAction() {
@@ -137,5 +146,10 @@ class MyPageFragment : Fragment() {
                 }, 2000)
             }
         }
+    }
+
+    fun checkSharedPreference() {
+//        Toast.makeText(requireContext(), "SharedPreference 변경됨!!!", Toast.LENGTH_SHORT).show()
+        myPageAdapter.notifyDataSetChanged()
     }
 }

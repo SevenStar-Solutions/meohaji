@@ -113,7 +113,7 @@ data class Statistics (
     @SerializedName("viewCount")
     val viewCount: String,
     @SerializedName("likeCount")
-    val likeCount: String,
+    val likeCount: String?,
     @SerializedName("favoriteCount")
     val favoriteCount: String,
     @SerializedName("commentCount")
