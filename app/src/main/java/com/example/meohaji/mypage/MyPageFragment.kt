@@ -46,7 +46,7 @@ class MyPageFragment : Fragment() {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
         overrideBackAction()
 
-        val textView = binding.tvSaved
+        val textView = binding.tvMyPageSavedVideo
         val spannableString = SpannableString(textView.text)
         spannableString.setSpan(
             ForegroundColorSpan(
@@ -60,10 +60,10 @@ class MyPageFragment : Fragment() {
         textView.text = spannableString
 
         val (name, image) = Utils.getMyInfo(requireContext())
-        binding.tvName.text = name
+        binding.tvMyPageName.text = name
         Glide.with(requireContext())
             .load(image?.toUri())
-            .into(binding.civProfile)
+            .into(binding.civMyPageProfile)
 
         return binding.root
     }
@@ -71,7 +71,7 @@ class MyPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnEditName.setOnClickListener {
+        binding.btnMyPageEditName.setOnClickListener {
             val dialogView =
                 LayoutInflater.from(requireContext()).inflate(R.layout.dialog_mydata, null)
             dialogImg = dialogView.findViewById(R.id.civ_dialog_profile)
@@ -81,8 +81,8 @@ class MyPageFragment : Fragment() {
             val builder = AlertDialog.Builder(context)
             builder.setView(dialogView)
             builder.setPositiveButton("확인") { dialog, _ ->
-                binding.tvName.text = dialogName.text
-                binding.civProfile.setImageURI(selectedImageUri)
+                binding.tvMyPageName.text = dialogName.text
+                binding.civMyPageProfile.setImageURI(selectedImageUri)
                 Utils.saveMaInfo(
                     requireContext(),
                     dialogName.text.toString(),
@@ -97,8 +97,8 @@ class MyPageFragment : Fragment() {
             val dialog = builder.create()
             dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.apply_corner_radius_10))
             dialog.show()
-            dialogName.setText(binding.tvName.text)
-            dialogImg.setImageDrawable(binding.civProfile.drawable)
+            dialogName.setText(binding.tvMyPageName.text)
+            dialogImg.setImageDrawable(binding.civMyPageProfile.drawable)
 
             changeBtn.setOnClickListener {
                 pickImageFromGallery.launch("image/*")

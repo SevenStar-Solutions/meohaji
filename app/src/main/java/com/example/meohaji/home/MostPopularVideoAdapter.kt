@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.meohaji.databinding.LayoutMostPopularVideoBinding
+import com.example.meohaji.databinding.ItemMostPopularVideoBinding
 
 class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPopularVideo, MostPopularVideoAdapter.MostPopularVideoViewHolder>(
     object : DiffUtil.ItemCallback<MostPopularVideo>() {
@@ -29,7 +29,7 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MostPopularVideoViewHolder {
         return MostPopularVideoViewHolder(
-            LayoutMostPopularVideoBinding.inflate(
+            ItemMostPopularVideoBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -41,13 +41,13 @@ class MostPopularVideoAdapter(private val context: Context): ListAdapter<MostPop
         holder.onBind(currentList[position])
     }
 
-    inner class MostPopularVideoViewHolder(private val binding: LayoutMostPopularVideoBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class MostPopularVideoViewHolder(private val binding: ItemMostPopularVideoBinding): RecyclerView.ViewHolder(binding.root) {
         fun onBind(item: MostPopularVideo) = with(binding) {
             Glide.with(context)
                 .load(item.thumbnail)
-                .into(ivMostPopularVideoThumbnail)
+                .into(ivMostPopularVideoItemThumbnail)
 
-            tvMostPopularVideoTitle.text = item.title
+            tvMostPopularVideoItemTitle.text = item.title
 
             itemView.setOnClickListener {
                 videoClick?.onClick(item)

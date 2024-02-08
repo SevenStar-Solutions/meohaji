@@ -9,6 +9,7 @@ data class SearchList(
     var thumbnail: String,
     val channelTitle: String,
     val publishedAt: String,
+    val videoId: String,
 //    val score: String,
 //    val favorit: Boolean
 ) : Parcelable

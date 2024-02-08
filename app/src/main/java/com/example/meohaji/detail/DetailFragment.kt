@@ -1,5 +1,7 @@
 package com.example.meohaji.detail
 
+import android.app.Dialog
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -9,13 +11,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.example.meohaji.home.CategoryVideo
-import com.example.meohaji.main.MainActivity
-import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.detail.DetailTags.DETAIL_MOST
+import com.example.meohaji.detail.DetailTags.PREF_KEY
+import com.example.meohaji.home.CategoryVideo
 import com.example.meohaji.home.HomeFragment
+import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.main.MainActivity
+import com.google.gson.GsonBuilder
 import java.text.DecimalFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -29,6 +34,7 @@ class DetailFragment : DialogFragment() {
     private val binding get() = _binding!!
     private var param1: MostPopularVideo? = null
     private var param2: CategoryVideo? = null
+    private var param3: CategoryVideo? = null
     private var keyString: String? = null
 
     private lateinit var homeFragment: HomeFragment
@@ -40,6 +46,7 @@ class DetailFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         homeFragment = HomeFragment()
         mainActivity = context as MainActivity
+        isCancelable = true
 
         arguments?.let {
             Log.i("This is DetailFragment","onCreate/keyString : $keyString")
@@ -49,6 +56,24 @@ class DetailFragment : DialogFragment() {
             }
         }
     }
+
+    // 다이얼로그에 스타일 적용
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = Dialog(requireContext(), R.style.DetailTransparent)
+        return dialog
+    }
+
+    // dialog의 사이즈를 직접 지정하는 부분
+//    override fun onResume() {
+//        super.onResume()
+//        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        val rect = windowManager.currentWindowMetrics.bounds
+//        val window = dialog?.window
+//        val x = (rect.width() * 0.9f).toInt()
+//        val y = (rect.height() * 0.8f).toInt()
+//        window?.setLayout(x, y)
+//        Log.i("This is DetailFragment","onResume : x:$x, y:$y")
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,13 +119,17 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param1?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = df.format(param1?.likeCount)
-            tvDetailCountView.text = df.format(param1?.viewCount)
+            tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
+            tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
             tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
-            tvDetailTextDescription.text = param1?.description
+            tvDetailTextDescription.text = when(param1?.description) {
+                "" -> "내용이 없습니다."
+                else -> param1?.description
+            }
 
             btnDetailSaveData.setOnClickListener{
+                saveData(param1!!)
                 Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
@@ -115,13 +144,17 @@ class DetailFragment : DialogFragment() {
             Glide.with(mainActivity)
                 .load(param2?.thumbnail)
                 .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = df.format(param2?.likeCount)
-            tvDetailCountView.text = df.format(param2?.viewCount)
+            tvDetailCountLike.text = setCount(param2?.likeCount!!.toLong())
+            tvDetailCountView.text = setCount(param2?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param2?.recommendScore}/5.0"
             tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param2?.publishedAt))}"
-            tvDetailTextDescription.text = param2?.description
+            tvDetailTextDescription.text = when(param2?.description) {
+                "" -> "내용이 없습니다."
+                else -> param2?.description
+            }
 
             btnDetailSaveData.setOnClickListener{
+                saveData(param2!!)
                 Toast.makeText(mainActivity,"saved! : ${param2?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
@@ -135,10 +168,39 @@ class DetailFragment : DialogFragment() {
         _binding = null
         keyString = null
     }
+
+    private fun setCount(count: Long):String {
+        var ans = ""
+        if(count / 10000L <= 0L) {
+            ans = "$count"
+        } else if(count / 10000L > 0L) {
+            ans = if((count / 10000L) / 10000L <= 0L) {
+                "${count/10000L}.${(count%10000L).toString().first()}만"
+            } else {
+                "${(count/10000L)/10000L}.${((count/10000L)%10000L).toString().first()}억"
+            }
+        }
+        return ans
+    }
+
+    private fun saveData(test:Parcelable) {
+        val preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
+        val editor = preferences.edit()
+        val gson = GsonBuilder().create()
+        when(test) {
+            is MostPopularVideo -> {
+                editor.putString((test as MostPopularVideo).id, gson.toJson((test as MostPopularVideo)))
+            }
+            is CategoryVideo -> {
+                editor.putString((test as CategoryVideo).id, gson.toJson((test as CategoryVideo)))
+            }
+        }
+        editor.apply()
+    }
 }
 
 object DetailTags{
     const val DETAIL_MOST = "MostPopular"
     const val DETAIL_CATEGORY = "Category"
-    const val DETAIL_SEARCH = "Search"
+    const val PREF_KEY = "My Preferences"
 }

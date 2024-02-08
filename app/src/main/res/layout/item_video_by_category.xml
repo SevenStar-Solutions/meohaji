@@ -2,19 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/iv_thumbnail"
+        android:id="@+id/iv_video_by_category_item_thumbnail"
         android:layout_width="380dp"
-        android:layout_height="240dp"
-        android:layout_marginVertical="5dp"
+        android:layout_height="210dp"
+        android:layout_marginVertical="8dp"
         android:background="@drawable/apply_video_image_background"
         android:clipToOutline="true"
         android:scaleType="fitXY"
-        android:src="@drawable/galaxy"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/img_galaxy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,30 +21,29 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/apply_video_title_background"
         android:clipToOutline="true"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_thumbnail"
-        app:layout_constraintEnd_toEndOf="@+id/iv_thumbnail"
-        app:layout_constraintStart_toStartOf="@+id/iv_thumbnail">
+        app:layout_constraintTop_toBottomOf="@+id/iv_video_by_category_item_thumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/iv_video_by_category_item_thumbnail"
+        app:layout_constraintStart_toStartOf="@+id/iv_video_by_category_item_thumbnail">
 
         <TextView
-            android:id="@+id/tv_video_title"
+            android:id="@+id/tv_video_by_category_item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="영상 이름"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_channel_name"
-            app:layout_constraintEnd_toStartOf="@+id/textView4"
+            app:layout_constraintBottom_toTopOf="@+id/tv_video_by_category_item_channel_name"
+            app:layout_constraintEnd_toStartOf="@+id/tv_video_by_category_item_recommend_score"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_channel_name"
+            android:id="@+id/tv_video_by_category_item_channel_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -56,12 +54,12 @@
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_upload_date"
-            app:layout_constraintStart_toStartOf="@+id/tv_video_title"
-            app:layout_constraintTop_toBottomOf="@+id/tv_video_title" />
+            app:layout_constraintEnd_toStartOf="@+id/tv_video_by_category_item_upload_date"
+            app:layout_constraintStart_toStartOf="@+id/tv_video_by_category_item_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_video_by_category_item_title" />
 
         <TextView
-            android:id="@+id/tv_upload_date"
+            android:id="@+id/tv_video_by_category_item_upload_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -70,15 +68,15 @@
             android:maxLines="1"
             android:text="시간"
             android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_channel_name"
-            app:layout_constraintStart_toEndOf="@+id/tv_channel_name" />
+            app:layout_constraintBottom_toBottomOf="@+id/tv_video_by_category_item_channel_name"
+            app:layout_constraintStart_toEndOf="@+id/tv_video_by_category_item_channel_name" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tv_video_by_category_item_recommend_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="5dp"
             android:drawablePadding="6dp"
             android:gravity="center_vertical"
             android:text="평점"
