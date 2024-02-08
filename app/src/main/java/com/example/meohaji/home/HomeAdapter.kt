@@ -37,11 +37,11 @@ class HomeAdapter(private val context: Context) :
     }
 
     interface DetailMostPopularVideo {
-        fun move(videoData: MostPopularVideo)
+        fun move(videoData: VideoForUi)
     }
 
     interface DetailCategoryVideo {
-        fun move(videoData: CategoryVideo)
+        fun move(videoData: VideoForUi)
     }
 
     interface SortCategoryVideo {
@@ -185,7 +185,7 @@ class HomeAdapter(private val context: Context) :
             mostPopularVideoAdapter.submitList(item.list.toList())
             mostPopularVideoAdapter.videoClick =
                 object : MostPopularVideoAdapter.MostPopularVideoClick {
-                    override fun onClick(videoData: MostPopularVideo) {
+                    override fun onClick(videoData: VideoForUi) {
                         detailMostPopularVideo?.move(videoData)
                     }
                 }

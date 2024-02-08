@@ -24,8 +24,8 @@ class HomeViewModel : ViewModel() {
     )
     val homeList: LiveData<List<HomeUiData>> get() = _homeList
 
-    private val mostPopularVideoList = arrayListOf<MostPopularVideo>()
-    private val videoByCategoryList = arrayListOf<CategoryVideo>()
+    private val mostPopularVideoList = arrayListOf<VideoForUi>()
+    private val videoByCategoryList = arrayListOf<VideoForUi>()
     private val channelByCategoryList = arrayListOf<CategoryChannel>()
 
     private val channelIds = StringBuilder()
@@ -63,7 +63,7 @@ class HomeViewModel : ViewModel() {
             mostPopularVideoList.clear()
             response.body()?.items?.forEach { item ->
                 mostPopularVideoList.add(
-                    MostPopularVideo(
+                    VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
@@ -102,7 +102,7 @@ class HomeViewModel : ViewModel() {
             channelIds.clear()
             response.body()?.items?.forEach { item ->
                 videoByCategoryList.add(
-                    CategoryVideo(
+                    VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
