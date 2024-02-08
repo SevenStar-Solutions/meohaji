@@ -2,6 +2,8 @@ package com.example.meohaji.detail
 
 import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -21,7 +23,6 @@ import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.MostPopularVideo
 import com.example.meohaji.main.MainActivity
 import com.google.gson.GsonBuilder
-import java.text.DecimalFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -43,15 +44,17 @@ class DetailFragment : DialogFragment() {
     private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
 
+    private lateinit var preferences: SharedPreferences
     var btnClick: BtnClick? = null
 
-    private val df = DecimalFormat("#,###")
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         homeFragment = HomeFragment()
         mainActivity = context as MainActivity
         isCancelable = true
+        preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
+
 
         arguments?.let {
             Log.i("This is DetailFragment","onCreate/keyString : $keyString")
@@ -89,10 +92,26 @@ class DetailFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.i("This is DetailFragment","onViewCreated : $param1")
+        loadData()
+        Log.i("This is DetailFragment","onViewCreated : ${loadData()}")
         when(keyString) {
-            DETAIL_MOST -> p1()
-            DETAIL_CATEGORY -> p2()
+            DETAIL_MOST -> {
+                when(param1!!.id) {
+                    !in preferences.all.keys -> binding.btnDetailSaveData.text = "저장"
+                    in preferences.all.keys -> binding.btnDetailSaveData.text = "삭제"
+                }
+                p1()
+            }
+            DETAIL_CATEGORY -> {
+                when(param2!!.id) {
+                    !in preferences.all.keys -> binding.btnDetailSaveData.text = "저장"
+                    in preferences.all.keys -> binding.btnDetailSaveData.text = "삭제"
+                }
+                p2()
+            }
+        }
+        binding.ivBtnDetailClose.setOnClickListener {
+            this.dismiss()
         }
     }
 
@@ -114,7 +133,6 @@ class DetailFragment : DialogFragment() {
                         }
                     }
                 }
-                Log.i("This is DetailFragment","Companion Object : $param1")
             }
     }
 
@@ -134,12 +152,23 @@ class DetailFragment : DialogFragment() {
             }
 
             btnDetailSaveData.setOnClickListener{
-                saveData(param1!!)
+                when(param1!!.id) {
+                    !in preferences.all.keys -> {
+                        btnDetailSaveData.text = "삭제"
+                        saveData (param1!!)
+                        toast("saved! : ${param1?.title}")
+                    }
+                    in preferences.all.keys -> {
+                        btnDetailSaveData.text = "저장"
+                        deleteData(param1!!.id)
+                        toast("deleted! : ${param1?.title}")
+                    }
+                }
                 btnClick?.click()
-                //Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
             }
             btnDetailShare.setOnClickListener {
-                Toast.makeText(mainActivity,"share! : ${param1?.title}", Toast.LENGTH_SHORT).show()
+                shareLink(param1!!)
+                toast("share! : ${param1?.title}")
             }
         }
     }
@@ -160,11 +189,22 @@ class DetailFragment : DialogFragment() {
             }
 
             btnDetailSaveData.setOnClickListener{
-                saveData(param2!!)
-                Toast.makeText(mainActivity,"saved! : ${param2?.title}", Toast.LENGTH_SHORT).show()
+                when(param2!!.id) {
+                    !in preferences.all.keys -> {
+                        btnDetailSaveData.text = "삭제"
+                        saveData (param2!!)
+                        toast("saved! : ${param2?.title}")
+                    }
+                    in preferences.all.keys -> {
+                        btnDetailSaveData.text = "저장"
+                        deleteData(param2!!.id)
+                        toast("deleted! : ${param2?.title}")
+                    }
+                }
             }
             btnDetailShare.setOnClickListener {
-                Toast.makeText(mainActivity,"share! : ${param2?.title}", Toast.LENGTH_SHORT).show()
+                shareLink(param2!!)
+                toast("share! : ${param2?.title}")
             }
         }
     }
@@ -189,8 +229,8 @@ class DetailFragment : DialogFragment() {
         return ans
     }
 
+    // SharedPreference에 저장(key = id, value = 값.toString)
     private fun saveData(test:Parcelable) {
-        val preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
         val editor = preferences.edit()
         val gson = GsonBuilder().create()
         when(test) {
@@ -202,6 +242,52 @@ class DetailFragment : DialogFragment() {
             }
         }
         editor.apply()
+    }
+
+    // SharedPreference에서 삭제
+    private fun deleteData(id: String) {
+        val editor = preferences.edit()
+        editor.remove(id)
+        editor.apply()
+    }
+
+    // SharedPreferences에서 데이터 불러오기
+    private fun loadData():ArrayList<MostPopularVideo> {
+        val allEntries: Map<String, *> = preferences.all
+        val bookmarks = ArrayList<MostPopularVideo>()
+        val gson = GsonBuilder().create()
+        for((key, value) in allEntries) {
+            val item = gson.fromJson(value as String, MostPopularVideo::class.java)
+            bookmarks.add(item)
+        }
+        return bookmarks
+    }
+
+    private fun shareLink(data:Parcelable) {
+        // parcelable 가능한 데이터를 MostPopularVideo 타입으로 형 변환(타입 캐스팅)
+        (data as MostPopularVideo)
+
+        // 전송 인텐트 생성
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/html"
+
+        // 링크 생성 & 인텐트에 담기
+        val url = "https://youtube.com/video/${data.id}"
+        intent.putExtra(Intent.EXTRA_TEXT, url)
+
+        // chooser로 앱 선택하기
+        val text = "공유하기"
+        startActivity(Intent.createChooser(intent, text))
+
+        // 클립보드 서비스 사용
+//        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//        val clip: ClipData = ClipData.newPlainText("VideoUri",url)
+//        clipboard.setPrimaryClip(clip)
+//        toast("클립보드에 복사함.")
+    }
+
+    private fun toast(s: String) {
+        Toast.makeText(mainActivity, s, Toast.LENGTH_SHORT).show()
     }
 }
 
