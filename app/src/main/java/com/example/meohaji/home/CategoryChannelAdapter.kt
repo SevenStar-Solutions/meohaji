@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.LayoutChannelByCategoryBinding
-import com.example.meohaji.databinding.LayoutMostPopularVideoBinding
 
 class CategoryChannelAdapter(private val context: Context) :
     ListAdapter<CategoryChannel, CategoryChannelAdapter.CategoryChannelViewHolder>(

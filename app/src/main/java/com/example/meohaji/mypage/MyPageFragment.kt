@@ -1,4 +1,4 @@
-package com.example.meohaji.fragment
+package com.example.meohaji.mypage
 
 import android.app.AlertDialog
 import android.net.Uri

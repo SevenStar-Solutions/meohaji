@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.search
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.LayoutVideoByCategoryBigBinding
 
-class SeachAdapter(private val mContext: Context) :
+class SearchAdapter(private val mContext: Context) :
 
-    ListAdapter<SeachList, SeachAdapter.ItemViewHolder>(object :
-        DiffUtil.ItemCallback<SeachList>() {
-        override fun areItemsTheSame(oldItem: SeachList, newItem: SeachList): Boolean {
+    ListAdapter<SearchList, SearchAdapter.ItemViewHolder>(object :
+        DiffUtil.ItemCallback<SearchList>() {
+        override fun areItemsTheSame(oldItem: SearchList, newItem: SearchList): Boolean {
             // 비디오 id가 같은지 확인
             return (oldItem.thumbnail == newItem.thumbnail) && (oldItem.title == newItem.title)
         }
 
-        override fun areContentsTheSame(oldItem: SeachList, newItem: SeachList): Boolean {
+        override fun areContentsTheSame(oldItem: SearchList, newItem: SearchList): Boolean {
             // 모든 필드가 같은지 확인 (data class의 equals 사용)
             return oldItem == newItem
         }
@@ -31,18 +31,18 @@ class SeachAdapter(private val mContext: Context) :
         val channel = binding.tvChannelName
         val time = binding.tvUploadDate
         val score = binding.textView4
-            fun bind(seachList: SeachList){
+            fun bind(searchList: SearchList){
                 title.text = getItem(adapterPosition).title
-                channel.text = getItem(adapterPosition).channel
-                time.text = getItem(adapterPosition).time
-                score.text = getItem(adapterPosition).score
+                channel.text = getItem(adapterPosition).channelTitle
+                time.text = getItem(adapterPosition).publishedAt
+//                score.text = getItem(adapterPosition).score
                 Glide.with(image)
-                    .load(seachList.thumbnail)
+                    .load(searchList.thumbnail)
                     .into(image)
             }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeachAdapter.ItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
             LayoutVideoByCategoryBigBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -52,7 +52,7 @@ class SeachAdapter(private val mContext: Context) :
         )
     }
 
-    override fun onBindViewHolder(holder: SeachAdapter.ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
     }

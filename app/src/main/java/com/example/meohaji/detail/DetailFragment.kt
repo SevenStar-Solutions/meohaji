@@ -1,4 +1,4 @@
-package com.example.meohaji.fragment
+package com.example.meohaji.detail
 
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.example.meohaji.CategoryVideo
-import com.example.meohaji.MainActivity
-import com.example.meohaji.MostPopularVideo
+import com.example.meohaji.home.CategoryVideo
+import com.example.meohaji.main.MainActivity
+import com.example.meohaji.home.MostPopularVideo
 import com.example.meohaji.databinding.FragmentDetailBinding
+import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
+import com.example.meohaji.detail.DetailTags.DETAIL_MOST
+import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
 import com.example.meohaji.fragment.DetailTags.PREF_KEY
@@ -33,7 +36,7 @@ class DetailFragment : DialogFragment() {
     private var param2: CategoryVideo? = null
     private var keyString: String? = null
 
-    private lateinit var homeFragment:HomeFragment
+    private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
 
     private val df = DecimalFormat("#,###")
