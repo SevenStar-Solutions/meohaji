@@ -20,17 +20,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
-
 
 class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
     private var backPressedOnce = false
     private var selectedImageUri: Uri? = null
     private lateinit var dialogImg: ImageView
+    private lateinit var myPageAdapter: MyPageAdapter
+    private var items: ArrayList<SavedItem> = ArrayList()
 
     private val pickImageFromGallery =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -40,11 +42,14 @@ class MyPageFragment : Fragment() {
             }
         }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
         overrideBackAction()
+
+
 
         val textView = binding.tvMyPageSavedVideo
         val spannableString = SpannableString(textView.text)
@@ -70,6 +75,13 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        items = Utils.getPrefBookmarkItems(requireContext())
+        myPageAdapter = MyPageAdapter(requireContext(), items)
+        val recyclerView = binding.rvMyPage
+        recyclerView.adapter = myPageAdapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
 
         binding.btnMyPageEditName.setOnClickListener {
             val dialogView =
@@ -103,6 +115,12 @@ class MyPageFragment : Fragment() {
             changeBtn.setOnClickListener {
                 pickImageFromGallery.launch("image/*")
             }
+        }
+
+        binding.btnClearSavedVideo.setOnClickListener {
+            Utils.deletePrefItem(requireContext())
+            items.clear() // 저장된 아이템 리스트를 비웁니다.
+            myPageAdapter.notifyDataSetChanged()
         }
     }
 
