@@ -1,5 +1,6 @@
 package com.example.meohaji.detail
 
+import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Parcelable
@@ -10,16 +11,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.example.meohaji.home.CategoryVideo
-import com.example.meohaji.main.MainActivity
-import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
 import com.example.meohaji.detail.DetailTags.DETAIL_MOST
+import com.example.meohaji.detail.DetailTags.PREF_KEY
+import com.example.meohaji.home.CategoryVideo
 import com.example.meohaji.home.HomeFragment
-import com.example.meohaji.fragment.DetailTags.DETAIL_CATEGORY
-import com.example.meohaji.fragment.DetailTags.DETAIL_MOST
-import com.example.meohaji.fragment.DetailTags.PREF_KEY
+import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.main.MainActivity
 import com.google.gson.GsonBuilder
 import java.text.DecimalFormat
 import java.time.OffsetDateTime
@@ -55,6 +55,24 @@ class DetailFragment : DialogFragment() {
             }
         }
     }
+
+    // 다이얼로그에 스타일 적용
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = Dialog(requireContext(), R.style.DetailTransparent)
+        return dialog
+    }
+
+    // dialog의 사이즈를 직접 지정하는 부분
+//    override fun onResume() {
+//        super.onResume()
+//        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        val rect = windowManager.currentWindowMetrics.bounds
+//        val window = dialog?.window
+//        val x = (rect.width() * 0.9f).toInt()
+//        val y = (rect.height() * 0.8f).toInt()
+//        window?.setLayout(x, y)
+//        Log.i("This is DetailFragment","onResume : x:$x, y:$y")
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -152,7 +170,6 @@ class DetailFragment : DialogFragment() {
 
     private fun setCount(count: Long):String {
         var ans = ""
-        Log.i("This is DetailFragment","setCount : $count")
         if(count / 10000L <= 0L) {
             ans = "$count"
         } else if(count / 10000L > 0L) {
