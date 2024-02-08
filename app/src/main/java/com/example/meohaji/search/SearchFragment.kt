@@ -214,6 +214,18 @@ class SearchFragment : Fragment() {
         )
     }
 
+    private suspend fun searchByIdVideo(query: String) = withContext(Dispatchers.IO) {
+        NetworkClient.apiService.searchByQueryList(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet",
+            10,
+            "date",
+            query,
+            "kr",
+            "video"
+        )
+    }
+
     //받아온 데이터를 LiveData에 넣는과정
     private fun communicateSearchVideos() {
 //        CoroutineScope(Dispatchers.Main).launch
