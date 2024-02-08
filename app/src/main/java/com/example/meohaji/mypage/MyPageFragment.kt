@@ -120,4 +120,8 @@ class MyPageFragment : Fragment() {
             }
         }
     }
+
+    fun checkSharedPreference() {
+        Toast.makeText(requireContext(), "SharedPreference 변경됨!!!", Toast.LENGTH_SHORT).show()
+    }
 }

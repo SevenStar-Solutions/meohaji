@@ -30,6 +30,10 @@ import java.time.format.DateTimeFormatter
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+interface BtnClick {
+    fun click()
+}
+
 class DetailFragment : DialogFragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -41,6 +45,8 @@ class DetailFragment : DialogFragment() {
     private lateinit var mainActivity: MainActivity
 
     private lateinit var preferences: SharedPreferences
+    var btnClick: BtnClick? = null
+
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,6 +164,7 @@ class DetailFragment : DialogFragment() {
                         toast("deleted! : ${param1?.title}")
                     }
                 }
+                btnClick?.click()
             }
             btnDetailShare.setOnClickListener {
                 shareLink(param1!!)
