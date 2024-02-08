@@ -2,8 +2,8 @@ package com.example.meohaji
 
 import com.example.meohaji.home.Channel
 import com.example.meohaji.home.Video
-import retrofit2.Call
 import com.example.meohaji.search.SearchResult
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,29 +11,29 @@ import retrofit2.http.Query
 interface NetworkInterface {
 
     @GET("videos")
-    fun mostPopularVideos(
+    suspend fun mostPopularVideos(
         @Query("key") key: String?,
         @Query("part") part: String?,
         @Query("chart") chart: String?,
         @Query("regionCode") code: String?
-    ): Call<Video?>?
+    ): Response<Video>
 
     @GET("videos")
-    fun videoByCategory(
+    suspend fun videoByCategory(
         @Query("key") key: String?,
         @Query("part") part: String?,
         @Query("chart") chart: String?,
         @Query("maxResults") max: Int?,
         @Query("regionCode") code: String?,
         @Query("videoCategoryId") categoryId: String?,
-    ): Call<Video?>?
+    ): Response<Video>
 
     @GET("channels")
-    fun channelByCategory(
+    suspend fun channelByCategory(
         @Query("key") key: String?,
         @Query("part") part: String?,
         @Query("id") channelId: String?
-    ) : Call<Channel?>?
+    ) : Response<Channel>
 
     // q 타입 max 파트 오더 Regioncode
     @GET("search")
