@@ -1,4 +1,4 @@
-package com.example.meohaji.fragment
+package com.example.meohaji.search
 
 import android.content.Context
 import android.os.Bundle
@@ -17,32 +17,30 @@ import androidx.activity.addCallback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.meohaji.BuildConfig
-import com.example.meohaji.MostPopularVideo
 import com.example.meohaji.NetworkClient
-import com.example.meohaji.SeachAdapter
-import com.example.meohaji.SeachList
 import com.example.meohaji.databinding.FragmentSearchBinding
+import com.example.meohaji.detail.DetailFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-//검색눌렀을때 키보드 내려가게하기
-//하단 네비게이션 키보드 나타났을때 안올라오게 하기
+
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private var backPressedOnce = false
-    private val searchAdapter: SeachAdapter by lazy {
-        SeachAdapter(requireContext())
+    private val searchAdapter: SearchAdapter by lazy {
+        SearchAdapter(requireContext())
     }
 
-    private val searchVideoList = arrayListOf<SeachList>()
-    private val _searchVideoList = MutableLiveData<List<SeachList>>()
-    private val searchVideo : LiveData<List<SeachList>> get()= _searchVideoList
+    private val searchVideoList = arrayListOf<SearchList>()
+    private val _searchVideoList = MutableLiveData<List<SearchList>>()
+    private val searchVideo : LiveData<List<SearchList>> get()= _searchVideoList
 
     private lateinit var mContext: Context
     override fun onAttach(context: Context) {
@@ -126,10 +124,10 @@ class SearchFragment : Fragment() {
     }
 
     /** 프레그먼트 띄우는 함수 */
-    private fun setDetailFragment(item: Parcelable, key: String) {
-        val dialog = DetailFragment.newInstance(item,key)
-        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
-    }
+//    private fun setDetailFragment(item: Parcelable, key: String) {
+//        val dialog = DetailFragment.newInstance(item,key)
+//        dialog.show(requireActivity().supportFragmentManager,"DetailFragment")
+//    }
 
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -151,7 +149,7 @@ class SearchFragment : Fragment() {
     private suspend fun searchByQueryList(query: String) = withContext(Dispatchers.IO) {
         NetworkClient.apiService.searchByQueryList(
             BuildConfig.YOUTUBE_API_KEY,
-            "snippet,statistics",
+            "snippet",
             10,
             "date",
             query,
@@ -169,7 +167,7 @@ class SearchFragment : Fragment() {
                 searchVideoList.clear()
                 videos.items.forEach { item ->
                     searchVideoList.add(
-                        SeachList(
+                        SearchList(
                             item.snippet.title,
                             item.snippet.thumbnails.high.url,
                             item.snippet.channelTitle,

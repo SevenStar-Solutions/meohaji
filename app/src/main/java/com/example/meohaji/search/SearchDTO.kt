@@ -1,4 +1,4 @@
-package com.example.meohaji.Search
+package com.example.meohaji.search
 
 import com.google.gson.annotations.SerializedName
 

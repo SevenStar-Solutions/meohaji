@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

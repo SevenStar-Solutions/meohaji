@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 import android.net.Uri
 import com.google.gson.annotations.SerializedName

@@ -1,4 +1,4 @@
-package com.example.meohaji
+package com.example.meohaji.home
 
 sealed class HomeUiData {
     data class Title(
@@ -18,6 +18,11 @@ sealed class HomeUiData {
     ): HomeUiData()
 
     data class Spinner(
+        val categories: List<String>
+    ): HomeUiData()
+
+    data class TitleWithSpinner(
+        val title: String,
         val categories: List<String>
     ): HomeUiData()
 }
