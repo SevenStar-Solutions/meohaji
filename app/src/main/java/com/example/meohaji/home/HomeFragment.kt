@@ -14,9 +14,6 @@ import androidx.fragment.app.viewModels
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
-import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
-import com.example.meohaji.detail.DetailTags.DETAIL_MOST
-import android.os.Parcelable as Parcelable1
 
 interface BtnClick2 {
     fun click()
@@ -72,13 +69,13 @@ class HomeFragment : Fragment() {
 
             detailMostPopularVideo = object : HomeAdapter.DetailMostPopularVideo {
                 override fun move(videoData: VideoForUi) {
-                    setDetailFragment(videoData, DETAIL_MOST)
+                    setDetailFragment(videoData)
                 }
             }
 
             detailCategoryVideo = object : HomeAdapter.DetailCategoryVideo {
                 override fun move(videoData: VideoForUi) {
-                    setDetailFragment(videoData, DETAIL_CATEGORY)
+                    setDetailFragment(videoData)
                 }
             }
 
@@ -118,8 +115,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setDetailFragment(item: Parcelable1, key: String) {
-        val dialog = DetailFragment.newInstance(item, key)
+    private fun setDetailFragment(item: VideoForUi) {
+        val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
             override fun click() {
                 btnClick2?.click()

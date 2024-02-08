@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,6 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentDetailBinding
-import com.example.meohaji.detail.DetailTags.DETAIL_CATEGORY
-import com.example.meohaji.detail.DetailTags.DETAIL_MOST
 import com.example.meohaji.detail.DetailTags.PREF_KEY
 import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
@@ -27,7 +24,6 @@ import java.time.format.DateTimeFormatter
 
 
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 interface BtnClick {
     fun click()
@@ -37,8 +33,6 @@ class DetailFragment : DialogFragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
     private var param1: VideoForUi? = null
-    private var param2: VideoForUi? = null
-    private var keyString: String? = null
 
     private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
@@ -54,13 +48,8 @@ class DetailFragment : DialogFragment() {
         isCancelable = true
         preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
 
-
         arguments?.let {
-            Log.i("This is DetailFragment","onCreate/keyString : $keyString")
-            when(keyString) {
-                DETAIL_MOST -> param1 = it.getParcelable(ARG_PARAM1)
-                DETAIL_CATEGORY -> param2 = it.getParcelable(ARG_PARAM2)
-            }
+            param1 = it.getParcelable(ARG_PARAM1)
         }
     }
 
@@ -93,22 +82,12 @@ class DetailFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         loadData()
         Log.i("This is DetailFragment","onViewCreated : ${loadData()}")
-        when(keyString) {
-            DETAIL_MOST -> {
-                when(param1!!.id) {
-                    !in preferences.all.keys -> saveButton()
-                    in preferences.all.keys -> deleteButton()
-                }
-                p1()
-            }
-            DETAIL_CATEGORY -> {
-                when(param2!!.id) {
-                    !in preferences.all.keys -> saveButton()
-                    in preferences.all.keys -> deleteButton()
-                }
-                p2()
-            }
+        when(param1!!.id) {
+            !in preferences.all.keys -> saveButton()
+            in preferences.all.keys -> deleteButton()
         }
+        p1()
+
         binding.ivBtnDetailClose.setOnClickListener {       // X버튼 클릭 시 프래그먼트 닫기
             this.dismiss()
         }
@@ -116,21 +95,10 @@ class DetailFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: Parcelable, key:String) =
+        fun newInstance(param1: VideoForUi) =
             DetailFragment().apply {
-                when(key) {
-                    DETAIL_MOST -> {
-                        arguments = Bundle().apply {
-                            putParcelable(ARG_PARAM1, param1)
-                            keyString = key
-                        }
-                    }
-                    DETAIL_CATEGORY -> {
-                        arguments = Bundle().apply {
-                            putParcelable(ARG_PARAM2, param1)
-                            keyString = key
-                        }
-                    }
+                arguments = Bundle().apply {
+                    putParcelable(ARG_PARAM1, param1)
                 }
             }
     }
@@ -169,43 +137,9 @@ class DetailFragment : DialogFragment() {
         }
     }
 
-    private fun p2(){
-        binding.apply {
-            tvDetailVideoTitle.text = param2?.title
-            Glide.with(mainActivity)
-                .load(param2?.thumbnail)
-                .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = setCount(param2?.likeCount!!.toLong())
-            tvDetailCountView.text = setCount(param2?.viewCount!!.toLong())
-            tvDetailCountRec.text = "${param2?.recommendScore}/5.0"
-            tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param2?.publishedAt))}"
-            tvDetailTextDescription.text = when(param2?.description) {
-                "" -> "내용이 없습니다."
-                else -> param2?.description
-            }
-
-            btnDetailSaveData.setOnClickListener{
-                when(param2!!.id) {
-                    !in preferences.all.keys -> {
-                        deleteButton()
-                        saveData (param2!!)
-                    }
-                    in preferences.all.keys -> {
-                        deleteData(param2!!.id)
-                        saveButton()
-                    }
-                }
-            }
-            btnDetailShare.setOnClickListener {
-                shareLink(param2!!)
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        keyString = null
     }
 
     private fun setCount(count: Long):String {
@@ -223,17 +157,10 @@ class DetailFragment : DialogFragment() {
     }
 
     // SharedPreference에 저장(key = id, value = 값.toString)
-    private fun saveData(test:Parcelable) {
+    private fun saveData(test:VideoForUi) {
         val editor = preferences.edit()
         val gson = GsonBuilder().create()
-        when(test) {
-            is VideoForUi -> {
-                editor.putString((test as VideoForUi).id, gson.toJson((test as VideoForUi)))
-            }
-            is VideoForUi -> {
-                editor.putString((test as VideoForUi).id, gson.toJson((test as VideoForUi)))
-            }
-        }
+        editor.putString(test.id, gson.toJson(test))
         editor.apply()
     }
 
@@ -267,10 +194,7 @@ class DetailFragment : DialogFragment() {
         binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_delete)
     }
 
-    private fun shareLink(data:Parcelable) {       // 수정 필요
-        // parcelable 가능한 데이터를 MostPopularVideo 타입으로 형 변환(타입 캐스팅)
-        (data as VideoForUi)
-
+    private fun shareLink(data:VideoForUi) {       // 수정 필요
         // 전송 인텐트 생성
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/html"
@@ -292,7 +216,5 @@ class DetailFragment : DialogFragment() {
 }
 
 object DetailTags{
-    const val DETAIL_MOST = "MostPopular"
-    const val DETAIL_CATEGORY = "Category"
     const val PREF_KEY = "My Preferences"
 }

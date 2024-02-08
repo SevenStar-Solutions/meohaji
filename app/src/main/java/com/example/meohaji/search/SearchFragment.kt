@@ -4,9 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcelable
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -23,8 +22,7 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.DetailFragment
-import com.example.meohaji.detail.DetailTags.DETAIL_MOST
-import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,7 +44,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var mContext: Context
 
-    private lateinit var idData : MostPopularVideo
+    private lateinit var idData : VideoForUi
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -136,8 +134,8 @@ class SearchFragment : Fragment() {
     }
 
     /** 프레그먼트 띄우는 함수 */
-    private fun setDetailFragment(item: Parcelable, key: String) {
-        val dialog = DetailFragment.newInstance(item, key)
+    private fun setDetailFragment(item: VideoForUi) {
+        val dialog = DetailFragment.newInstance(item)
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
@@ -176,7 +174,7 @@ class SearchFragment : Fragment() {
                 val videos = searchByIdList(id = id)
                 searchVideoList.clear()
                 videos.items[0].let { item ->
-                    idData = MostPopularVideo(
+                    idData = VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
@@ -197,7 +195,7 @@ class SearchFragment : Fragment() {
             }.onFailure { //오류가 났을때 실행
                 Log.e("search", "잘못됐다")
             }
-            setDetailFragment(idData , DETAIL_MOST)
+            setDetailFragment(idData)
         }
 
     }
