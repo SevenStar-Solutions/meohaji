@@ -2,6 +2,7 @@ package com.example.meohaji.detail
 
 import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
@@ -103,6 +104,9 @@ class DetailFragment : DialogFragment() {
                 p2()
             }
         }
+        binding.ivBtnDetailClose.setOnClickListener {
+            this.dismiss()
+        }
     }
 
     companion object {
@@ -146,17 +150,18 @@ class DetailFragment : DialogFragment() {
                     !in preferences.all.keys -> {
                         btnDetailSaveData.text = "삭제"
                         saveData (param1!!)
-                        Toast.makeText(mainActivity,"saved! : ${param1?.title}", Toast.LENGTH_SHORT).show()
+                        toast("saved! : ${param1?.title}")
                     }
                     in preferences.all.keys -> {
                         btnDetailSaveData.text = "저장"
                         deleteData(param1!!.id)
-                        Toast.makeText(mainActivity,"deleted! : ${param1?.title}", Toast.LENGTH_SHORT).show()
+                        toast("deleted! : ${param1?.title}")
                     }
                 }
             }
             btnDetailShare.setOnClickListener {
-                Toast.makeText(mainActivity,"share! : ${param1?.title}", Toast.LENGTH_SHORT).show()
+                shareLink(param1!!)
+                toast("share! : ${param1?.title}")
             }
         }
     }
@@ -181,17 +186,18 @@ class DetailFragment : DialogFragment() {
                     !in preferences.all.keys -> {
                         btnDetailSaveData.text = "삭제"
                         saveData (param2!!)
-                        Toast.makeText(mainActivity,"saved! : ${param2?.title}", Toast.LENGTH_SHORT).show()
+                        toast("saved! : ${param2?.title}")
                     }
                     in preferences.all.keys -> {
                         btnDetailSaveData.text = "저장"
                         deleteData(param2!!.id)
-                        Toast.makeText(mainActivity,"deleted! : ${param2?.title}", Toast.LENGTH_SHORT).show()
+                        toast("deleted! : ${param2?.title}")
                     }
                 }
             }
             btnDetailShare.setOnClickListener {
-                Toast.makeText(mainActivity,"share! : ${param2?.title}", Toast.LENGTH_SHORT).show()
+                shareLink(param2!!)
+                toast("share! : ${param2?.title}")
             }
         }
     }
@@ -248,6 +254,33 @@ class DetailFragment : DialogFragment() {
             bookmarks.add(item)
         }
         return bookmarks
+    }
+
+    private fun shareLink(data:Parcelable) {
+        // parcelable 가능한 데이터를 MostPopularVideo 타입으로 형 변환(타입 캐스팅)
+        (data as MostPopularVideo)
+
+        // 전송 인텐트 생성
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/html"
+
+        // 링크 생성 & 인텐트에 담기
+        val url = "https://youtube.com/video/${data.id}"
+        intent.putExtra(Intent.EXTRA_TEXT, url)
+
+        // chooser로 앱 선택하기
+        val text = "공유하기"
+        startActivity(Intent.createChooser(intent, text))
+
+        // 클립보드 서비스 사용
+//        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//        val clip: ClipData = ClipData.newPlainText("VideoUri",url)
+//        clipboard.setPrimaryClip(clip)
+//        toast("클립보드에 복사함.")
+    }
+
+    private fun toast(s: String) {
+        Toast.makeText(mainActivity, s, Toast.LENGTH_SHORT).show()
     }
 }
 
