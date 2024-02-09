@@ -1,8 +1,7 @@
 package com.example.meohaji.mypage
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -22,47 +21,56 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
-import com.example.meohaji.detail.DetailTags
-import com.example.meohaji.home.VideoForUi
-import com.google.gson.GsonBuilder
-
 
 class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
     private var backPressedOnce = false
     private var selectedImageUri: Uri? = null
     private lateinit var dialogImg: ImageView
-    private lateinit var myPageAdapter: MyPageAdapter
-    private var items: ArrayList<VideoForUi> = ArrayList()
-    private lateinit var preferences: SharedPreferences
+    private val myPageAdapter: MyPageAdapter by lazy {
+        MyPageAdapter(requireContext())
+    }
 
     private val pickImageFromGallery =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
+                context?.grantUriPermission("com.example.meohaji", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 selectedImageUri = uri
                 dialogImg.setImageURI(selectedImageUri)
             }
         }
 
+    private val myPageViewModel: MyPageViewModel by viewModels {
+        MyPageViewModelFactory(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
+
         overrideBackAction()
 
-        preferences = requireContext().getSharedPreferences(
-            DetailTags.PREF_KEY,
-            Context.MODE_PRIVATE
-        )
+        return binding.root
+    }
 
-        val textView = binding.tvMyPageSavedVideo
-        val spannableString = SpannableString(textView.text)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        myPageViewModel.loadData()
+        myPageViewModel.loadUserData()
+
+        initView()
+        initViewModel()
+    }
+
+    private fun initView() {
+        val spannableString = SpannableString(binding.tvMyPageSavedVideo.text)
         spannableString.setSpan(
             ForegroundColorSpan(
                 ContextCompat.getColor(
@@ -72,27 +80,10 @@ class MyPageFragment : Fragment() {
             ),
             0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        textView.text = spannableString
+        binding.tvMyPageSavedVideo.text = spannableString
 
-        val (name, image) = Utils.getMyInfo(requireContext())
-        binding.tvMyPageName.text = name
-        Glide.with(requireContext())
-            .load(image?.toUri())
-            .into(binding.civMyPageProfile)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        items = loadData()
-        myPageAdapter = MyPageAdapter(requireContext())
-        myPageAdapter.submitList(items.toList())
-        val recyclerView = binding.rvMyPage
-        recyclerView.adapter = myPageAdapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
+        binding.rvMyPage.adapter = myPageAdapter
+        binding.rvMyPage.layoutManager = LinearLayoutManager(requireContext())
 
         binding.btnMyPageEditName.setOnClickListener {
             val dialogView =
@@ -129,13 +120,26 @@ class MyPageFragment : Fragment() {
         }
 
         binding.btnClearSavedVideo.setOnClickListener {
-            Utils.deletePrefItem(requireContext())
-            items.clear() // 저장된 아이템 리스트를 비웁니다.
-            myPageAdapter.submitList(items.toList())
+            myPageViewModel.clearData()
         }
         binding.btnRefreshSavedVideo.setOnClickListener {
-            items = loadData()
-            myPageAdapter.submitList(items.toList())
+            myPageViewModel.loadData()
+        }
+    }
+
+    private fun initViewModel() = with(myPageViewModel) {
+        uiState.observe(viewLifecycleOwner) {
+            myPageAdapter.submitList(it.toList())
+        }
+
+        userImage.observe(viewLifecycleOwner) {
+            Glide.with(requireContext())
+                .load(it?.toUri())
+                .into(binding.civMyPageProfile)
+        }
+
+        userName.observe(viewLifecycleOwner) {
+            binding.tvMyPageName.text = it
         }
     }
 
@@ -155,18 +159,6 @@ class MyPageFragment : Fragment() {
     }
 
     fun checkSharedPreference() {
-        items = loadData()
-        myPageAdapter.submitList(items.toList())
-    }
-
-    private fun loadData():ArrayList<VideoForUi> {
-        val allEntries: Map<String, *> = preferences.all
-        val bookmarks = ArrayList<VideoForUi>()
-        val gson = GsonBuilder().create()
-        for((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, VideoForUi::class.java)
-            bookmarks.add(item)
-        }
-        return bookmarks
+        myPageViewModel.loadData()
     }
 }
