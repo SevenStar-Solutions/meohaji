@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CategoryVideo(
+data class VideoForUi(
     val id: String,
     val publishedAt: String,
     val channelTitle: String,

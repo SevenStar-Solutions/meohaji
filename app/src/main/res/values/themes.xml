@@ -7,4 +7,15 @@
     </style>
 
     <style name="Theme.Meohaji" parent="Base.Theme.Meohaji" />
+
+    <style name="DetailTransparent">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+
+        <item name="android:windowBackground">#80000000</item>
+<!--        <item name="android:background">#32000000</item>-->
+    </style>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.meohaji.home
 
-import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Video (
@@ -114,7 +113,7 @@ data class Statistics (
     @SerializedName("viewCount")
     val viewCount: String,
     @SerializedName("likeCount")
-    val likeCount: String,
+    val likeCount: String?,
     @SerializedName("favoriteCount")
     val favoriteCount: String,
     @SerializedName("commentCount")
@@ -128,8 +127,3 @@ data class PageInfo (
     val resultsPerPage: Long
 )
 
-/** 마이페이지 내 저장 */
-data class MyInfo (
-    val name: String?,
-    val pic: Uri?
-)

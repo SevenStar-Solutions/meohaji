@@ -1,6 +1,7 @@
 package com.example.meohaji.mypage
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -20,34 +21,56 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
-
 
 class MyPageFragment : Fragment() {
     private lateinit var binding: FragmentMyPageBinding
     private var backPressedOnce = false
     private var selectedImageUri: Uri? = null
     private lateinit var dialogImg: ImageView
+    private val myPageAdapter: MyPageAdapter by lazy {
+        MyPageAdapter(requireContext())
+    }
 
     private val pickImageFromGallery =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
+                context?.grantUriPermission("com.example.meohaji", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 selectedImageUri = uri
                 dialogImg.setImageURI(selectedImageUri)
             }
         }
 
+    private val myPageViewModel: MyPageViewModel by viewModels {
+        MyPageViewModelFactory(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
+
         overrideBackAction()
 
-        val textView = binding.tvMyPageSavedVideo
-        val spannableString = SpannableString(textView.text)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        myPageViewModel.loadData()
+        myPageViewModel.loadUserData()
+
+        initView()
+        initViewModel()
+    }
+
+    private fun initView() {
+        val spannableString = SpannableString(binding.tvMyPageSavedVideo.text)
         spannableString.setSpan(
             ForegroundColorSpan(
                 ContextCompat.getColor(
@@ -57,19 +80,10 @@ class MyPageFragment : Fragment() {
             ),
             0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        textView.text = spannableString
+        binding.tvMyPageSavedVideo.text = spannableString
 
-        val (name, image) = Utils.getMyInfo(requireContext())
-        binding.tvMyPageName.text = name
-        Glide.with(requireContext())
-            .load(image?.toUri())
-            .into(binding.civMyPageProfile)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        binding.rvMyPage.adapter = myPageAdapter
+        binding.rvMyPage.layoutManager = LinearLayoutManager(requireContext())
 
         binding.btnMyPageEditName.setOnClickListener {
             val dialogView =
@@ -104,6 +118,29 @@ class MyPageFragment : Fragment() {
                 pickImageFromGallery.launch("image/*")
             }
         }
+
+        binding.btnClearSavedVideo.setOnClickListener {
+            myPageViewModel.clearData()
+        }
+        binding.btnRefreshSavedVideo.setOnClickListener {
+            myPageViewModel.loadData()
+        }
+    }
+
+    private fun initViewModel() = with(myPageViewModel) {
+        uiState.observe(viewLifecycleOwner) {
+            myPageAdapter.submitList(it.toList())
+        }
+
+        userImage.observe(viewLifecycleOwner) {
+            Glide.with(requireContext())
+                .load(it?.toUri())
+                .into(binding.civMyPageProfile)
+        }
+
+        userName.observe(viewLifecycleOwner) {
+            binding.tvMyPageName.text = it
+        }
     }
 
     private fun overrideBackAction() {
@@ -119,5 +156,9 @@ class MyPageFragment : Fragment() {
                 }, 2000)
             }
         }
+    }
+
+    fun checkSharedPreference() {
+        myPageViewModel.loadData()
     }
 }

@@ -24,8 +24,8 @@ class HomeViewModel : ViewModel() {
     )
     val homeList: LiveData<List<HomeUiData>> get() = _homeList
 
-    private val mostPopularVideoList = arrayListOf<MostPopularVideo>()
-    private val videoByCategoryList = arrayListOf<CategoryVideo>()
+    private val mostPopularVideoList = arrayListOf<VideoForUi>()
+    private val videoByCategoryList = arrayListOf<VideoForUi>()
     private val channelByCategoryList = arrayListOf<CategoryChannel>()
 
     private val channelIds = StringBuilder()
@@ -53,100 +53,100 @@ class HomeViewModel : ViewModel() {
     }
 
     private suspend fun communicateMostPopularVideos() {
-            val response = NetworkClient.apiService.mostPopularVideos(
-                BuildConfig.YOUTUBE_API_KEY,
-                "snippet,statistics",
-                "mostPopular",
-                "kr"
-            )
-            if (response.isSuccessful) {
-                mostPopularVideoList.clear()
-                response.body()?.items?.forEach { item ->
-                    mostPopularVideoList.add(
-                        MostPopularVideo(
-                            item.id,
-                            item.snippet.publishedAt,
-                            item.snippet.channelTitle,
-                            item.snippet.title,
+        val response = NetworkClient.apiService.mostPopularVideos(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            "kr"
+        )
+        if (response.isSuccessful) {
+            mostPopularVideoList.clear()
+            response.body()?.items?.forEach { item ->
+                mostPopularVideoList.add(
+                    VideoForUi(
+                        item.id,
+                        item.snippet.publishedAt,
+                        item.snippet.channelTitle,
+                        item.snippet.title,
+                        item.snippet.description,
+                        item.snippet.thumbnails.medium.url,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.likeCount?.toInt() ?: 0,
+                        item.statistics.commentCount.toInt(),
+                        calRecommendScore(
                             item.snippet.description,
-                            item.snippet.thumbnails.medium.url,
                             item.statistics.viewCount.toInt(),
-                            item.statistics.likeCount.toInt(),
-                            item.statistics.commentCount.toInt(),
-                            calRecommendScore(
-                                item.snippet.description,
-                                item.statistics.viewCount.toInt(),
-                                item.statistics.likeCount.toInt(),
-                                item.statistics.commentCount.toInt()
-                            )
+                            item.statistics.likeCount?.toInt() ?: 0,
+                            item.statistics.commentCount.toInt()
                         )
                     )
-                }
-            } else {
-                Log.d("dkj", "is not Successful")
+                )
             }
+        } else {
+            Log.d("dkj", "is not Successful")
+        }
 
     }
 
     private suspend fun communicateVideoByCategory(id: String) {
-            val response = NetworkClient.apiService.videoByCategory(
-                BuildConfig.YOUTUBE_API_KEY,
-                "snippet,statistics",
-                "mostPopular",
-                10,
-                "kr",
-                id
-            )
-            if (response.isSuccessful) {
-                videoByCategoryList.clear()
-                channelIds.clear()
-                response.body()?.items?.forEach { item ->
-                    videoByCategoryList.add(
-                        CategoryVideo(
-                            item.id,
-                            item.snippet.publishedAt,
-                            item.snippet.channelTitle,
-                            item.snippet.title,
+        val response = NetworkClient.apiService.videoByCategory(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            10,
+            "kr",
+            id
+        )
+        if (response.isSuccessful) {
+            videoByCategoryList.clear()
+            channelIds.clear()
+            response.body()?.items?.forEach { item ->
+                videoByCategoryList.add(
+                    VideoForUi(
+                        item.id,
+                        item.snippet.publishedAt,
+                        item.snippet.channelTitle,
+                        item.snippet.title,
+                        item.snippet.description,
+                        item.snippet.thumbnails.medium.url,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.likeCount?.toInt() ?: 0,
+                        item.statistics.commentCount.toInt(),
+                        calRecommendScore(
                             item.snippet.description,
-                            item.snippet.thumbnails.medium.url,
                             item.statistics.viewCount.toInt(),
-                            item.statistics.likeCount.toInt(),
-                            item.statistics.commentCount.toInt(),
-                            calRecommendScore(
-                                item.snippet.description,
-                                item.statistics.viewCount.toInt(),
-                                item.statistics.likeCount.toInt(),
-                                item.statistics.commentCount.toInt()
-                            )
+                            item.statistics.likeCount?.toInt() ?: 0,
+                            item.statistics.commentCount.toInt()
                         )
                     )
-                    channelIds.append(item.snippet.channelID).append(",")
-                }
-                sortByOrder(sortOrderIdx)
-
-                communicationChannelByCategory()
+                )
+                channelIds.append(item.snippet.channelID).append(",")
             }
+            sortByOrder(sortOrderIdx)
+
+            communicationChannelByCategory()
+        }
 
     }
 
     private suspend fun communicationChannelByCategory() {
-            val response = NetworkClient.apiService.channelByCategory(
-                BuildConfig.YOUTUBE_API_KEY,
-                "snippet,statistics",
-                channelIds.toString()
-            )
-            if (response.isSuccessful) {
-                channelByCategoryList.clear()
-                response.body()?.items?.forEach { item ->
-                    channelByCategoryList.add(
-                        CategoryChannel(
-                            item.id,
-                            item.snippet.title,
-                            item.snippet.thumbnails.medium.url
-                        )
+        val response = NetworkClient.apiService.channelByCategory(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            channelIds.toString()
+        )
+        if (response.isSuccessful) {
+            channelByCategoryList.clear()
+            response.body()?.items?.forEach { item ->
+                channelByCategoryList.add(
+                    CategoryChannel(
+                        item.id,
+                        item.snippet.title,
+                        item.snippet.thumbnails.medium.url
                     )
-                }
+                )
             }
+        }
 
     }
 
@@ -207,7 +207,8 @@ class HomeViewModel : ViewModel() {
             }
 
             2 -> {
-                _homeList.value = homeList.value.orEmpty().toMutableList().subList(0, 6) + videoByCategoryList.map {
+                _homeList.value = homeList.value.orEmpty().toMutableList()
+                    .subList(0, 6) + videoByCategoryList.map {
                     HomeUiData.CategoryVideos(it)
                 }
             }

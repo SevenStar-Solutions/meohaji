@@ -1,10 +1,10 @@
-package com.example.meohaji.home
+package com.example.meohaji.search
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class MostPopularVideo(
+data class IdSearchList(
     val id: String,
     val publishedAt: String,
     val channelTitle: String,
@@ -15,4 +15,4 @@ data class MostPopularVideo(
     val likeCount: Int,
     val commentCount: Int,
     val recommendScore: Double
-) : Parcelable
+): Parcelable

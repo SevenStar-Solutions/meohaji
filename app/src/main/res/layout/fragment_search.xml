@@ -21,7 +21,9 @@
         android:hint="검색어를 입력해주세요"
         android:textColorHint="#ACACAC"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="17sp"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,10 +42,10 @@
         app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search"/>
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:src="@drawable/img_search"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/et_search_fragment_search"
         app:layout_constraintStart_toStartOf="@+id/et_search_fragment_search"
         app:layout_constraintTop_toTopOf="@+id/et_search_fragment_search" />
