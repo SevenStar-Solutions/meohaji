@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.PREF_KEY
+import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
@@ -134,6 +136,10 @@ class DetailFragment : DialogFragment() {
             btnDetailShare.setOnClickListener {
                 shareLink(param1!!)
             }
+
+            ivDetailVideoThumbnail.setOnClickListener {     // 이미지 클릭 시 해당 유튜브 링크로 이동
+                openLink(param1!!.id)
+            }
         }
     }
 
@@ -200,7 +206,7 @@ class DetailFragment : DialogFragment() {
         intent.type = "text/html"
 
         // 링크 생성 & 인텐트에 담기
-        val url = "https://youtube.com/video/${data.id}"
+        val url = "$YOUTUBE_LINK${data.id}"
         intent.putExtra(Intent.EXTRA_TEXT, url)
 
         // chooser로 앱 선택하기
@@ -213,8 +219,15 @@ class DetailFragment : DialogFragment() {
 //        clipboard.setPrimaryClip(clip)
 //        toast("클립보드에 복사함.")
     }
+
+    private fun openLink(link : String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("$YOUTUBE_LINK$link"))
+        Log.i("This is DetailFragment","link : $link")
+        startActivity(intent)
+    }
 }
 
 object DetailTags{
     const val PREF_KEY = "My Preferences"
+    const val YOUTUBE_LINK = "https://youtube.com/video/"
 }
