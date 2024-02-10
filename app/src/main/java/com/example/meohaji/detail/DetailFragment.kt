@@ -20,6 +20,7 @@ import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -83,7 +84,6 @@ class DetailFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         loadData()
-        Log.i("This is DetailFragment","onViewCreated : ${loadData()}")
         when(param1!!.id) {
             !in preferences.all.keys -> saveButton()
             in preferences.all.keys -> deleteButton()
@@ -124,10 +124,12 @@ class DetailFragment : DialogFragment() {
                 when(param1!!.id) {
                     !in preferences.all.keys -> {
                         saveData (param1!!)
+                        snackBar(requireView(),"내 보관함에 저장됨.")
                         deleteButton()
                     }
                     in preferences.all.keys -> {
                         deleteData(param1!!.id)
+                        snackBar(requireView(),"내 보관함에서 삭제됨.")
                         saveButton()
                     }
                 }
@@ -221,13 +223,18 @@ class DetailFragment : DialogFragment() {
     }
 
     private fun openLink(link : String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("$YOUTUBE_LINK$link"))
-        Log.i("This is DetailFragment","link : $link")
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("$YOUTUBE_LINK$link"))    // 유튜브 링크 띄우려고 했는데 유튜브 앱 문제인지 이상하게 띄워짐
+        Log.i("This is DetailFragment","$YOUTUBE_LINK$link")
         startActivity(intent)
+    }
+
+    // 스낵바 생성
+    private fun snackBar(view: View, str:String) {
+        Snackbar.make(view, str, Snackbar.LENGTH_SHORT).show()
     }
 }
 
 object DetailTags{
     const val PREF_KEY = "My Preferences"
-    const val YOUTUBE_LINK = "https://youtube.com/video/"
+    const val YOUTUBE_LINK = "https://youtu.be/"    // 유튜브 링크 변경됨
 }
