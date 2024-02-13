@@ -21,15 +21,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.meohaji.Constants.PREF_KEY
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
-import com.example.meohaji.detail.DetailTags
 import com.example.meohaji.home.VideoForUi
 import com.google.gson.GsonBuilder
-
 
 class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null
@@ -58,7 +57,7 @@ class MyPageFragment : Fragment() {
         overrideBackAction()
 
         preferences = requireContext().getSharedPreferences(
-            DetailTags.PREF_KEY,
+            PREF_KEY,
             Context.MODE_PRIVATE
         )
 
@@ -90,7 +89,7 @@ class MyPageFragment : Fragment() {
                     builder.setPositiveButton("확인") { dialog, _ ->
                         uiData = listOf(MyPageUiData.Profile(dialogName.text.toString(), selectedImageUri.toString())) + uiData.subList(1, uiData.size)
                         myPageAdapter.submitList(uiData.toList())
-                        Utils.saveMaInfo(
+                        Utils.saveMyInfo(
                             requireContext(),
                             dialogName.text.toString(),
                             selectedImageUri.toString()

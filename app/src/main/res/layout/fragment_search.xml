@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".search.SearchFragment"
-    android:background="@color/black_background">
-
+    android:background="@color/black_background"
+    tools:context=".search.SearchFragment">
 
     <EditText
         android:id="@+id/et_search_fragment_search"
@@ -16,14 +15,14 @@
         android:background="@drawable/apply_search_background"
         android:ems="10"
         android:gravity="center_vertical"
-        android:inputType="text"
-        android:paddingStart="40dp"
         android:hint="검색어를 입력해주세요"
-        android:textColorHint="#ACACAC"
-        android:textColor="@color/white"
-        android:textSize="17sp"
         android:imeOptions="actionSearch"
+        android:inputType="text"
         android:maxLines="1"
+        android:paddingStart="40dp"
+        android:textColor="@color/white"
+        android:textColorHint="#ACACAC"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,22 +31,21 @@
         android:id="@+id/rv_search"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search"/>
+        app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search" />
 
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:src="@drawable/img_search"
         android:layout_marginStart="10dp"
+        android:src="@drawable/img_search"
         app:layout_constraintBottom_toBottomOf="@+id/et_search_fragment_search"
         app:layout_constraintStart_toStartOf="@+id/et_search_fragment_search"
         app:layout_constraintTop_toTopOf="@+id/et_search_fragment_search" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
