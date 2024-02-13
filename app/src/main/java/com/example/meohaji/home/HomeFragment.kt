@@ -18,7 +18,7 @@ import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 
 interface BtnClick2 {
-    fun click()
+    fun clickFromHome()
 }
 
 class HomeFragment : Fragment() {
@@ -40,7 +40,9 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        btnClick2 = context as BtnClick2
+        if (context is BtnClick2) {
+            btnClick2 = context
+        }
     }
 
     override fun onCreateView(
@@ -134,7 +136,7 @@ class HomeFragment : Fragment() {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
             override fun click() {
-                btnClick2?.click()
+                btnClick2?.clickFromHome()
             }
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")

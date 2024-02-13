@@ -13,8 +13,9 @@ import androidx.core.content.ContextCompat
 import com.example.meohaji.R
 import com.example.meohaji.databinding.ActivityMainBinding
 import com.example.meohaji.home.BtnClick2
+import com.example.meohaji.search.BtnClick3
 
-class MainActivity : AppCompatActivity(), BtnClick2 {
+class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
 
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -252,7 +253,12 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
         testAlphaOff(binding.btnTestRight)
         testAlphaOn(binding.btnTestMiddle)
     }
-    override fun click() {
+
+    override fun clickFromHome() {
+        adapter.notifyChangeData()
+    }
+
+    override fun clickFromSearch() {
         adapter.notifyChangeData()
     }
 }

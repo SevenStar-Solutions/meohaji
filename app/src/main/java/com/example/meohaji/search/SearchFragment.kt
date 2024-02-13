@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
+import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,10 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.round
 
+interface BtnClick3 {
+    fun clickFromSearch()
+}
+
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
@@ -39,6 +44,8 @@ class SearchFragment : Fragment() {
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter()
     }
+
+    var btnClick3: BtnClick3? = null
 
     /** MVVM은 안쓰면 LiveData는 안써도 무방*/
     private val _searchVideoList = MutableLiveData<List<SearchList>>()
@@ -56,6 +63,9 @@ class SearchFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        if (context is BtnClick3) {
+            btnClick3 = context
+        }
     }
 
     override fun onCreateView(
@@ -129,6 +139,11 @@ class SearchFragment : Fragment() {
     /** 프레그먼트 띄우는 함수 */
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
+        dialog.btnClick = object : BtnClick {
+            override fun click() {
+                btnClick3?.clickFromSearch()
+            }
+        }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
