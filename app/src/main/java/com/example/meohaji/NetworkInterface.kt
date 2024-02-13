@@ -53,6 +53,4 @@ interface NetworkInterface {
         @Query("part") part: String?,
         @Query("id") channelId: String?,
     ) : Video
-
-//    좋아요를 받아오는 게터를 하나 더 만드는것도 좋아보임
 }

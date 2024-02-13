@@ -34,7 +34,7 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
     private var backPressedOnce = false
     private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter(requireContext())
+        SearchAdapter()
     }
 
     /** MVVM은 안쓰면 LiveData는 안써도 무방*/
@@ -53,17 +53,7 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-//        return inflater.inflate(R.layout.fragment_search, container, false)
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-
-//        binding.etSeachfragmentSeach.setOnEditorActionListener { _, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                /** 여기다 검색 기능 추가하시면 됩니다 */
-//                hideSoftKeyBoard()
-//                return@setOnEditorActionListener true
-//            }
-//            false
-//        }
 
         overrideBackAction()
 
@@ -84,7 +74,7 @@ class SearchFragment : Fragment() {
                 }
             }
         })
-//        searchAdapter.submitList(searchVideoList)
+
         //LiveData로 Adapter에 연결할때
         /**viewLifecycleOwner는 화면이 보일때만 감지한다, 옵저브는 데이터가 바뀌는지 지켜보고있음*/
         searchVideo.observe(viewLifecycleOwner) {
@@ -97,7 +87,6 @@ class SearchFragment : Fragment() {
                 communicateSearchVideos()
                 handled = true
             }
-            handled
 
             //키보드 숨기기
             val imm =
@@ -111,21 +100,6 @@ class SearchFragment : Fragment() {
                 communicateIDSearchVideos(videoData.videoId)
             }
         }
-
-        /** VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분 */
-//        mostPopularVideoAdapter.videoClick =
-//            object : MostPopularVideoAdapter.MostPopularVideoClick {
-//                override fun onClick(videoData: MostPopularVideo) {
-//                    setDetailFragment(videoData, DETAIL_MOST)
-//                    Log.i("This is HomeFragment", "MostPopularVideoAdapter Interface : $videoData")
-//                }
-//            }
-//        categoryVideoAdapter.videoClick = object : CategoryVideoAdapter.CategoryVideoClick {
-//            override fun onClick(videoData: CategoryVideo) {
-//                setDetailFragment(videoData, DETAIL_CATEGORY)
-//                Log.i("This is HomeFragment", "CategoryVideoAdapter Interface : $videoData")
-//            }
-//        }
     }
 
     override fun onDestroyView() {
@@ -155,9 +129,8 @@ class SearchFragment : Fragment() {
         }
     }
 
-//    videoID = WxGyfYHACz0
     /** 클릭한 아이템 id로 데이터 요청*/
-    private suspend fun searchByIdList(id: String) = withContext(Dispatchers.IO) {
+    private suspend fun searchVideoById(id: String) = withContext(Dispatchers.IO) {
         NetworkClient.apiService.searchByIdList(
             BuildConfig.YOUTUBE_API_KEY,
             "snippet,statistics",
@@ -167,11 +140,10 @@ class SearchFragment : Fragment() {
 
     /** List로 넣는 작업*/
     private fun communicateIDSearchVideos(id: String) {
-//        CoroutineScope(Dispatchers.Main).launch
         lifecycleScope.launch {
             runCatching {
                 /**런캐칭이 뭔지 검색해보기*/
-                val videos = searchByIdList(id = id)
+                val videos = searchVideoById(id = id)
                 searchVideoList.clear()
                 videos.items[0].let { item ->
                     idData = VideoForUi(
@@ -212,21 +184,8 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private suspend fun searchByIdVideo(query: String) = withContext(Dispatchers.IO) {
-        NetworkClient.apiService.searchByQueryList(
-            BuildConfig.YOUTUBE_API_KEY,
-            "snippet",
-            10,
-            "date",
-            query,
-            "kr",
-            "video"
-        )
-    }
-
     //받아온 데이터를 LiveData에 넣는과정
     private fun communicateSearchVideos() {
-//        CoroutineScope(Dispatchers.Main).launch
         lifecycleScope.launch {
             runCatching {
                 /**런캐칭이 뭔지 검색해보기*/
@@ -247,18 +206,11 @@ class SearchFragment : Fragment() {
                 _searchVideoList.value = searchVideoList
                 /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
                 /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
-//                searchAdapter.submitList(searchVideoList.toList())
                 Log.d("searchFragment", "id들어오는지 확인 ${_searchVideoList.value}")
             }.onFailure { //오류가 났을때 실행
                 Log.e("search", "잘못됐다")
             }
         }
-    }
-
-    private fun hideSoftKeyBoard() {
-        val inputMethodManager =
-            view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     private fun calRecommendScore(
@@ -278,8 +230,3 @@ class SearchFragment : Fragment() {
         return if (totalScore > 5.0) 5.0 else totalScore
     }
 }
-
-//API데이터 요청
-
-
-
