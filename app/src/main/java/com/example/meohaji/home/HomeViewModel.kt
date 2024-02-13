@@ -1,16 +1,19 @@
 package com.example.meohaji.home
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.Utils
 import kotlinx.coroutines.launch
 import kotlin.math.round
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val context: Context) : ViewModel() {
 
     private val _homeList = MutableLiveData(
         listOf(
@@ -24,8 +27,8 @@ class HomeViewModel : ViewModel() {
     )
     val homeList: LiveData<List<HomeUiData>> get() = _homeList
 
-    private val mostPopularVideoList = arrayListOf<MostPopularVideo>()
-    private val videoByCategoryList = arrayListOf<CategoryVideo>()
+    private val mostPopularVideoList = arrayListOf<VideoForUi>()
+    private val videoByCategoryList = arrayListOf<VideoForUi>()
     private val channelByCategoryList = arrayListOf<CategoryChannel>()
 
     private val channelIds = StringBuilder()
@@ -36,6 +39,7 @@ class HomeViewModel : ViewModel() {
             communicateMostPopularVideos()
             communicateVideoByCategory("1")
             checkComplete(ENTIRE_CHANGE)
+            popularVideoAverage()
         }
     }
 
@@ -63,7 +67,7 @@ class HomeViewModel : ViewModel() {
             mostPopularVideoList.clear()
             response.body()?.items?.forEach { item ->
                 mostPopularVideoList.add(
-                    MostPopularVideo(
+                    VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
@@ -102,7 +106,7 @@ class HomeViewModel : ViewModel() {
             channelIds.clear()
             response.body()?.items?.forEach { item ->
                 videoByCategoryList.add(
-                    CategoryVideo(
+                    VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
@@ -213,6 +217,15 @@ class HomeViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun popularVideoAverage() {
+        Utils.saveCounts(
+            context,
+            mostPopularVideoList.map { it.viewCount }.average().toInt(),
+            mostPopularVideoList.map { it.likeCount }.average().toInt(),
+            mostPopularVideoList.map { it.commentCount }.average().toInt()
+        )
     }
 
     companion object {

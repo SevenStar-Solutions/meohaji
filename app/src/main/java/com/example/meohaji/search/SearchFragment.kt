@@ -1,12 +1,11 @@
 package com.example.meohaji.search
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcelable
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -23,14 +23,17 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.DetailFragment
-import com.example.meohaji.detail.DetailTags.DETAIL_MOST
-import com.example.meohaji.home.MostPopularVideo
+import com.example.meohaji.home.VideoForUi
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.round
 
 class SearchFragment : Fragment() {
+
+    private lateinit var preferences: SharedPreferences
+
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -46,7 +49,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var mContext: Context
 
-    private lateinit var idData : MostPopularVideo
+    private lateinit var idData : VideoForUi
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -113,6 +116,18 @@ class SearchFragment : Fragment() {
                 communicateIDSearchVideos(videoData.videoId)
             }
         }
+        
+        binding.etSearchFragmentSearch.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+            override fun onFocusChange(view: View, hasFocus: Boolean) {
+                if (hasFocus) {
+                    //  .. 포커스시
+                } else {
+                    //  .. 포커스 뺏겼을 때
+                }
+                preferences.
+            }
+        })
+
 
         /** VideoAdapter에서 interface로 받은 데이터를 DetailFragment Dialog로 띄우는 부분 */
 //        mostPopularVideoAdapter.videoClick =
@@ -129,6 +144,30 @@ class SearchFragment : Fragment() {
 //            }
 //        }
     }
+/** 최근검색어 */
+    private fun saveData(test:VideoForUi) {
+        val editor = preferences.edit()
+        val gson = GsonBuilder().create()
+        editor.putString(test.id, gson.toJson(test))
+        editor.apply()
+    }
+
+    private fun deleteData(id: String) {
+        val editor = preferences.edit()
+        editor.remove(id)
+        editor.apply()
+    }
+
+    private fun loadData():ArrayList<VideoForUi> {
+        val allEntries: Map<String, *> = preferences.all
+        val bookmarks = ArrayList<VideoForUi>()
+        val gson = GsonBuilder().create()
+        for((key, value) in allEntries) {
+            val item = gson.fromJson(value as String, VideoForUi::class.java)
+            bookmarks.add(item)
+        }
+        return bookmarks
+    }
 
     override fun onDestroyView() {
         _binding = null
@@ -136,8 +175,8 @@ class SearchFragment : Fragment() {
     }
 
     /** 프레그먼트 띄우는 함수 */
-    private fun setDetailFragment(item: Parcelable, key: String) {
-        val dialog = DetailFragment.newInstance(item, key)
+    private fun setDetailFragment(item: VideoForUi) {
+        val dialog = DetailFragment.newInstance(item)
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
@@ -176,7 +215,7 @@ class SearchFragment : Fragment() {
                 val videos = searchByIdList(id = id)
                 searchVideoList.clear()
                 videos.items[0].let { item ->
-                    idData = MostPopularVideo(
+                    idData = VideoForUi(
                         item.id,
                         item.snippet.publishedAt,
                         item.snippet.channelTitle,
@@ -184,12 +223,12 @@ class SearchFragment : Fragment() {
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
                         item.statistics.viewCount.toInt(),
-                        item.statistics.likeCount?.toInt()?:0,
+                        item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
                         calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
-                            item.statistics.likeCount?.toInt()?:0,
+                            item.statistics.likeCount?.toInt() ?: 0,
                             item.statistics.commentCount.toInt()
                         )
                     )
@@ -197,7 +236,7 @@ class SearchFragment : Fragment() {
             }.onFailure { //오류가 났을때 실행
                 Log.e("search", "잘못됐다")
             }
-            setDetailFragment(idData , DETAIL_MOST)
+            setDetailFragment(idData)
         }
 
     }

@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.meohaji.databinding.ActivityMainBinding
@@ -79,6 +77,7 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
                         0 -> spotlight0to2()
                         1 -> spotlight1to2()
                     }
+
                 }
 
             }
@@ -101,9 +100,6 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
             duration = 50
             start()
         }
-//        btn0.setBackgroundDrawable(R.color.black)
-//        btn0.setCardForegroundColor(Drawable(R.color.black))
-//        btn0.setCardForegroundColor()
 
         //애니메이션을 변수화 해서 이동이 완료되면 다시 밝히도록 리스너를 추가
         rotationAnimator.addListener(object : AnimatorListenerAdapter() {
@@ -171,74 +167,40 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
         animator.start()
     }
 
+    private val spotLeft: Float = -45f
+    private val spotMid: Float = 0f
+    private val spotRight: Float = 45f
+
     private fun spotlight0to1() {
-        animateSpotlight(-40f, 0f)
+        animateSpotlight(spotLeft, spotMid)
         animateBtnSizeDown(binding.btnTestLeft)
     }
 
     private fun spotlight0to2() {
-        animateSpotlight(-40f, 40f)
+        animateSpotlight(spotLeft, spotRight)
         animateBtnSizeDown(binding.btnTestLeft)
     }
 
     private fun spotlight1to0() {
-        animateSpotlight(0f, -40f)
+        animateSpotlight(spotMid, spotLeft)
         animateBtnSizeDown(binding.btnTestMiddle)
     }
 
     private fun spotlight1to2() {
-        animateSpotlight(0f, 40f)
+        animateSpotlight(spotMid, spotRight)
         animateBtnSizeDown(binding.btnTestMiddle)
     }
 
     private fun spotlight2to0() {
-        animateSpotlight(40f, -40f)
+        animateSpotlight(spotRight, spotLeft)
         animateBtnSizeDown(binding.btnTestRight)
     }
 
     private fun spotlight2to1() {
-        animateSpotlight(40f, 0f)
+        animateSpotlight(spotRight, spotMid)
         animateBtnSizeDown(binding.btnTestRight)
     }
-
     override fun click() {
         adapter.notifyChangeData()
     }
-    /* 이전 코드임
-        private fun spotlight_1to2(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", -50f, 0f).apply {
-                duration = 200
-                start()
-            }
-        }
-        private fun spotlight_1to3(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", -50f, 50f).apply {
-                duration = 200
-                start()
-            }
-        }
-        private fun spotlight_2to1(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 0f, -50f).apply {
-                duration = 200
-                start()
-            }
-        }
-        private fun spotlight_2to3(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 0f, 50f).apply {
-                duration = 200
-                start()
-            }
-        }
-        private fun spotlight_3to1(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 50f, -50f).apply {
-                duration = 200
-                start()
-            }
-        }
-        private fun spotlight_3to2(){
-            ObjectAnimator.ofFloat(binding.ivSpotLight, "rotation", 50f, 0f).apply {
-                duration = 200
-                start()
-            }
-        }*/
 }

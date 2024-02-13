@@ -1,10 +1,10 @@
-package com.example.meohaji.search
+package com.example.meohaji.home
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class IdSearchList(
+data class VideoForUi(
     val id: String,
     val publishedAt: String,
     val channelTitle: String,
@@ -15,4 +15,4 @@ data class IdSearchList(
     val likeCount: Int,
     val commentCount: Int,
     val recommendScore: Double
-): Parcelable
+) : Parcelable

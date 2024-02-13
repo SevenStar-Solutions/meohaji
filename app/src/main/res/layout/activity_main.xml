@@ -38,7 +38,7 @@
         android:id="@+id/view_pager_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cv_main"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />
 
     <ImageView
@@ -53,10 +53,11 @@
         android:id="@+id/cv_main"
         android:layout_width="match_parent"
         android:layout_height="134dp"
-        android:layout_marginBottom="-80dp"
+        android:contextClickable="true"
+        android:layout_marginBottom="-40dp"
         android:clickable="false"
         app:cardBackgroundColor="#24262A"
-        app:cardCornerRadius="80dp"
+        app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:strokeColor="#33FFFFFF"
@@ -69,9 +70,10 @@
         android:layout_marginBottom="25dp"
         android:outlineSpotShadowColor="#C5DC40"
         android:text="Home"
-
+        app:strokeWidth="0dp"
+        app:cardForegroundColor="#4D000000"
         app:cardCornerRadius="35dp"
-        app:cardElevation="7dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tv_home_search"
         app:layout_constraintStart_toStartOf="@id/tv_home_search">
@@ -92,9 +94,11 @@
         android:foreground="@drawable/apply_ripple_effect_circle"
         android:outlineSpotShadowColor="#C5DC40"
         android:text="Home"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/yellow_background"
 
         app:cardCornerRadius="35dp"
-        app:cardElevation="7dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -113,9 +117,11 @@
         android:layout_marginBottom="25dp"
         android:foreground="@drawable/apply_ripple_effect_circle"
         android:outlineSpotShadowColor="#C5DC40"
+        app:strokeWidth="0dp"
+        app:cardForegroundColor="#4D000000"
         android:text="Home"
         app:cardCornerRadius="35dp"
-        app:cardElevation="7dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tv_home_myPage"
         app:layout_constraintStart_toStartOf="@id/tv_home_myPage">
@@ -135,7 +141,8 @@
         android:alpha="0.8"
         android:elevation="15dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_spot_light"
+        android:background="@drawable/ic_spot_light"
+        android:backgroundTint="@color/yellow_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -144,9 +151,9 @@
         android:id="@+id/tv_home_search"
         android:layout_width="55dp"
         android:layout_height="18dp"
-        android:layout_marginEnd="45dp"
+        android:layout_marginEnd="65dp"
         android:gravity="center"
-        android:text="Search"
+        android:text="검색"
         android:textColor="#AEAEAE"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
@@ -159,7 +166,7 @@
         android:layout_height="18dp"
         android:layout_marginTop="3dp"
         android:gravity="center"
-        android:text="Home"
+        android:text="홈"
         android:textColor="#AEAEAE"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="@id/btn_testMiddle"
@@ -170,9 +177,9 @@
         android:id="@+id/tv_home_myPage"
         android:layout_width="55dp"
         android:layout_height="18dp"
-        android:layout_marginStart="45dp"
+        android:layout_marginStart="65dp"
         android:gravity="center"
-        android:text="My"
+        android:text="내 정보"
         android:textColor="#AEAEAE"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
@@ -185,94 +192,143 @@
 
     <!--
 
+
     <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_main"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginHorizontal="10dp"
-            android:clickable="false"
-            android:layout_marginBottom="-40dp"
-            app:cardBackgroundColor="#24262A"
-            app:cardCornerRadius="40dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:strokeColor="#33FFFFFF"
-            app:strokeWidth="0.5dp"/>
+        android:id="@+id/cv_main"
+        android:layout_width="match_parent"
+        android:layout_height="134dp"
+        android:contextClickable="true"
+        android:layout_marginBottom="-40dp"
+        android:clickable="false"
+        app:cardBackgroundColor="#24262A"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:strokeColor="#33FFFFFF"
+        app:strokeWidth="0.5dp" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_testLeft"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:foreground="@drawable/apply_ripple_effect_circle"
-            app:cardCornerRadius="35dp"
-            app:cardElevation="10dp"
-            android:layout_marginStart="25dp"
-            android:text="Home"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_testMiddle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="20dp">
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testLeft"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:outlineSpotShadowColor="#C5DC40"
+        android:text="홈"
+        app:strokeWidth="0dp"
+        app:cardForegroundColor="#70000000"
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_search"
-                android:layout_margin="18dp"/>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_testMiddle"
-            android:layout_width="58.5dp"
-            android:layout_height="58.5dp"
-            android:foreground="@drawable/apply_ripple_effect_circle"
-            app:cardCornerRadius="35dp"
-            app:cardElevation="10dp"
-            android:text="Home"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="30dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_home"
-                android:layout_margin="18dp"/>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_testRight"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:foreground="@drawable/apply_ripple_effect_circle"
-            app:cardCornerRadius="35dp"
-            app:cardElevation="10dp"
-            android:layout_marginEnd="25dp"
-            android:text="Home"
-            app:layout_constraintStart_toEndOf="@id/btn_testMiddle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="20dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_mypage"
-                android:layout_margin="18dp"/>
-        </com.google.android.material.card.MaterialCardView>
+        app:cardCornerRadius="35dp"
+        app:cardElevation="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_home_search"
+        app:layout_constraintStart_toStartOf="@id/tv_home_search">
 
         <ImageView
-            android:id="@+id/iv_soptlight"
-            android:layout_width="140dp"
-            android:layout_height="180dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
 
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_soptlight"
-            android:elevation="15dp"
-            android:alpha="0.8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="-45dp"/>
+            android:src="@drawable/ic_search" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testMiddle"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        android:outlineSpotShadowColor="#C5DC40"
+        android:text="Home"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/yellow_background"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_home"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testRight"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        android:outlineSpotShadowColor="#C5DC40"
+        app:strokeWidth="0dp"
+        app:cardForegroundColor="#70000000"
+        android:text="Home"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_home_myPage"
+        app:layout_constraintStart_toStartOf="@id/tv_home_myPage">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_mypage" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/iv_spotLight"
+        android:layout_width="140dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="-55dp"
+        android:alpha="0.8"
+        android:elevation="15dp"
+        android:scaleType="fitXY"
+        android:background="@drawable/ic_spot_light"
+        android:backgroundTint="@color/yellow_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_home_search"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="65dp"
+        android:gravity="center"
+        android:text="검색"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
+        app:layout_constraintEnd_toStartOf="@id/tv_home_title"
+        app:layout_constraintTop_toTopOf="@id/tv_home_title" />
+
+    <TextView
+        android:id="@+id/tv_home_title"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="홈"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@id/btn_testMiddle"
+        app:layout_constraintStart_toStartOf="@id/btn_testMiddle"
+        app:layout_constraintTop_toBottomOf="@id/btn_testMiddle" />
+
+    <TextView
+        android:id="@+id/tv_home_myPage"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="65dp"
+        android:gravity="center"
+        android:text="내 정보"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
+        app:layout_constraintStart_toEndOf="@id/tv_home_title"
+        app:layout_constraintTop_toTopOf="@id/tv_home_title" />
 
     -->

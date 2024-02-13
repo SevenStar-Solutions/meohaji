@@ -63,6 +63,16 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_detail_video_title"
                 app:srcCompat="@drawable/img_galaxy" />
 
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/bar_chart_detail"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_detail_video_thumbnail" />
+
             <TextView
                 android:id="@+id/tv_detail_count_like"
                 android:layout_width="wrap_content"
@@ -75,6 +85,7 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/tv_detail_count_view"
                 app:layout_constraintEnd_toStartOf="@id/tv_detail_count_view"
+                app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_detail_count_view" />
 
@@ -83,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:text="29,564"
@@ -91,7 +102,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/tv_detail_count_rec"
                 app:layout_constraintStart_toEndOf="@id/tv_detail_count_like"
-                app:layout_constraintTop_toBottomOf="@id/iv_detail_video_thumbnail" />
+                app:layout_constraintTop_toBottomOf="@+id/bar_chart_detail" />
 
             <TextView
                 android:id="@+id/tv_detail_count_rec"
@@ -112,7 +123,6 @@
                 android:id="@+id/tv_detail_text_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="@string/detail_liked"
                 android:textSize="14sp"
@@ -137,15 +147,15 @@
                 android:id="@+id/tv_detail_text_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:drawableStart="@drawable/apply_score_icon_resize"
                 android:gravity="center"
                 android:text="@string/detail_recommended"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_detail_text_view"
+
+                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_text_view"
                 app:layout_constraintEnd_toEndOf="@+id/tv_detail_count_rec"
                 app:layout_constraintStart_toStartOf="@+id/tv_detail_count_rec"
-                app:layout_constraintTop_toTopOf="@id/tv_detail_text_view" />
+                app:layout_constraintTop_toTopOf="@+id/tv_detail_text_view" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_detail_save_data"
@@ -154,7 +164,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/apply_video_image_background"
+                android:background="@drawable/apply_detail_button_save"
                 android:text="@string/detail_button_save"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -169,7 +179,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/apply_video_image_background"
+                android:background="@drawable/apply_detail_button_save"
                 android:text="@string/detail_button_share"
                 android:textColor="@color/black"
                 android:textSize="14sp"
