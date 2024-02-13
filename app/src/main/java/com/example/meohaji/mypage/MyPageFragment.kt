@@ -103,7 +103,12 @@ class MyPageFragment : Fragment() {
                     dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.apply_corner_radius_10))
                     dialog.show()
                     dialogName.setText(name)
-                    dialogImg.setImageDrawable(image)
+//                    dialogImg.setImageDrawable(image)
+                    if (image == null) {
+                        dialogImg.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_default_profile))
+                    } else {
+                        dialogImg.setImageDrawable(image)
+                    }
 
                     changeBtn.setOnClickListener {
                         pickImageFromGallery.launch("image/*")

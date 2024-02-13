@@ -107,9 +107,15 @@ class MyPageAdapter(private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Profile) = with(binding) {
             tvMyPageName.text = item.name
-            Glide.with(context)
-                .load(item.image)
-                .into(civMyPageProfile)
+
+            if (item.image == null) {
+                civMyPageProfile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_default_profile))
+
+            } else {
+                Glide.with(context)
+                    .load(item.image)
+                    .into(civMyPageProfile)
+            }
 
             btnMyPageEditName.setOnClickListener {
                 editMyProfile?.open(
