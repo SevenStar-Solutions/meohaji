@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
+//fgdr
 rootProject.name = "Meohaji"
 include(":app")
- 
