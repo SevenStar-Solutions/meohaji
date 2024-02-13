@@ -125,6 +125,9 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
 
         rotationAnimator.start()
     }
+    private fun testrun(testlist : List) {
+        println("안녕하세요")
+    }
 
     private fun setInitialSize(cardView: CardView) {
         val layoutParams = cardView.layoutParams
