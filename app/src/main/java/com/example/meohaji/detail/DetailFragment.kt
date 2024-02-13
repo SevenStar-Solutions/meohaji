@@ -276,5 +276,5 @@ class DetailFragment : DialogFragment() {
 }
 
 object DetailTags{
-    const val YOUTUBE_LINK = "https://youtu.be/"    // 유튜브 링크 변경됨
+    const val YOUTUBE_LINK = "https://youtube.com/watch?v="
 }
