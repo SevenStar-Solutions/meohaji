@@ -7,12 +7,37 @@
     android:background="@color/black_background"
     tools:context=".search.SearchFragment">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout_search_latest_words"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="-10dp"
+        android:background="@color/grey_background"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/et_search_fragment_search"
+        app:layout_constraintStart_toStartOf="@+id/et_search_fragment_search"
+        app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_search_latest_words"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:listitem="@layout/item_latest_search_word" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <EditText
         android:id="@+id/et_search_fragment_search"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_margin="10dp"
         android:background="@drawable/apply_search_background"
+        android:elevation="3dp"
         android:ems="10"
         android:gravity="center_vertical"
         android:hint="검색어를 입력해주세요"
@@ -37,13 +62,16 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search" />
+        app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="10dp"
+        android:elevation="3dp"
         android:src="@drawable/img_search"
         app:layout_constraintBottom_toBottomOf="@+id/et_search_fragment_search"
         app:layout_constraintStart_toStartOf="@+id/et_search_fragment_search"
