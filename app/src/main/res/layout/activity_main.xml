@@ -70,13 +70,12 @@
         android:layout_marginBottom="25dp"
         android:outlineSpotShadowColor="#C5DC40"
         android:text="Home"
+        app:strokeWidth="0dp"
         app:cardCornerRadius="35dp"
         app:cardElevation="0dp"
-        app:cardForegroundColor="#4D000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tv_home_search"
-        app:layout_constraintStart_toStartOf="@id/tv_home_search"
-        app:strokeWidth="0dp">
+        app:layout_constraintStart_toStartOf="@id/tv_home_search">
 
         <ImageView
             android:layout_width="match_parent"
@@ -96,7 +95,6 @@
         android:text="Home"
         app:cardBackgroundColor="@color/yellow_background"
         app:cardCornerRadius="35dp"
-
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,14 +115,13 @@
         android:layout_marginBottom="25dp"
         android:foreground="@drawable/apply_ripple_effect_circle"
         android:outlineSpotShadowColor="#C5DC40"
+        app:strokeWidth="0dp"
         android:text="Home"
         app:cardCornerRadius="35dp"
         app:cardElevation="0dp"
-        app:cardForegroundColor="#4D000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tv_home_myPage"
-        app:layout_constraintStart_toStartOf="@id/tv_home_myPage"
-        app:strokeWidth="0dp">
+        app:layout_constraintStart_toStartOf="@id/tv_home_myPage">
 
         <ImageView
             android:layout_width="match_parent"
