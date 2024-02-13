@@ -3,27 +3,43 @@ package com.example.meohaji.mypage
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.databinding.ItemVideoByCategoryBinding
+import com.example.meohaji.home.VideoForUi
 
 
-class MyPageAdapter(private val context: Context, private val items: ArrayList<SavedItem>) : RecyclerView.Adapter<MyPageAdapter.Holder>() {
+class MyPageAdapter(private val context: Context) : ListAdapter<VideoForUi, MyPageAdapter.Holder>(
+    object : DiffUtil.ItemCallback<VideoForUi>() {
+        override fun areItemsTheSame(oldItem: VideoForUi, newItem: VideoForUi): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: VideoForUi, newItem: VideoForUi): Boolean {
+            return oldItem == newItem
+        }
+    }
+) {
 
     inner class Holder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: VideoForUi) = with(binding) {
+            Glide.with(context)
+                .load(item.thumbnail)
+                .into(ivVideoByCategoryItemThumbnail)
 
-        var thumbnail = binding.ivVideoByCategoryItemThumbnail //iv 사용 시 Glide 사용 잊지 말것
-        var title = binding.tvVideoByCategoryItemTitle
-        var likeCount = binding.tvVideoByCategoryItemChannelName
-        var viewCount = binding.tvVideoByCategoryItemUploadDate
-        var recommendScore = binding.tvVideoByCategoryItemRecommendScore
-
+            tvVideoByCategoryItemTitle.text = item.title
+            tvVideoByCategoryItemChannelName.text = item.likeCount.toString()
+            tvVideoByCategoryItemUploadDate.text = item.viewCount.toString()
+            tvVideoByCategoryItemRecommendScore.text = item.recommendScore.toString()
+        }
 
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return currentList.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -32,22 +48,7 @@ class MyPageAdapter(private val context: Context, private val items: ArrayList<S
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val data = items[position]
-
-        holder.apply {
-
-            Glide.with(context)
-                .load(data.thumbnail)
-                .into(thumbnail)
-
-            title.text = data.title
-            likeCount.text = data.likeCount.toString()
-            viewCount.text = data.viewCount.toString()
-            recommendScore.text = data.recommendScore
-
-
-        }
-        //클릭 이벤트
+        holder.bind(currentList[position])
     }
 
 }
