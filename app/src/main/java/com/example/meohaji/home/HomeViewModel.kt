@@ -9,7 +9,19 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import kotlinx.coroutines.launch
 import kotlin.math.round
-
+/**
+ *
+ *
+ *
+ *
+ * 검색했을때 빈칸인지 예외처리 구현해야된
+ *
+ *
+ *
+ *
+ *
+ *
+ * */
 class HomeViewModel : ViewModel() {
 
     private val _homeList = MutableLiveData(
