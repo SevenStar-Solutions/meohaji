@@ -1,6 +1,8 @@
 package com.example.meohaji.mypage
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -20,10 +22,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
+import com.example.meohaji.detail.DetailTags
+import com.example.meohaji.home.VideoForUi
+import com.google.gson.GsonBuilder
 
 
 class MyPageFragment : Fragment() {
@@ -31,6 +37,9 @@ class MyPageFragment : Fragment() {
     private var backPressedOnce = false
     private var selectedImageUri: Uri? = null
     private lateinit var dialogImg: ImageView
+    private lateinit var myPageAdapter: MyPageAdapter
+    private var items: ArrayList<VideoForUi> = ArrayList()
+    private lateinit var preferences: SharedPreferences
 
     private val pickImageFromGallery =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -40,11 +49,17 @@ class MyPageFragment : Fragment() {
             }
         }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
         overrideBackAction()
+
+        preferences = requireContext().getSharedPreferences(
+            DetailTags.PREF_KEY,
+            Context.MODE_PRIVATE
+        )
 
         val textView = binding.tvMyPageSavedVideo
         val spannableString = SpannableString(textView.text)
@@ -70,6 +85,14 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        items = loadData()
+        myPageAdapter = MyPageAdapter(requireContext())
+        myPageAdapter.submitList(items.toList())
+        val recyclerView = binding.rvMyPage
+        recyclerView.adapter = myPageAdapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
 
         binding.btnMyPageEditName.setOnClickListener {
             val dialogView =
@@ -104,6 +127,16 @@ class MyPageFragment : Fragment() {
                 pickImageFromGallery.launch("image/*")
             }
         }
+
+        binding.btnClearSavedVideo.setOnClickListener {
+            Utils.deletePrefItem(requireContext())
+            items.clear() // 저장된 아이템 리스트를 비웁니다.
+            myPageAdapter.submitList(items.toList())
+        }
+        binding.btnRefreshSavedVideo.setOnClickListener {
+            items = loadData()
+            myPageAdapter.submitList(items.toList())
+        }
     }
 
     private fun overrideBackAction() {
@@ -122,6 +155,18 @@ class MyPageFragment : Fragment() {
     }
 
     fun checkSharedPreference() {
-        Toast.makeText(requireContext(), "SharedPreference 변경됨!!!", Toast.LENGTH_SHORT).show()
+        items = loadData()
+        myPageAdapter.submitList(items.toList())
+    }
+
+    private fun loadData():ArrayList<VideoForUi> {
+        val allEntries: Map<String, *> = preferences.all
+        val bookmarks = ArrayList<VideoForUi>()
+        val gson = GsonBuilder().create()
+        for((key, value) in allEntries) {
+            val item = gson.fromJson(value as String, VideoForUi::class.java)
+            bookmarks.add(item)
+        }
+        return bookmarks
     }
 }
