@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.meohaji.databinding.ActivityMainBinding
@@ -23,6 +25,13 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            ObjectAnimator.ofFloat(binding.constraintLayoutMainSplash, "alpha", 1f, 0f).apply {
+                duration = 1000
+                start()
+            }
+        }, 3000)
 
         setSupportActionBar(binding.toolbarMain)
         supportActionBar?.setDisplayShowTitleEnabled(false)

@@ -9,11 +9,14 @@ import com.example.meohaji.search.SearchFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
 
-    val mypage = MyPageFragment()
+    private val search = SearchFragment()
+    private val home = HomeFragment()
+    private val myPage = MyPageFragment()
+
     private val fragmentList = listOf(
-        SearchFragment(),
-        HomeFragment(),
-        mypage
+        search,
+        home,
+        myPage
     )
 
     override fun getItemCount(): Int {
@@ -23,6 +26,6 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter
     override fun createFragment(position: Int): Fragment = fragmentList[position]
 
     fun notifyChangeData() {
-        mypage.checkSharedPreference()
+        myPage.checkSharedPreference()
     }
 }

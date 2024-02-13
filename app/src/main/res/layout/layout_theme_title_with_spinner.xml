@@ -9,20 +9,20 @@
         android:id="@+id/tv_home_theme_title_with_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="가장 인기있는 영상"
         android:layout_marginStart="5dp"
+        android:text="가장 인기있는 영상"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-    android:id="@+id/spinner_home_sort_video"
-    android:layout_width="120dp"
-    android:layout_height="wrap_content"
-    android:background="@drawable/apply_spinner_background"
-    android:popupBackground="@color/black_background"
-    app:layout_constraintBottom_toBottomOf="@+id/tv_home_theme_title_with_spinner"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="@+id/tv_home_theme_title_with_spinner" />
+        android:id="@+id/spinner_home_sort_video"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/apply_spinner_background"
+        android:popupBackground="@color/black_background"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_home_theme_title_with_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_home_theme_title_with_spinner" />
 </androidx.constraintlayout.widget.ConstraintLayout>

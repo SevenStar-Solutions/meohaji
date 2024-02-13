@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class MyPageAdapter(private val context: Context) :
     ListAdapter<MyPageUiData, RecyclerView.ViewHolder>(
         object : DiffUtil.ItemCallback<MyPageUiData>() {

@@ -6,18 +6,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.example.meohaji.Constants.PREF_KEY
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentDetailBinding
-import com.example.meohaji.detail.DetailTags.PREF_KEY
-import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
 import com.github.mikephil.charting.components.AxisBase
@@ -32,7 +30,6 @@ import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-
 private const val ARG_PARAM1 = "param1"
 
 interface BtnClick {
@@ -44,7 +41,6 @@ class DetailFragment : DialogFragment() {
     private val binding get() = _binding!!
     private var param1: VideoForUi? = null
 
-    private lateinit var homeFragment: HomeFragment
     private lateinit var mainActivity: MainActivity
 
     private lateinit var preferences: SharedPreferences
@@ -53,7 +49,6 @@ class DetailFragment : DialogFragment() {
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeFragment = HomeFragment()
         mainActivity = context as MainActivity
         isCancelable = true
         preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
@@ -78,13 +73,11 @@ class DetailFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        loadData()
-        Log.i("This is DetailFragment","onViewCreated : ${loadData()}")
-        when(param1!!.id) {
+        when (param1!!.id) {
             !in preferences.all.keys -> saveButton()
             in preferences.all.keys -> deleteButton()
         }
-        p1()
+        setUI()
 
         binding.ivBtnDetailClose.setOnClickListener {       // X버튼 클릭 시 프래그먼트 닫기
             this.dismiss()
@@ -101,7 +94,7 @@ class DetailFragment : DialogFragment() {
             }
     }
 
-    private fun p1(){
+    private fun setUI() {
         binding.apply {
             tvDetailVideoTitle.text = param1?.title
             Glide.with(mainActivity)
@@ -110,18 +103,20 @@ class DetailFragment : DialogFragment() {
             tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
             tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
             tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
-            tvDetailUploadDate.text = "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
-            tvDetailTextDescription.text = when(param1?.description) {
+            tvDetailUploadDate.text =
+                "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
+            tvDetailTextDescription.text = when (param1?.description) {
                 "" -> "내용이 없습니다."
                 else -> param1?.description
             }
 
-            btnDetailSaveData.setOnClickListener{
-                when(param1!!.id) {
+            btnDetailSaveData.setOnClickListener {
+                when (param1!!.id) {
                     !in preferences.all.keys -> {
-                        saveData (param1!!)
+                        saveData(param1!!)
                         deleteButton()
                     }
+
                     in preferences.all.keys -> {
                         deleteData(param1!!.id)
                         saveButton()
@@ -146,10 +141,10 @@ class DetailFragment : DialogFragment() {
                 BarEntry(3f, param1?.commentCount!!.toFloat()),
             )
 
-            var dataSet1 = BarDataSet(entry1, "인기 동영상 평균")
+            val dataSet1 = BarDataSet(entry1, "인기 동영상 평균")
             dataSet1.color = ContextCompat.getColor(mainActivity, R.color.yellow_background)
 
-            var dataSet2 = BarDataSet(entry2, "현재 동영상")
+            val dataSet2 = BarDataSet(entry2, "현재 동영상")
             dataSet2.color = ContextCompat.getColor(mainActivity, R.color.white)
 
             val dataSet: ArrayList<IBarDataSet> = arrayListOf(
@@ -204,7 +199,7 @@ class DetailFragment : DialogFragment() {
         }
     }
 
-    inner class MyXAxisFormatter: ValueFormatter() {
+    inner class MyXAxisFormatter : ValueFormatter() {
         private val counts = arrayOf("좋아요수", "조회수", "댓글수")
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return counts.getOrNull(value.toInt()) ?: value.toString()
@@ -216,22 +211,22 @@ class DetailFragment : DialogFragment() {
         _binding = null
     }
 
-    private fun setCount(count: Long):String {
+    private fun setCount(count: Long): String {
         var ans = ""
-        if(count / 10000L <= 0L) {
+        if (count / 10000L <= 0L) {
             ans = "$count"
-        } else if(count / 10000L > 0L) {
-            ans = if((count / 10000L) / 10000L <= 0L) {
-                "${count/10000L}.${(count%10000L).toString().first()}만"
+        } else if (count / 10000L > 0L) {
+            ans = if ((count / 10000L) / 10000L <= 0L) {
+                "${count / 10000L}.${(count % 10000L).toString().first()}만"
             } else {
-                "${(count/10000L)/10000L}.${((count/10000L)%10000L).toString().first()}억"
+                "${(count / 10000L) / 10000L}.${((count / 10000L) % 10000L).toString().first()}억"
             }
         }
         return ans
     }
 
     // SharedPreference에 저장(key = id, value = 값.toString)
-    private fun saveData(test:VideoForUi) {
+    private fun saveData(test: VideoForUi) {
         val editor = preferences.edit()
         val gson = GsonBuilder().create()
         editor.putString(test.id, gson.toJson(test))
@@ -245,30 +240,19 @@ class DetailFragment : DialogFragment() {
         editor.apply()
     }
 
-    // SharedPreferences에서 데이터 불러오기
-    private fun loadData():ArrayList<VideoForUi> {
-        val allEntries: Map<String, *> = preferences.all
-        val bookmarks = ArrayList<VideoForUi>()
-        val gson = GsonBuilder().create()
-        for((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, VideoForUi::class.java)
-            bookmarks.add(item)
-        }
-        return bookmarks
-    }
-
     private fun saveButton() {
         binding.btnDetailSaveData.text = "저장"
         binding.btnDetailSaveData.setTextColor(Color.BLACK)
         binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_save)
     }
+
     private fun deleteButton() {
         binding.btnDetailSaveData.text = "삭제"
         binding.btnDetailSaveData.setTextColor(Color.parseColor("#FF4141"))
         binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_delete)
     }
 
-    private fun shareLink(data:VideoForUi) {       // 수정 필요
+    private fun shareLink(data: VideoForUi) {
         // 전송 인텐트 생성
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/html"
@@ -280,15 +264,5 @@ class DetailFragment : DialogFragment() {
         // chooser로 앱 선택하기
         val text = "공유하기"
         startActivity(Intent.createChooser(intent, text))
-
-        // 클립보드 서비스 사용
-//        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-//        val clip: ClipData = ClipData.newPlainText("VideoUri",url)
-//        clipboard.setPrimaryClip(clip)
-//        toast("클립보드에 복사함.")
     }
-}
-
-object DetailTags{
-    const val PREF_KEY = "My Preferences"
 }

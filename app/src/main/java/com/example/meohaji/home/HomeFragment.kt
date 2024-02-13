@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
@@ -95,7 +94,6 @@ class HomeFragment : Fragment() {
             homeAdapter.submitList(it.toList())
         }
     }
-
 
     override fun onDestroyView() {
         _binding = null
