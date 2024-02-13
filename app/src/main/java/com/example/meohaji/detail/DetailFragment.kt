@@ -5,25 +5,23 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.PREF_KEY
+import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
-import com.google.gson.GsonBuilder
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import android.net.Uri
-import androidx.core.content.ContextCompat
-import com.example.meohaji.Utils
-import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -33,6 +31,9 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.GsonBuilder
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 private const val ARG_PARAM1 = "param1"
