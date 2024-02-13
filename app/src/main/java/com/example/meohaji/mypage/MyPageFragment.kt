@@ -124,11 +124,11 @@ class MyPageFragment : Fragment() {
 
         binding.btnClearSavedVideo.setOnClickListener {
             Utils.deletePrefItem(requireContext())
-            items.clear() // 저장된 아이템 리스트를 비웁니다.
+            items.clear()
             myPageAdapter.notifyDataSetChanged()
         }
         binding.btnRefreshSavedVideo.setOnClickListener {
-            items = Utils.getPrefBookmarkItems(requireContext())
+
             myPageAdapter.notifyDataSetChanged()
         }
     }
