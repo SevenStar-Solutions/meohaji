@@ -38,7 +38,7 @@
         android:id="@+id/view_pager_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cv_main"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />
 
     <ImageView
@@ -71,7 +71,6 @@
         android:outlineSpotShadowColor="#C5DC40"
         android:text="Home"
         app:strokeWidth="0dp"
-        app:cardForegroundColor="#4D000000"
         app:cardCornerRadius="35dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -118,7 +117,6 @@
         android:foreground="@drawable/apply_ripple_effect_circle"
         android:outlineSpotShadowColor="#C5DC40"
         app:strokeWidth="0dp"
-        app:cardForegroundColor="#4D000000"
         android:text="Home"
         app:cardCornerRadius="35dp"
         app:cardElevation="0dp"
