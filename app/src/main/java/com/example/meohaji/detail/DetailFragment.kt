@@ -5,9 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +14,25 @@ import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.PREF_KEY
-import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.HomeFragment
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import android.net.Uri
+import androidx.core.content.ContextCompat
+import com.example.meohaji.Utils
+import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.google.android.material.snackbar.Snackbar
 
 
 private const val ARG_PARAM1 = "param1"
@@ -61,18 +70,6 @@ class DetailFragment : DialogFragment() {
         val dialog = Dialog(requireContext(), R.style.DetailTransparent)
         return dialog
     }
-
-    // dialog의 사이즈를 직접 지정하는 부분
-//    override fun onResume() {
-//        super.onResume()
-//        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-//        val rect = windowManager.currentWindowMetrics.bounds
-//        val window = dialog?.window
-//        val x = (rect.width() * 0.9f).toInt()
-//        val y = (rect.height() * 0.8f).toInt()
-//        window?.setLayout(x, y)
-//        Log.i("This is DetailFragment","onResume : x:$x, y:$y")
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -142,6 +139,82 @@ class DetailFragment : DialogFragment() {
             ivDetailVideoThumbnail.setOnClickListener {     // 이미지 클릭 시 해당 유튜브 링크로 이동
                 openLink(param1!!.id)
             }
+
+            val average = Utils.getCounts(requireContext())
+            val entry1 = arrayListOf<BarEntry>(
+                BarEntry(1f, average.first.toFloat() / 5),
+                BarEntry(2f, average.second.toFloat() / 100),
+                BarEntry(3f, average.third.toFloat()),
+            )
+
+            val entry2 = arrayListOf<BarEntry>(
+                BarEntry(1f, param1?.likeCount!!.toFloat() / 5),
+                BarEntry(2f, param1?.viewCount!!.toFloat() / 100),
+                BarEntry(3f, param1?.commentCount!!.toFloat()),
+            )
+
+            var dataSet1 = BarDataSet(entry1, "인기 동영상 평균")
+            dataSet1.color = ContextCompat.getColor(mainActivity, R.color.yellow_background)
+
+            var dataSet2 = BarDataSet(entry2, "현재 동영상")
+            dataSet2.color = ContextCompat.getColor(mainActivity, R.color.white)
+
+            val dataSet: ArrayList<IBarDataSet> = arrayListOf(
+                dataSet1,
+                dataSet2
+            )
+            val data = BarData(dataSet)
+            data.barWidth = 0.2f
+
+            barChartDetail.run {
+                this.data = data
+                setFitBars(true)
+
+                description.isEnabled = false
+                setMaxVisibleValueCount(3)
+                setPinchZoom(false)
+                setDrawBarShadow(false)
+                setDrawGridBackground(false)
+                axisLeft.run {
+                    axisMinimum = 0f
+                    setDrawAxisLine(false)
+                    setDrawLabels(false)
+                    setDrawGridLines(false)
+                    axisLineColor = ContextCompat.getColor(mainActivity, R.color.white)
+                    gridColor = ContextCompat.getColor(mainActivity, R.color.white)
+                    textColor = ContextCompat.getColor(mainActivity, R.color.white)
+                    textSize = 13f
+                }
+                xAxis.run {
+                    position = XAxis.XAxisPosition.BOTTOM
+                    axisMaximum = (0f + barData.getGroupWidth(0.44f, 0.08f) * 3)
+                    axisMinimum = 0f
+                    granularity = 1f
+                    setDrawAxisLine(true)
+                    setDrawGridLines(false)
+                    setCenterAxisLabels(true)
+                    isGranularityEnabled = true
+                    textColor = ContextCompat.getColor(mainActivity, R.color.white)
+                    textSize = 12f
+                    valueFormatter = MyXAxisFormatter()
+                }
+                axisRight.isEnabled = false
+                setTouchEnabled(false)
+                groupBars(0f, 0.44f, 0.08f)
+                animateY(1000)
+                legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+                legend.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+                legend.textColor = ContextCompat.getColor(mainActivity, R.color.white)
+                legend.isEnabled = true
+                invalidate()
+            }
+        }
+    }
+
+    inner class MyXAxisFormatter: ValueFormatter() {
+        private val counts = arrayOf("좋아요수", "조회수", "댓글수")
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+            return counts.getOrNull(value.toInt()) ?: value.toString()
         }
     }
 
