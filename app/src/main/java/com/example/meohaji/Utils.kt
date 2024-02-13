@@ -11,9 +11,11 @@ object Utils {
     //키보드 숨김
 
     fun saveMaInfo(context: Context, name: String, image: String) {
-        val namePrefs = context.getSharedPreferences(Constants.PREFS_DIALOG_NAME, Context.MODE_PRIVATE)
+        val namePrefs =
+            context.getSharedPreferences(Constants.PREFS_DIALOG_NAME, Context.MODE_PRIVATE)
         namePrefs.edit().putString(Constants.PREFS_DIALOG_NAME_KEY, name).apply()
-        val imgPrefs = context.getSharedPreferences(Constants.PREFS_DIALOG_IMG, Context.MODE_PRIVATE)
+        val imgPrefs =
+            context.getSharedPreferences(Constants.PREFS_DIALOG_IMG, Context.MODE_PRIVATE)
         imgPrefs.edit().putString(Constants.PREFS_DIALOG_IMG_KEY, image).apply()
 
     }
@@ -47,7 +49,30 @@ object Utils {
         editor.clear().apply()
     }
 
+    fun saveCounts(context: Context, view: Int, like: Int, comment: Int) {
+        val viewPrefs =
+            context.getSharedPreferences(Constants.PREFS_VIEW_COUNT, Context.MODE_PRIVATE)
+        viewPrefs.edit().putString(Constants.PREFS_VIEW_COUNT_KEY, view.toString()).apply()
+        val likePrefs =
+            context.getSharedPreferences(Constants.PREFS_LIKE_COUNT, Context.MODE_PRIVATE)
+        likePrefs.edit().putString(Constants.PREFS_LIKE_COUNT_KEY, like.toString()).apply()
+        val commentPrefs =
+            context.getSharedPreferences(Constants.PREFS_COMMENT_COUNT, Context.MODE_PRIVATE)
+        commentPrefs.edit().putString(Constants.PREFS_COMMENT_COUNT_KEY, comment.toString()).apply()
+    }
 
+    fun getCounts(context: Context): Triple<String, String, String> {
+        val viewPrefs =
+            context.getSharedPreferences(Constants.PREFS_VIEW_COUNT, Context.MODE_PRIVATE)
+        val likePrefs =
+            context.getSharedPreferences(Constants.PREFS_LIKE_COUNT, Context.MODE_PRIVATE)
+        val commentPrefs =
+            context.getSharedPreferences(Constants.PREFS_COMMENT_COUNT, Context.MODE_PRIVATE)
 
-
+        return Triple(
+            likePrefs.getString(Constants.PREFS_LIKE_COUNT_KEY, null) ?: "0",
+            viewPrefs.getString(Constants.PREFS_VIEW_COUNT_KEY, null) ?: "0",
+            commentPrefs.getString(Constants.PREFS_COMMENT_COUNT_KEY, null) ?: "0"
+        )
+    }
 }
