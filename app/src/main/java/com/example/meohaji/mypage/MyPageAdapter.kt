@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class MyPageAdapter(private val context: Context) :
     ListAdapter<MyPageUiData, RecyclerView.ViewHolder>(
         object : DiffUtil.ItemCallback<MyPageUiData>() {
@@ -109,9 +108,8 @@ class MyPageAdapter(private val context: Context) :
         fun bind(item: MyPageUiData.Profile) = with(binding) {
             tvMyPageName.text = item.name
 
-            if (civMyPageProfile.drawable == null) {
+            if (item.image == null) {
                 civMyPageProfile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_default_profile))
-                Utils.saveMaInfo(context,tvMyPageName.text.toString(),civMyPageProfile.drawable.toString())
 
             } else {
                 Glide.with(context)
