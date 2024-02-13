@@ -83,6 +83,14 @@ class SearchFragment : Fragment() {
             }
         })
 
+        binding.etSearchFragmentSearch.setOnFocusChangeListener { _, hasFocus ->
+            binding.constraintLayoutSearchLatestWords.visibility = if (hasFocus) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
+
         //LiveData로 Adapter에 연결할때
         /**viewLifecycleOwner는 화면이 보일때만 감지한다, 옵저브는 데이터가 바뀌는지 지켜보고있음*/
         searchVideoList.observe(viewLifecycleOwner) {
