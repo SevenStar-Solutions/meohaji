@@ -1,45 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black_background">
+    android:background="@color/black_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ_my_page_profile"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/ic_launcher_background"
-        app:layout_constraintEnd_toEndOf="parent"
+
+        app:civ_circle_background_color="@color/white"
+        app:civ_border_width="1dp"
+        app:civ_border_color="#EFEFEF"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/btn_my_page_editName"
         android:layout_width="23dp"
         android:layout_height="30dp"
-        android:backgroundTint="@color/white"
+        app:layout_constraintTop_toTopOf="@id/civ_my_page_profile"
         app:layout_constraintEnd_toEndOf="@id/civ_my_page_profile"
-        app:layout_constraintTop_toTopOf="@id/civ_my_page_profile" />
+        android:backgroundTint="@color/white"/>
 
     <TextView
         android:id="@+id/tv_my_page_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Unknown"
+        android:hint="사용자 이름을 입력해 주세요"
+        android:gravity="center"
+        android:textColorHint="#E3E3E3"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/civ_my_page_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/civ_my_page_profile" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_page_name"
         app:dividerColor="#5B5B5B"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
+        android:layout_marginHorizontal="15dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

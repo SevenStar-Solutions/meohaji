@@ -9,10 +9,13 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import com.example.meohaji.R
 import com.example.meohaji.databinding.ActivityMainBinding
 import com.example.meohaji.home.BtnClick2
+import com.example.meohaji.search.BtnClick3
 
-class MainActivity : AppCompatActivity(), BtnClick2 {
+class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
 
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -44,6 +47,9 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
         setInitialSize(binding.btnTestMiddle)
 
         with(binding) {
+
+            btnTestLeft.alpha = 0.6f
+            btnTestRight.alpha = 0.6f
 
             btnTestLeft.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
@@ -97,9 +103,6 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
 
     private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
         val spotlight = binding.ivSpotLight
-        val btn0 = binding.btnTestLeft
-        val btn1 = binding.btnTestMiddle
-        val btn2 = binding.btnTestRight
 
         val rotationAnimator =
             ObjectAnimator.ofFloat(spotlight, "rotation", fromRotation, toRotation).apply {
@@ -180,36 +183,82 @@ class MainActivity : AppCompatActivity(), BtnClick2 {
     private val spotMid: Float = 0f
     private val spotRight: Float = 45f
 
+    private fun testAlphaOn(target : CardView){
+        ObjectAnimator.ofFloat(target,"alpha",0.6f,1f).apply {
+            duration = 400
+            start()
+        }
+    }
+    private fun testAlphaOff(target : CardView){
+        ObjectAnimator.ofFloat(target,"alpha",1f,0.6f).apply {
+            duration = 700
+            start()
+        }
+    }
+
     private fun spotlight0to1() {
         animateSpotlight(spotLeft, spotMid)
         animateBtnSizeDown(binding.btnTestLeft)
+        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+//        binding.btnTestLeft.setCardBackgroundColor(Color.parseColor("#D1D1D1"))
+        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestLeft)
+        testAlphaOn(binding.btnTestMiddle)
+
+
+
     }
 
     private fun spotlight0to2() {
         animateSpotlight(spotLeft, spotRight)
         animateBtnSizeDown(binding.btnTestLeft)
+        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestLeft)
+        testAlphaOn(binding.btnTestRight)
     }
 
     private fun spotlight1to0() {
         animateSpotlight(spotMid, spotLeft)
         animateBtnSizeDown(binding.btnTestMiddle)
+        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestMiddle)
+        testAlphaOn(binding.btnTestLeft)
     }
 
     private fun spotlight1to2() {
         animateSpotlight(spotMid, spotRight)
         animateBtnSizeDown(binding.btnTestMiddle)
+        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestMiddle)
+        testAlphaOn(binding.btnTestRight)
     }
 
     private fun spotlight2to0() {
         animateSpotlight(spotRight, spotLeft)
         animateBtnSizeDown(binding.btnTestRight)
+        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestRight)
+        testAlphaOn(binding.btnTestLeft)
     }
 
     private fun spotlight2to1() {
         animateSpotlight(spotRight, spotMid)
         animateBtnSizeDown(binding.btnTestRight)
+        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
+        testAlphaOff(binding.btnTestRight)
+        testAlphaOn(binding.btnTestMiddle)
     }
-    override fun click() {
+
+    override fun clickFromHome() {
+        adapter.notifyChangeData()
+    }
+
+    override fun clickFromSearch() {
         adapter.notifyChangeData()
     }
 }

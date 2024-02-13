@@ -23,6 +23,7 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.Constants
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
+import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
 import com.google.gson.GsonBuilder
@@ -33,6 +34,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.round
+
+interface BtnClick3 {
+    fun clickFromSearch()
+}
 
 class SearchFragment : Fragment() {
 
@@ -50,6 +55,8 @@ class SearchFragment : Fragment() {
         HistoryAdapter()
     }
 
+    var btnClick3: BtnClick3? = null
+
     /** MVVM은 안쓰면 LiveData는 안써도 무방*/
     private val _searchVideoList = MutableLiveData<List<SearchList>>()
     private val searchVideoList: LiveData<List<SearchList>> get() = _searchVideoList
@@ -66,6 +73,9 @@ class SearchFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        if (context is BtnClick3) {
+            btnClick3 = context
+        }
     }
 
     override fun onCreateView(
@@ -172,6 +182,11 @@ class SearchFragment : Fragment() {
     /** 프레그먼트 띄우는 함수 */
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
+        dialog.btnClick = object : BtnClick {
+            override fun click() {
+                btnClick3?.clickFromSearch()
+            }
+        }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 

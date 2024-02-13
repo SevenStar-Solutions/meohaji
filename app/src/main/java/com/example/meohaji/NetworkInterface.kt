@@ -25,6 +25,7 @@ interface NetworkInterface {
         @Query("chart") chart: String?,
         @Query("maxResults") max: Int?,
         @Query("regionCode") code: String?,
+        @Query("pageToken") pageToken: String?,
         @Query("videoCategoryId") categoryId: String?,
     ): Response<Video>
 

@@ -11,12 +11,14 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 
 interface BtnClick2 {
-    fun click()
+    fun clickFromHome()
 }
 
 class HomeFragment : Fragment() {
@@ -38,7 +40,9 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        btnClick2 = context as BtnClick2
+        if (context is BtnClick2) {
+            btnClick2 = context
+        }
     }
 
     override fun onCreateView(
@@ -62,6 +66,17 @@ class HomeFragment : Fragment() {
 
     private fun initView() {
         binding.rvHome.adapter = homeAdapter
+        binding.rvHome.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val lastItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
+                if (lastItemPosition + 2 == totalItemCount && !homeViewModel.isLoading) {
+                    homeViewModel.additionalCommunicateNetwork()
+                }
+            }
+        })
+
         homeAdapter.apply {
             communicateVideoByCategory = object : HomeAdapter.CommunicateVideoByCategory {
                 override fun call(id: String, sortOrder: Int) {
@@ -92,6 +107,7 @@ class HomeFragment : Fragment() {
     private fun initViewModel() = with(homeViewModel) {
         homeList.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it.toList())
+            isLoading = false
         }
     }
 
@@ -120,7 +136,7 @@ class HomeFragment : Fragment() {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
             override fun click() {
-                btnClick2?.click()
+                btnClick2?.clickFromHome()
             }
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
