@@ -29,14 +29,18 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     private val mostPopularVideoList = arrayListOf<VideoForUi>()
     private val videoByCategoryList = arrayListOf<VideoForUi>()
     private val channelByCategoryList = arrayListOf<CategoryChannel>()
+    private val additionalVideoList = arrayListOf<VideoForUi>()
 
     private val channelIds = StringBuilder()
+    private var pageToken: String? = null
     private var sortOrderIdx = 0
+    private var categoryId = "1"
+    var isLoading = false
 
     fun initialCommunicateNetwork() {
         viewModelScope.launch {
             communicateMostPopularVideos()
-            communicateVideoByCategory("1")
+            communicateVideoByCategory(categoryId)
             checkComplete(ENTIRE_CHANGE)
             popularVideoAverage()
         }
@@ -44,9 +48,18 @@ class HomeViewModel(private val context: Context) : ViewModel() {
 
     fun changeCategory(id: String, sortOrder: Int) {
         viewModelScope.launch {
+            pageToken = null
             sortOrderIdx = sortOrder
-            communicateVideoByCategory(id)
+            categoryId = id
+            communicateVideoByCategory(categoryId)
             checkComplete(CATEGORY_CHANGE)
+        }
+    }
+
+    fun additionalCommunicateNetwork() {
+        viewModelScope.launch {
+            isLoading = true
+            scrollCommunicateVideoByCategory()
         }
     }
 
@@ -98,10 +111,12 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             "mostPopular",
             10,
             "kr",
+            pageToken,
             id
         )
         if (response.isSuccessful) {
             videoByCategoryList.clear()
+            additionalVideoList.clear()
             channelIds.clear()
             response.body()?.items?.forEach { item ->
                 videoByCategoryList.add(
@@ -126,10 +141,45 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 channelIds.append(item.snippet.channelID).append(",")
             }
             sortByOrder(sortOrderIdx)
-
+            pageToken = response.body()?.nextPageToken.toString()
             communicationChannelByCategory()
         }
+    }
 
+    private suspend fun scrollCommunicateVideoByCategory() {
+        val response = NetworkClient.apiService.videoByCategory(
+            BuildConfig.YOUTUBE_API_KEY,
+            "snippet,statistics",
+            "mostPopular",
+            10,
+            "kr",
+            pageToken,
+            categoryId
+        )
+        if (response.isSuccessful) {
+            response.body()?.items?.forEach { item ->
+                additionalVideoList.add(
+                    VideoForUi(
+                        item.id,
+                        item.snippet.publishedAt,
+                        item.snippet.channelTitle,
+                        item.snippet.title,
+                        item.snippet.description,
+                        item.snippet.thumbnails.medium.url,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.likeCount?.toInt() ?: 0,
+                        item.statistics.commentCount.toInt(),
+                        calRecommendScore(
+                            item.snippet.description,
+                            item.statistics.viewCount.toInt(),
+                            item.statistics.likeCount?.toInt() ?: 0,
+                            item.statistics.commentCount.toInt()
+                        )
+                    )
+                )
+            }
+            checkComplete(SCROLL_DOWN)
+        }
     }
 
     private suspend fun communicationChannelByCategory() {
@@ -211,8 +261,16 @@ class HomeViewModel(private val context: Context) : ViewModel() {
 
             2 -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList()
-                    .subList(0, 6) + videoByCategoryList.map {
+                    .subList(0, 6) + (videoByCategoryList + additionalVideoList).map {
                     HomeUiData.CategoryVideos(it)
+                }
+            }
+
+            3 -> {
+                _homeList.value = homeList.value.orEmpty().toMutableList().apply {
+                    addAll(additionalVideoList.map {
+                        HomeUiData.CategoryVideos(it)
+                    })
                 }
             }
         }
@@ -231,5 +289,6 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         const val ENTIRE_CHANGE = 0
         const val CATEGORY_CHANGE = 1
         const val SORT_CHANGE = 2
+        const val SCROLL_DOWN = 3
     }
 }
