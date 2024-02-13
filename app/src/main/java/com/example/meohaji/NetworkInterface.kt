@@ -45,6 +45,7 @@ interface NetworkInterface {
         @Query("q") query: String?,
         @Query("regionCode") code: String?,
         @Query("type") type: String?,
+        @Query("pageToken") pageToken: String?
     ) : SearchResult
 
     @GET("videos")

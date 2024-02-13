@@ -26,6 +26,9 @@ import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.round
 
 class SearchFragment : Fragment() {
@@ -38,13 +41,18 @@ class SearchFragment : Fragment() {
     }
 
     /** MVVM은 안쓰면 LiveData는 안써도 무방*/
-    private val searchVideoList = arrayListOf<SearchList>()
     private val _searchVideoList = MutableLiveData<List<SearchList>>()
-    private val searchVideo: LiveData<List<SearchList>> get() = _searchVideoList
+    private val searchVideoList: LiveData<List<SearchList>> get() = _searchVideoList
 
     private lateinit var mContext: Context
+    private lateinit var idData: VideoForUi
 
-    private lateinit var idData : VideoForUi
+    private var pageToken: String? = null
+    private var isLoading = false
+
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -63,13 +71,13 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvSearch.adapter = searchAdapter
-        /**무한스크롤, 추가필요*/
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val lastItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
-                if (lastItemPosition + 2 == totalItemCount) {
+                if (lastItemPosition + 2 == totalItemCount && !isLoading) {
+                    isLoading = true
                     communicateSearchVideos()
                 }
             }
@@ -77,21 +85,24 @@ class SearchFragment : Fragment() {
 
         //LiveData로 Adapter에 연결할때
         /**viewLifecycleOwner는 화면이 보일때만 감지한다, 옵저브는 데이터가 바뀌는지 지켜보고있음*/
-        searchVideo.observe(viewLifecycleOwner) {
+        searchVideoList.observe(viewLifecycleOwner) {
             searchAdapter.submitList(it.toList()) //값
+            isLoading = false
         }
+
         //키보드에서 엔터로 검색시작
         binding.etSearchFragmentSearch.setOnEditorActionListener { textView, action, event ->
             var handled = false
             if (action == EditorInfo.IME_ACTION_SEARCH) {
+                pageToken = null
+                binding.etSearchFragmentSearch.clearFocus()
+                //키보드 숨기기
+                val imm =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
                 communicateSearchVideos()
                 handled = true
             }
-
-            //키보드 숨기기
-            val imm =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
             handled
         }
         /**클릭이벤트 VideoID로 API를 받아오고 DetailFragment로 데이터 보내고 실행*/
@@ -144,7 +155,6 @@ class SearchFragment : Fragment() {
             runCatching {
                 /**런캐칭이 뭔지 검색해보기*/
                 val videos = searchVideoById(id = id)
-                searchVideoList.clear()
                 videos.items[0].let { item ->
                     idData = VideoForUi(
                         item.id,
@@ -172,17 +182,19 @@ class SearchFragment : Fragment() {
 
     }
 
-    private suspend fun searchByQueryList(query: String) = withContext(Dispatchers.IO) {
-        NetworkClient.apiService.searchByQueryList(
-            BuildConfig.YOUTUBE_API_KEY,
-            "snippet",
-            10,
-            "date",
-            query,
-            "kr",
-            "video",
-        )
-    }
+    private suspend fun searchByQueryList(query: String, page: String?) =
+        withContext(Dispatchers.IO) {
+            NetworkClient.apiService.searchByQueryList(
+                BuildConfig.YOUTUBE_API_KEY,
+                "snippet",
+                10,
+                "relevance",
+                query,
+                "kr",
+                "video",
+                page
+            )
+        }
 
     //받아온 데이터를 LiveData에 넣는과정
     private fun communicateSearchVideos() {
@@ -190,23 +202,33 @@ class SearchFragment : Fragment() {
             runCatching {
                 /**런캐칭이 뭔지 검색해보기*/
                 val search = binding.etSearchFragmentSearch.text.toString()
-                val videos = searchByQueryList(query = search)
-                searchVideoList.clear()
-                videos.items.forEach { item ->
-                    searchVideoList.add(
+                val videos = searchByQueryList(query = search, page = pageToken)
+                /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
+                /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
+                if (pageToken == null) {
+                    _searchVideoList.value = videos.items.map { item ->
                         SearchList(
                             item.snippet.title,
                             item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
-                            item.snippet.publishedAt,
+                            outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
                             item.id.videoId
                         )
-                    )
+                    }
+                } else {
+                    _searchVideoList.value = searchVideoList.value.orEmpty().toMutableList().apply {
+                        addAll(videos.items.map { item ->
+                            SearchList(
+                                item.snippet.title,
+                                item.snippet.thumbnails.medium.url,
+                                item.snippet.channelTitle,
+                                outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                                item.id.videoId
+                            )
+                        })
+                    }
                 }
-                _searchVideoList.value = searchVideoList
-                /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
-                /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
-                Log.d("searchFragment", "id들어오는지 확인 ${_searchVideoList.value}")
+                pageToken = videos.nextPageToken
             }.onFailure { //오류가 났을때 실행
                 Log.e("search", "잘못됐다")
             }

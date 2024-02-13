@@ -36,9 +36,9 @@ class SearchAdapter : ListAdapter<SearchList, SearchAdapter.ItemViewHolder>(obje
         val time = binding.tvVideoByCategoryItemUploadDate
         val score = binding.tvVideoByCategoryItemRecommendScore
         fun bind(searchList: SearchList) {
-            title.text = getItem(adapterPosition).title
-            channel.text = getItem(adapterPosition).channelTitle
-            time.text = getItem(adapterPosition).publishedAt
+            title.text = searchList.title
+            channel.text = searchList.channelTitle
+            time.text = searchList.publishedAt
             score.visibility = View.INVISIBLE
             Glide.with(image)
                 .load(searchList.thumbnail)
@@ -57,11 +57,11 @@ class SearchAdapter : ListAdapter<SearchList, SearchAdapter.ItemViewHolder>(obje
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+//        val item = getItem(position)
+        holder.bind(currentList[position])
         //클릭이 호출됐을때
         holder.itemView.setOnClickListener {
-            videoClick?.onClick(item)
+            videoClick?.onClick(currentList[position])
         }
     }
 }
