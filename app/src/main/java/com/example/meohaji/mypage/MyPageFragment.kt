@@ -64,7 +64,7 @@ class MyPageFragment : Fragment() {
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
             } else {
-//                Toast.makeText(requ, "Task Cancelled", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -87,12 +87,27 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val (name, image) = Utils.getMyInfo(requireContext())
-        items = loadData()
+        items = loadData() //조건 체크
         selectedImageUri = image?.toUri()
-        uiData = listOf(
-            MyPageUiData.Profile(name, image),
-            MyPageUiData.Title,
-        ) + items.map { MyPageUiData.Video(it) }
+//        uiData = listOf(
+//            MyPageUiData.Profile(name, image),
+//            MyPageUiData.Title,
+//            MyPageUiData.Text,
+//        ) + items.map { MyPageUiData.Video(it) }
+
+        uiData = if(items.isEmpty()) {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+                MyPageUiData.Text
+            )
+        } else {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+            ) + items.map { MyPageUiData.Video(it) }
+        }
+
 
         myPageAdapter = MyPageAdapter(requireContext())
         myPageAdapter.apply {
@@ -187,7 +202,11 @@ class MyPageFragment : Fragment() {
 
     fun checkSharedPreference() {
         items = loadData()
-        uiData = uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        uiData = if (items.isEmpty()) {
+            uiData.subList(0, 2) + MyPageUiData.Text
+        }else {
+            uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        }
         myPageAdapter.submitList(uiData.toList())
     }
 

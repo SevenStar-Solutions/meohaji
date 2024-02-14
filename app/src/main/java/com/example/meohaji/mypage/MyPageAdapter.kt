@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
+import com.example.meohaji.databinding.ItemNoItemBinding
 import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import com.example.meohaji.databinding.LayoutMyProfileBinding
 import com.example.meohaji.databinding.LayoutSaveVideoTitleBinding
@@ -58,6 +59,7 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> PROFILE
             is MyPageUiData.Title -> TITLE
             is MyPageUiData.Video -> VIDEO
+            is MyPageUiData.Text -> TEXT
         }
     }
 
@@ -83,9 +85,19 @@ class MyPageAdapter(private val context: Context) :
                 )
             }
 
-            else -> {
+            VIDEO -> {
                 SaveVideoViewHolder(
                     ItemVideoByCategoryBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> {
+                TextViewHolder(
+                    ItemNoItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -100,6 +112,8 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> (holder as ProfileViewHolder).bind(currentList[position] as MyPageUiData.Profile)
             is MyPageUiData.Title -> (holder as TitleViewHolder).bind(currentList[position] as MyPageUiData.Title)
             is MyPageUiData.Video -> (holder as SaveVideoViewHolder).bind(currentList[position] as MyPageUiData.Video)
+            is MyPageUiData.Text -> (holder as TextViewHolder).bind(currentList[position] as MyPageUiData.Text)
+
         }
     }
 
@@ -143,7 +157,7 @@ class MyPageAdapter(private val context: Context) :
 
             btnClearSavedVideo.setOnClickListener {
                 Utils.deletePrefItem(context)
-                submitList(currentList.subList(0, 2))
+                submitList(currentList.subList(0, 2) + MyPageUiData.Text)
             }
         }
     }
@@ -166,10 +180,18 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    inner class TextViewHolder(private val binding: ItemNoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: MyPageUiData.Text) = with(binding) {
+
+        }
+    }
+
     companion object {
         private const val PROFILE = 1
         private const val TITLE = 2
         private const val VIDEO = 3
+        private const val TEXT = 4
     }
 }
 
