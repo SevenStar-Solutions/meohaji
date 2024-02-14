@@ -1,5 +1,6 @@
 package com.example.meohaji.search
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -42,7 +43,7 @@ interface BtnClick3 {
 class SearchFragment : Fragment() {
 
     private lateinit var preferences: SharedPreferences
-    private var historyDataList: MutableList<HistoryList> = mutableListOf()
+    private var historyDataList: ArrayList<HistoryList> = arrayListOf()
 
 
     private var _binding: FragmentSearchBinding? = null
@@ -83,10 +84,9 @@ class SearchFragment : Fragment() {
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         preferences = requireContext().getSharedPreferences(
-            Constants.PREF_KEY,
+            Constants.PREFS_HISTORY_DATA_KEY,
             Context.MODE_PRIVATE
         )
-
 
         overrideBackAction()
 
@@ -108,6 +108,7 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+
 /**포커스 유무 확인*/
         binding.etSearchFragmentSearch.setOnFocusChangeListener { _, hasFocus ->
             binding.constraintLayoutSearchLatestWords.visibility = if (hasFocus) {
@@ -150,10 +151,20 @@ class SearchFragment : Fragment() {
         }
     }
 /** 최근검색어 */
-    private fun saveData(historyData: MutableList<HistoryList>) {
+    private fun saveData(historyData: ArrayList<HistoryList>) {
+    Log.d("history","save함수실행")
         val editor = preferences.edit()
         val gson = GsonBuilder().create()
         editor.putString("historyData", gson.toJson(historyData))
+        editor.apply()
+    Log.d("history","json 변환 $historyData")
+    }
+
+    fun addPrefItem(context: Context, item: String) {
+        val prefs = context.getSharedPreferences("$item", Activity.MODE_PRIVATE)
+        val editor = prefs.edit()
+        val gson = GsonBuilder().create()
+        editor.putString(item, gson.toJson(item))
         editor.apply()
     }
 
@@ -163,15 +174,27 @@ class SearchFragment : Fragment() {
         editor.apply()
     }
 
-    private fun loadData():ArrayList<VideoForUi> {
+    private fun loadData():ArrayList<HistoryList> {
         val allEntries: Map<String, *> = preferences.all
-        val bookmarks = ArrayList<VideoForUi>()
+        val bookmarks = ArrayList<HistoryList>()
         val gson = GsonBuilder().create()
         for((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, VideoForUi::class.java)
+            val item = gson.fromJson(value as String, HistoryList::class.java)
             bookmarks.add(item)
         }
         return bookmarks
+    }
+
+    fun getPrefBookmarkItems(context: Context): ArrayList<HistoryList> {
+        val prefs = context.getSharedPreferences("pref", Activity.MODE_PRIVATE)
+        val allEntries: Map<String, *> = prefs.all
+        val bookmarkItems = ArrayList<HistoryList>()
+        val gson = GsonBuilder().create()
+        for ((key, value) in allEntries) {
+            val item = gson.fromJson(value as String, HistoryList::class.java)
+            bookmarkItems.add(item)
+        }
+        return bookmarkItems
     }
 
     override fun onDestroyView() {
@@ -247,7 +270,7 @@ class SearchFragment : Fragment() {
         }
 
     }
-
+    //  API 호출
     private suspend fun searchByQueryList(query: String, page: String?) =
         withContext(Dispatchers.IO) {
             NetworkClient.apiService.searchByQueryList(
@@ -271,6 +294,7 @@ class SearchFragment : Fragment() {
                 val videos = searchByQueryList(query = search, page = pageToken)
                 historyDataList.add(HistoryList(search)) //검색어 리스트에 저장
                 Log.d("history","검색어 리스트에 저장 $historyDataList")
+                addPrefItem(requireContext(),search)
                 /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
                 /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
                 if (pageToken == null) {
