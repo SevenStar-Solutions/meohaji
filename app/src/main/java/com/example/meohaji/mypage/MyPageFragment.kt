@@ -48,14 +48,6 @@ class MyPageFragment : Fragment() {
     private var items: ArrayList<VideoForUi> = ArrayList()
     private lateinit var preferences: SharedPreferences
     var uiData: List<MyPageUiData> = listOf()
-    // 비교 주석 삭제x
-    //    private val pickImageFromGallery =
-//        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-//            uri?.let {
-//                selectedImageUri = uri
-//                dialogImg.setImageURI(selectedImageUri)
-//            }
-//        }
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val resultCode = result.resultCode
@@ -67,12 +59,12 @@ class MyPageFragment : Fragment() {
                 selectedImageUri = fileUri
                 dialogImg.setImageURI(fileUri)
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                    .show()
             } else {
-//                Toast.makeText(requ, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "선택을 취소하셨습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -94,10 +86,18 @@ class MyPageFragment : Fragment() {
         val (name, image) = Utils.getMyInfo(requireContext())
         items = loadData()
         selectedImageUri = image?.toUri()
-        uiData = listOf(
-            MyPageUiData.Profile(name, image),
-            MyPageUiData.Title,
-        ) + items.map { MyPageUiData.Video(it) }
+        uiData = if (items.isEmpty()) {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+                MyPageUiData.Text
+            )
+        } else {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+            ) + items.map { MyPageUiData.Video(it) }
+        }
 
         myPageAdapter = MyPageAdapter(requireContext())
         myPageAdapter.apply {
@@ -137,7 +137,6 @@ class MyPageFragment : Fragment() {
                     )
                     dialog.show()
                     dialogName.setText(name)
-//                    dialogImg.setImageDrawable(image)
                     if (image == null) {
                         dialogImg.setImageDrawable(
                             ContextCompat.getDrawable(
@@ -148,9 +147,7 @@ class MyPageFragment : Fragment() {
                     } else {
                         dialogImg.setImageDrawable(image)
                     }
-
                     changeBtn.setOnClickListener {
-//                        pickImageFromGallery.launch("image/*") // 비교 주석 삭제x
                         ImagePicker.with(requireActivity())
                             .galleryOnly()
                             .compress(1024)
@@ -162,14 +159,12 @@ class MyPageFragment : Fragment() {
                     }
                 }
             }
-
             detailSaveVideo = object : MyPageAdapter.DetailSaveVideo {
                 override fun move(videoData: VideoForUi) {
                     setDetailFragment(videoData)
                 }
             }
         }
-
         binding.rvMyPage.adapter = myPageAdapter
         binding.rvMyPage.layoutManager = LinearLayoutManager(requireContext())
         myPageAdapter.submitList(uiData.toList())
@@ -192,7 +187,11 @@ class MyPageFragment : Fragment() {
 
     fun checkSharedPreference() {
         items = loadData()
-        uiData = uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        uiData = if (items.isEmpty()) {
+            uiData.subList(0, 2) + MyPageUiData.Text
+        } else {
+            uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        }
         myPageAdapter.submitList(uiData.toList())
     }
 
