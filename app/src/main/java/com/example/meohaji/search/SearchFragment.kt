@@ -1,6 +1,7 @@
 package com.example.meohaji.search
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
+import com.example.meohaji.Constants.PREF_RECENT_KEY
+import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
@@ -28,7 +31,9 @@ import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 interface BtnClick3 {
     fun clickFromSearch()
@@ -46,6 +51,13 @@ class SearchFragment : Fragment() {
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter()
     }
+
+    private val searchRecentAdapter: SearchRecentAdapter by lazy {
+        SearchRecentAdapter()
+    }
+    private val _searchRecentList = MutableLiveData<List<RecentDataClass>>()
+    private val searchRecentList: LiveData<List<RecentDataClass>> get() = _searchRecentList
+    private var etFocus: Boolean = false
 
     var btnClick3: BtnClick3? = null
 
@@ -92,12 +104,39 @@ class SearchFragment : Fragment() {
             }
         })
 
+        // LiveData에 Recent Adapter 연결(???)
+        searchRecentList.observe(viewLifecycleOwner) {
+            searchRecentAdapter.submitList(showRecentData())
+            Log.i("This is SearchFragment","Show Recent : ${showRecentData()}")
+        }
+        // 최근 기록 어댑터 연결
+        binding.rvSearchLatestWords.apply {
+            adapter = searchRecentAdapter
+            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL, false)
+        }
+        // 어댑터에서 클릭한 아이템의 이름을 받아오는 부분
+        searchRecentAdapter.recentData = object : SearchRecentAdapter.RecentData {
+            override fun onDeleted(text: String, name: String) {
+                deleteRecentData(text)
+                searchRecentAdapter.submitList(showRecentData())
+                Log.i("This is SearchFragment", "Interface Called : $text, $name")
+            }
+        }
+        searchRecentAdapter.recentClick = object : SearchRecentAdapter.RecentClick {
+            override fun onClick(name: String) {
+                binding.etSearchFragmentSearch.setText(name)
+                etFocus = false
+            }
+        }
+
         binding.etSearchFragmentSearch.setOnFocusChangeListener { _, hasFocus ->
+            binding.rvSearchLatestWords.scrollToPosition(0)
             binding.constraintLayoutSearchLatestWords.visibility = if (hasFocus) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
+            _searchRecentList.value = showRecentData()  // 얘가 있어야 LiveData에 업데이트 가능???
         }
 
         //LiveData로 Adapter에 연결할때
@@ -119,6 +158,11 @@ class SearchFragment : Fragment() {
                 imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
                 communicateSearchVideos()
                 handled = true
+
+                // 검색어를 최근기록(Shared Preferences)에 저장하는 부분
+                if(binding.etSearchFragmentSearch.text.isNotBlank()) {
+                    saveRecentData(binding.etSearchFragmentSearch.text.toString())
+                }
             }
             handled
         }
@@ -261,4 +305,52 @@ class SearchFragment : Fragment() {
             }
         }
     }
+
+    // SharedPreferences에 검색어 저장하기
+    private fun saveRecentData(text: String) {
+        val preferences = requireContext().getSharedPreferences(PREF_RECENT_KEY, MODE_PRIVATE)
+        val editor = preferences.edit()
+        val allEntries: Map<String, *> = preferences.all
+        // 중복 제거
+        allEntries.forEach {
+            if(it.value == text) {
+                deleteRecentData(it.key)
+            }
+        }
+        editor.putString("${PREF_RECENT_KEY_VALUE}_${dateFormat()}", text)
+        editor.apply()
+    }
+
+    // SharedPreferences에 있는 검색어 삭제하기
+    private fun deleteRecentData(text: String) {
+        val preferences = requireContext().getSharedPreferences(PREF_RECENT_KEY, MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.remove(text)
+        editor.apply()
+        Log.i("This is SearchFragment","Delete Data : $text")
+    }
+
+    // SharedPreferences의 검색어 목록 보여주기(최근 검색어 순)
+    private fun showRecentData() : ArrayList<RecentDataClass>{
+        val preferences = requireContext().getSharedPreferences(PREF_RECENT_KEY, MODE_PRIVATE)
+        val allEntries:Map<String, *> = preferences.all.toSortedMap(compareByDescending { it })
+        val recent = ArrayList<RecentDataClass>()
+        for((key, value) in allEntries) {
+            recent.add(RecentDataClass(value as String, key))
+        }
+        Log.i("This is SearchFragment","recent : $recent")
+        return recent
+    }
+
+    private fun dateFormat(): String {
+        val now = System.currentTimeMillis()
+        val date = Date(now)
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale("ko","KR"))
+        return dateFormat.format(date)
+    }
 }
+
+data class RecentDataClass(
+    val text: String,
+    val time: String
+)
