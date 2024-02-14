@@ -173,7 +173,7 @@ class MyPageFragment : Fragment() {
         myPageAdapter.submitList(uiData.toList())
     }
 
-    //뒤로가기 클릭 시 한번 더 눌러야 종료
+    //뒤로가기 클릭 시 한번 더 눌러서 종료
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (backPressedOnce) {
@@ -189,6 +189,7 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    //SharedPreference 저장분 확인
     fun checkSharedPreference() {
         items = loadData()
         uiData = if (items.isEmpty()) {
@@ -199,6 +200,7 @@ class MyPageFragment : Fragment() {
         myPageAdapter.submitList(uiData.toList())
     }
 
+    //저장한 이미지 불러오기
     private fun loadData(): ArrayList<VideoForUi> {
         val allEntries: Map<String, *> = preferences.all
         val bookmarks = ArrayList<VideoForUi>()
@@ -210,6 +212,7 @@ class MyPageFragment : Fragment() {
         return bookmarks
     }
 
+    //디테일 프레그먼트의 저장 변경 신호를 가져오기
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {

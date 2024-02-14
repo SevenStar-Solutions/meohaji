@@ -1,18 +1,22 @@
 package com.example.meohaji.search
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,7 +26,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.Constants.PREF_RECENT_KEY
 import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
+import com.example.meohaji.NetworkCheckActivity
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.NetworkStatus
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
@@ -57,7 +63,6 @@ class SearchFragment : Fragment() {
     }
     private val _searchRecentList = MutableLiveData<List<RecentDataClass>>()
     private val searchRecentList: LiveData<List<RecentDataClass>> get() = _searchRecentList
-    private var etFocus: Boolean = false
 
     var btnClick3: BtnClick3? = null
 
@@ -89,6 +94,7 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvSearch.adapter = searchAdapter
@@ -98,12 +104,19 @@ class SearchFragment : Fragment() {
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
                 if (lastItemPosition + 2 == totalItemCount && !isLoading) {
-                    isLoading = true
-                    communicateSearchVideos()
+                    if (NetworkStatus.getConnectivityStatus(requireContext()) == NetworkStatus.TYPE_NOT_CONNECTED) {
+                        Toast.makeText(requireContext(), "네트워크 연결이 끊어졌습니다.", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), NetworkCheckActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        isLoading = true
+                        communicateSearchVideos()
+                    }
                 }
             }
         })
 
+        /**포커스 유무 확인*/
         // LiveData에 Recent Adapter 연결(???)
         searchRecentList.observe(viewLifecycleOwner) {
             searchRecentAdapter.submitList(showRecentData())
@@ -125,18 +138,28 @@ class SearchFragment : Fragment() {
         searchRecentAdapter.recentClick = object : SearchRecentAdapter.RecentClick {
             override fun onClick(name: String) {
                 binding.etSearchFragmentSearch.setText(name)
-                etFocus = false
+                binding.etSearchFragmentSearch.clearFocus()
             }
         }
 
         binding.etSearchFragmentSearch.setOnFocusChangeListener { _, hasFocus ->
             binding.rvSearchLatestWords.scrollToPosition(0)
-            binding.constraintLayoutSearchLatestWords.visibility = if (hasFocus) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+            binding.constraintLayoutSearchLatestWords.isVisible = hasFocus
+            binding.viewSearchClearFocus.isVisible = hasFocus
             _searchRecentList.value = showRecentData()  // 얘가 있어야 LiveData에 업데이트 가능???
+        }
+
+        binding.viewSearchClearFocus.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.etSearchFragmentSearch.clearFocus()
+                    hideKeyboard()
+                    v.isVisible = false
+                    true
+                }
+
+                else -> false
+            }
         }
 
         //LiveData로 Adapter에 연결할때
@@ -146,16 +169,13 @@ class SearchFragment : Fragment() {
             isLoading = false
         }
 
-        //키보드에서 엔터로 검색시작
+        /**키보드에서 엔터로 검색시작*/
         binding.etSearchFragmentSearch.setOnEditorActionListener { textView, action, event ->
             var handled = false
             if (action == EditorInfo.IME_ACTION_SEARCH) {
                 pageToken = null
                 binding.etSearchFragmentSearch.clearFocus()
-                //키보드 숨기기
-                val imm =
-                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
+                hideKeyboard()
                 communicateSearchVideos()
                 handled = true
 
@@ -190,6 +210,7 @@ class SearchFragment : Fragment() {
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
+    // 뒤로가기
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (binding.etSearchFragmentSearch.hasFocus()) {
@@ -250,9 +271,9 @@ class SearchFragment : Fragment() {
             }
             setDetailFragment(idData)
         }
-
     }
 
+    //  API 호출
     private suspend fun searchByQueryList(query: String, page: String?) =
         withContext(Dispatchers.IO) {
             NetworkClient.apiService.searchByQueryList(
@@ -276,19 +297,11 @@ class SearchFragment : Fragment() {
                 val videos = searchByQueryList(query = search, page = pageToken)
                 /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
                 /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
-                if (pageToken == null) {
-                    _searchVideoList.value = videos.items.map { item ->
-                        SearchList(
-                            item.snippet.title,
-                            item.snippet.thumbnails.medium.url,
-                            item.snippet.channelTitle,
-                            Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
-                            item.id.videoId
-                        )
-                    }
-                } else {
-                    _searchVideoList.value = searchVideoList.value.orEmpty().toMutableList().apply {
-                        addAll(videos.items.map { item ->
+                if (search.isEmpty()){
+                    Toast.makeText(context,"검색어를 입력해 주세요",Toast.LENGTH_SHORT).show()
+                }else{
+                    if (pageToken == null) {
+                        _searchVideoList.value = videos.items.map { item ->
                             SearchList(
                                 item.snippet.title,
                                 item.snippet.thumbnails.medium.url,
@@ -296,11 +309,26 @@ class SearchFragment : Fragment() {
                                 Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                                 item.id.videoId
                             )
-                        })
+                        }
+                        //무한스크롤 추가 페이지 불러오기
+                    } else {
+                        _searchVideoList.value = searchVideoList.value.orEmpty().toMutableList().apply {
+                            addAll(videos.items.map { item ->
+                                SearchList(
+                                    item.snippet.title,
+                                    item.snippet.thumbnails.medium.url,
+                                    item.snippet.channelTitle,
+                                    Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
+                                    item.id.videoId
+                                )
+                            })
+                        }
                     }
+                    pageToken = videos.nextPageToken
                 }
-                pageToken = videos.nextPageToken
+
             }.onFailure { //오류가 났을때 실행
+                Toast.makeText(context,"인터넷 연결이 되어있지 않습니다",Toast.LENGTH_SHORT).show()
                 Log.e("search", "잘못됐다")
             }
         }
@@ -347,6 +375,13 @@ class SearchFragment : Fragment() {
         val date = Date(now)
         val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale("ko","KR"))
         return dateFormat.format(date)
+    }
+
+    private fun hideKeyboard() {
+        //키보드 숨기기
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
     }
 }
 
