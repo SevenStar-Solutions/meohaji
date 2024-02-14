@@ -20,7 +20,6 @@ import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailChannelFragment
 import com.example.meohaji.detail.DetailFragment
-import com.example.meohaji.main.MainActivity
 
 interface BtnClick2 {
     fun clickFromHome()

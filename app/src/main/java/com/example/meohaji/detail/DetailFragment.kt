@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.meohaji.Constants.PREF_KEY
