@@ -10,7 +10,6 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import com.example.meohaji.NetworkStatus
 import com.example.meohaji.R
 import com.example.meohaji.databinding.ActivityMainBinding
 import com.example.meohaji.home.BtnClick2
