@@ -1,8 +1,10 @@
 package com.example.meohaji.search
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,12 +27,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.Constants.PREF_RECENT_KEY
 import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
+import com.example.meohaji.Constants
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -108,6 +112,7 @@ class SearchFragment : Fragment() {
             }
         })
 
+/**포커스 유무 확인*/
         // LiveData에 Recent Adapter 연결(???)
         searchRecentList.observe(viewLifecycleOwner) {
             searchRecentAdapter.submitList(showRecentData())
@@ -160,7 +165,7 @@ class SearchFragment : Fragment() {
             isLoading = false
         }
 
-        //키보드에서 엔터로 검색시작
+        /**키보드에서 엔터로 검색시작*/
         binding.etSearchFragmentSearch.setOnEditorActionListener { textView, action, event ->
             var handled = false
             if (action == EditorInfo.IME_ACTION_SEARCH) {
@@ -200,7 +205,7 @@ class SearchFragment : Fragment() {
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
-
+// 뒤로가기
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (binding.etSearchFragmentSearch.hasFocus()) {
@@ -263,7 +268,7 @@ class SearchFragment : Fragment() {
         }
 
     }
-
+    //  API 호출
     private suspend fun searchByQueryList(query: String, page: String?) =
         withContext(Dispatchers.IO) {
             NetworkClient.apiService.searchByQueryList(
@@ -287,19 +292,11 @@ class SearchFragment : Fragment() {
                 val videos = searchByQueryList(query = search, page = pageToken)
                 /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
                 /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
-                if (pageToken == null) {
-                    _searchVideoList.value = videos.items.map { item ->
-                        SearchList(
-                            item.snippet.title,
-                            item.snippet.thumbnails.medium.url,
-                            item.snippet.channelTitle,
-                            Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
-                            item.id.videoId
-                        )
-                    }
-                } else {
-                    _searchVideoList.value = searchVideoList.value.orEmpty().toMutableList().apply {
-                        addAll(videos.items.map { item ->
+                if (search.isEmpty()){
+                    Toast.makeText(context,"검색어를 입력해 주세요",Toast.LENGTH_SHORT).show()
+                }else{
+                    if (pageToken == null) {
+                        _searchVideoList.value = videos.items.map { item ->
                             SearchList(
                                 item.snippet.title,
                                 item.snippet.thumbnails.medium.url,
@@ -307,11 +304,26 @@ class SearchFragment : Fragment() {
                                 Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                                 item.id.videoId
                             )
-                        })
+                        }
+                        //무한스크롤 추가 페이지 불러오기
+                    } else {
+                        _searchVideoList.value = searchVideoList.value.orEmpty().toMutableList().apply {
+                            addAll(videos.items.map { item ->
+                                SearchList(
+                                    item.snippet.title,
+                                    item.snippet.thumbnails.medium.url,
+                                    item.snippet.channelTitle,
+                                    Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
+                                    item.id.videoId
+                                )
+                            })
+                        }
                     }
+                    pageToken = videos.nextPageToken
                 }
-                pageToken = videos.nextPageToken
+
             }.onFailure { //오류가 났을때 실행
+                Toast.makeText(context,"인터넷 연결이 되어있지 않습니다",Toast.LENGTH_SHORT).show()
                 Log.e("search", "잘못됐다")
             }
         }

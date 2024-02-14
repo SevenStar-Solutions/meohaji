@@ -2,6 +2,7 @@ package com.example.meohaji.home
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -186,6 +187,8 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 )
             }
             checkComplete(SCROLL_DOWN)
+        }else {
+            Toast.makeText(context,"오류가 발생했습니다", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -20,4 +20,5 @@ object Constants {
     const val PREFS_LIKE_COUNT_KEY = "LIKE_COUNT_PREF"
     const val PREFS_COMMENT_COUNT = "com.example.meohaji.counts"
     const val PREFS_COMMENT_COUNT_KEY = "COMMENT_COUNT_PREF"
+    const val PREFS_HISTORY_DATA_KEY = "HISTORY_DATA_PREF"
 }
