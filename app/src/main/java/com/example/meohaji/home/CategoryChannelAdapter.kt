@@ -28,6 +28,12 @@ class CategoryChannelAdapter(private val context: Context) :
         }
     ) {
 
+    interface VideoChannelClick {
+        fun onClick(channelData: CategoryChannel)
+    }
+
+    var videoChannelClick: VideoChannelClick? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryChannelViewHolder {
         return CategoryChannelViewHolder(
             ItemChannelByCategoryBinding.inflate(
@@ -39,7 +45,7 @@ class CategoryChannelAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: CategoryChannelViewHolder, position: Int) {
-        holder.onBind(currentList[position])
+        holder.onBind(getItem(position))
     }
 
     inner class CategoryChannelViewHolder(private val binding: ItemChannelByCategoryBinding) :
@@ -50,6 +56,9 @@ class CategoryChannelAdapter(private val context: Context) :
                 .into(civChannelByCategoryItemThumbnail)
 
             tvChannelByCategoryItemName.text = item.title
+            itemView.setOnClickListener {
+                videoChannelClick?.onClick(item)
+            }
         }
     }
 }

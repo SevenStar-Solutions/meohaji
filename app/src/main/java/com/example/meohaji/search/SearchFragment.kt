@@ -1,7 +1,6 @@
 package com.example.meohaji.search
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,8 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
-import com.example.meohaji.Constants.PREF_RECENT_KEY
-import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.DetailFragment
@@ -34,7 +31,15 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.round
 
+interface BtnClick3 {
+    fun clickFromSearch()
+}
+
 class SearchFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = SearchFragment()
+    }
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -42,13 +47,15 @@ class SearchFragment : Fragment() {
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter()
     }
-    
-    private val searchRecentAdapter: SearchRecentAdapter by lazy { 
+
+    private val searchRecentAdapter: SearchRecentAdapter by lazy {
         SearchRecentAdapter()
     }
     private val _searchRecentList = MutableLiveData<List<RecentDataClass>>()
     private val searchRecentList: LiveData<List<RecentDataClass>> get() = _searchRecentList
     private var etFocus: Boolean = false
+
+    var btnClick3: BtnClick3? = null
 
     /** MVVM은 안쓰면 LiveData는 안써도 무방*/
     private val _searchVideoList = MutableLiveData<List<SearchList>>()
@@ -60,12 +67,12 @@ class SearchFragment : Fragment() {
     private var pageToken: String? = null
     private var isLoading = false
 
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        if (context is BtnClick3) {
+            btnClick3 = context
+        }
     }
 
     override fun onCreateView(
@@ -171,11 +178,21 @@ class SearchFragment : Fragment() {
     /** 프레그먼트 띄우는 함수 */
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
+        dialog.btnClick = object : BtnClick {
+            override fun click() {
+                btnClick3?.clickFromSearch()
+            }
+        }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (binding.etSearchFragmentSearch.hasFocus()) {
+                binding.etSearchFragmentSearch.clearFocus()
+                return@addCallback
+            }
+
             if (backPressedOnce) {
                 requireActivity().finish() // 애플리케이션 종료
             } else {
@@ -216,7 +233,7 @@ class SearchFragment : Fragment() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -261,7 +278,7 @@ class SearchFragment : Fragment() {
                             item.snippet.title,
                             item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
-                            outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                            Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                             item.id.videoId
                         )
                     }
@@ -272,7 +289,7 @@ class SearchFragment : Fragment() {
                                 item.snippet.title,
                                 item.snippet.thumbnails.medium.url,
                                 item.snippet.channelTitle,
-                                outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                                Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                                 item.id.videoId
                             )
                         })
@@ -283,23 +300,6 @@ class SearchFragment : Fragment() {
                 Log.e("search", "잘못됐다")
             }
         }
-    }
-
-    private fun calRecommendScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): Double {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) 5.0 else totalScore
     }
 
     // SharedPreferences에 검색어 저장하기

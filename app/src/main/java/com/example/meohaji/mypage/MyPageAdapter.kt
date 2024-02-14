@@ -14,13 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
+import com.example.meohaji.databinding.ItemNoItemBinding
 import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import com.example.meohaji.databinding.LayoutMyProfileBinding
 import com.example.meohaji.databinding.LayoutSaveVideoTitleBinding
 import com.example.meohaji.home.VideoForUi
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class MyPageAdapter(private val context: Context) :
     ListAdapter<MyPageUiData, RecyclerView.ViewHolder>(
@@ -46,9 +45,6 @@ class MyPageAdapter(private val context: Context) :
     var editMyProfile: EditMyProfile? = null
     var detailSaveVideo: DetailSaveVideo? = null
 
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
-
     override fun getItemCount(): Int {
         return currentList.size
     }
@@ -58,6 +54,7 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> PROFILE
             is MyPageUiData.Title -> TITLE
             is MyPageUiData.Video -> VIDEO
+            is MyPageUiData.Text -> TEXT
         }
     }
 
@@ -83,9 +80,19 @@ class MyPageAdapter(private val context: Context) :
                 )
             }
 
-            else -> {
+            VIDEO -> {
                 SaveVideoViewHolder(
                     ItemVideoByCategoryBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> {
+                TextViewHolder(
+                    ItemNoItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -100,6 +107,8 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> (holder as ProfileViewHolder).bind(currentList[position] as MyPageUiData.Profile)
             is MyPageUiData.Title -> (holder as TitleViewHolder).bind(currentList[position] as MyPageUiData.Title)
             is MyPageUiData.Video -> (holder as SaveVideoViewHolder).bind(currentList[position] as MyPageUiData.Video)
+            is MyPageUiData.Text -> (holder as TextViewHolder).bind(currentList[position] as MyPageUiData.Text)
+
         }
     }
 
@@ -109,7 +118,12 @@ class MyPageAdapter(private val context: Context) :
             tvMyPageName.text = item.name
 
             if (item.image == null) {
-                civMyPageProfile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_default_profile))
+                civMyPageProfile.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_default_profile
+                    )
+                )
 
             } else {
                 Glide.with(context)
@@ -143,7 +157,7 @@ class MyPageAdapter(private val context: Context) :
 
             btnClearSavedVideo.setOnClickListener {
                 Utils.deletePrefItem(context)
-                submitList(currentList.subList(0, 2))
+                submitList(currentList.subList(0, 2) + MyPageUiData.Text)
             }
         }
     }
@@ -158,7 +172,7 @@ class MyPageAdapter(private val context: Context) :
             tvVideoByCategoryItemTitle.text = item.video.title
             tvVideoByCategoryItemChannelName.text = item.video.channelTitle
             tvVideoByCategoryItemUploadDate.text =
-                outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
+                Utils.outputFormat.format(Utils.inputFormat.parse(item.video.publishedAt) as Date)
             tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
             ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailSaveVideo?.move(item.video)
@@ -166,10 +180,18 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    inner class TextViewHolder(private val binding: ItemNoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: MyPageUiData.Text) = with(binding) {
+
+        }
+    }
+
     companion object {
         private const val PROFILE = 1
         private const val TITLE = 2
         private const val VIDEO = 3
+        private const val TEXT = 4
     }
 }
 

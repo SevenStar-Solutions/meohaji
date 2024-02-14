@@ -10,7 +10,6 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.Utils
 import kotlinx.coroutines.launch
-import kotlin.math.round
 
 class HomeViewModel(private val context: Context) : ViewModel() {
 
@@ -89,7 +88,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -101,7 +100,6 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         } else {
             Log.d("dkj", "is not Successful")
         }
-
     }
 
     private suspend fun communicateVideoByCategory(id: String) {
@@ -114,6 +112,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             pageToken,
             id
         )
+
         if (response.isSuccessful) {
             videoByCategoryList.clear()
             additionalVideoList.clear()
@@ -130,7 +129,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -156,6 +155,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             pageToken,
             categoryId
         )
+
         if (response.isSuccessful) {
             response.body()?.items?.forEach { item ->
                 additionalVideoList.add(
@@ -169,7 +169,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -188,6 +188,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             "snippet,statistics",
             channelIds.toString()
         )
+
         if (response.isSuccessful) {
             channelByCategoryList.clear()
             response.body()?.items?.forEach { item ->
@@ -195,29 +196,16 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                     CategoryChannel(
                         item.id,
                         item.snippet.title,
-                        item.snippet.thumbnails.medium.url
+                        item.snippet.thumbnails.high.url,
+                        item.snippet.description,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.subscriberCount.toInt(),
+                        item.statistics.videoCount.toInt(),
+                        item.snippet.customURL
                     )
                 )
             }
         }
-
-    }
-
-    private fun calRecommendScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): Double {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) 5.0 else totalScore
     }
 
     private fun sortByOrder(order: Int) {

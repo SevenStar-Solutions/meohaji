@@ -3,8 +3,14 @@ package com.example.meohaji
 import android.app.Activity
 import android.content.Context
 import com.example.meohaji.Constants.PREF_KEY
+import java.text.SimpleDateFormat
+import java.util.Locale
+import kotlin.math.round
 
 object Utils {
+
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     fun saveMyInfo(context: Context, name: String, image: String) {
         val namePrefs =
@@ -57,5 +63,36 @@ object Utils {
             viewPrefs.getString(Constants.PREFS_VIEW_COUNT_KEY, null) ?: "0",
             commentPrefs.getString(Constants.PREFS_COMMENT_COUNT_KEY, null) ?: "0"
         )
+    }
+
+    fun setCount(count: Long): String {
+        var ans = ""
+        if (count / 10000L <= 0L) {
+            ans = "$count"
+        } else if (count / 10000L > 0L) {
+            ans = if ((count / 10000L) / 10000L <= 0L) {
+                "${count / 10000L}.${(count % 10000L).toString().first()}만"
+            } else {
+                "${(count / 10000L) / 10000L}.${((count / 10000L) % 10000L).toString().first()}억"
+            }
+        }
+        return ans
+    }
+
+    fun calRecommendScore(
+        description: String,
+        viewCount: Int,
+        likeCount: Int,
+        commentCount: Int
+    ): Double {
+        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
+        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
+        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
+        val isShorts = description.contains("shorts")
+
+        var totalScore =
+            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
+        totalScore = round(totalScore * 10) / 10
+        return if (totalScore > 5.0) 5.0 else totalScore
     }
 }

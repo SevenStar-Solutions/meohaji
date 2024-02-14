@@ -1,5 +1,6 @@
 package com.example.meohaji.mypage
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -16,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -28,9 +30,15 @@ import com.example.meohaji.databinding.FragmentMyPageBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.gson.GsonBuilder
 
 class MyPageFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = MyPageFragment()
+    }
+
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
     private var backPressedOnce = false
@@ -40,15 +48,23 @@ class MyPageFragment : Fragment() {
     private var items: ArrayList<VideoForUi> = ArrayList()
     private lateinit var preferences: SharedPreferences
     var uiData: List<MyPageUiData> = listOf()
+    private val startForProfileImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+            val data = result.data
 
-    private val pickImageFromGallery =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                selectedImageUri = uri
-                dialogImg.setImageURI(selectedImageUri)
+            if (resultCode == Activity.RESULT_OK) {
+                val fileUri = data?.data!!
+
+                selectedImageUri = fileUri
+                dialogImg.setImageURI(fileUri)
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "선택을 취소하셨습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -70,10 +86,18 @@ class MyPageFragment : Fragment() {
         val (name, image) = Utils.getMyInfo(requireContext())
         items = loadData()
         selectedImageUri = image?.toUri()
-        uiData = listOf(
-            MyPageUiData.Profile(name, image),
-            MyPageUiData.Title,
-        ) + items.map { MyPageUiData.Video(it) }
+        uiData = if (items.isEmpty()) {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+                MyPageUiData.Text
+            )
+        } else {
+            listOf(
+                MyPageUiData.Profile(name, image),
+                MyPageUiData.Title,
+            ) + items.map { MyPageUiData.Video(it) }
+        }
 
         myPageAdapter = MyPageAdapter(requireContext())
         myPageAdapter.apply {
@@ -87,7 +111,12 @@ class MyPageFragment : Fragment() {
                     val builder = AlertDialog.Builder(context)
                     builder.setView(dialogView)
                     builder.setPositiveButton("확인") { dialog, _ ->
-                        uiData = listOf(MyPageUiData.Profile(dialogName.text.toString(), selectedImageUri.toString())) + uiData.subList(1, uiData.size)
+                        uiData = listOf(
+                            MyPageUiData.Profile(
+                                dialogName.text.toString(),
+                                selectedImageUri.toString()
+                            )
+                        ) + uiData.subList(1, uiData.size)
                         myPageAdapter.submitList(uiData.toList())
                         Utils.saveMyInfo(
                             requireContext(),
@@ -100,29 +129,42 @@ class MyPageFragment : Fragment() {
                         dialog.cancel()
                     }
                     val dialog = builder.create()
-                    dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.apply_corner_radius_10))
+                    dialog.window?.setBackgroundDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.apply_corner_radius_10
+                        )
+                    )
                     dialog.show()
                     dialogName.setText(name)
-//                    dialogImg.setImageDrawable(image)
                     if (image == null) {
-                        dialogImg.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_default_profile))
+                        dialogImg.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_default_profile
+                            )
+                        )
                     } else {
                         dialogImg.setImageDrawable(image)
                     }
-
                     changeBtn.setOnClickListener {
-                        pickImageFromGallery.launch("image/*")
+                        ImagePicker.with(requireActivity())
+                            .galleryOnly()
+                            .compress(1024)
+                            .maxResultSize(1080, 1080)
+                            .cropSquare()
+                            .createIntent { intent ->
+                                startForProfileImageResult.launch(intent)
+                            }
                     }
                 }
             }
-
             detailSaveVideo = object : MyPageAdapter.DetailSaveVideo {
                 override fun move(videoData: VideoForUi) {
                     setDetailFragment(videoData)
                 }
             }
         }
-
         binding.rvMyPage.adapter = myPageAdapter
         binding.rvMyPage.layoutManager = LinearLayoutManager(requireContext())
         myPageAdapter.submitList(uiData.toList())
@@ -145,15 +187,19 @@ class MyPageFragment : Fragment() {
 
     fun checkSharedPreference() {
         items = loadData()
-        uiData = uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        uiData = if (items.isEmpty()) {
+            uiData.subList(0, 2) + MyPageUiData.Text
+        } else {
+            uiData.subList(0, 2) + items.map { MyPageUiData.Video(it) }
+        }
         myPageAdapter.submitList(uiData.toList())
     }
 
-    private fun loadData():ArrayList<VideoForUi> {
+    private fun loadData(): ArrayList<VideoForUi> {
         val allEntries: Map<String, *> = preferences.all
         val bookmarks = ArrayList<VideoForUi>()
         val gson = GsonBuilder().create()
-        for((key, value) in allEntries) {
+        for ((key, value) in allEntries) {
             val item = gson.fromJson(value as String, VideoForUi::class.java)
             bookmarks.add(item)
         }

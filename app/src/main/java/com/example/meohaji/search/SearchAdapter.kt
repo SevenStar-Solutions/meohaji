@@ -57,11 +57,10 @@ class SearchAdapter : ListAdapter<SearchList, SearchAdapter.ItemViewHolder>(obje
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-//        val item = getItem(position)
-        holder.bind(currentList[position])
+        holder.bind(getItem(position))
         //클릭이 호출됐을때
         holder.itemView.setOnClickListener {
-            videoClick?.onClick(currentList[position])
+            videoClick?.onClick(getItem(position))
         }
     }
 }

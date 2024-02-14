@@ -33,6 +33,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -70,4 +71,6 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.8.2")
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    implementation("com.github.dhaval2404:imagepicker:2.1")
 }

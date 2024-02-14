@@ -10,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.meohaji.Constants.PREF_KEY
 import com.example.meohaji.R
 import com.example.meohaji.Utils
+import com.example.meohaji.Utils.setCount
 import com.example.meohaji.databinding.FragmentDetailBinding
 import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.VideoForUi
@@ -31,8 +33,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-
-private const val ARG_PARAM1 = "param1"
 
 interface BtnClick {
     fun click()
@@ -56,7 +56,7 @@ class DetailFragment : DialogFragment() {
         preferences = requireContext().getSharedPreferences(PREF_KEY, MODE_PRIVATE)
 
         arguments?.let {
-            param1 = it.getParcelable(ARG_PARAM1)
+            param1 = it.getParcelable(ARG_PARAM1, VideoForUi::class.java)
         }
     }
 
@@ -75,42 +75,29 @@ class DetailFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initView()
+        initChart()
+    }
+
+    private fun initView() = with(binding) {
         when (param1!!.id) {
             !in preferences.all.keys -> saveButton()
             in preferences.all.keys -> deleteButton()
         }
-        setUI()
 
-        binding.ivBtnDetailClose.setOnClickListener {       // X버튼 클릭 시 프래그먼트 닫기
-            this.dismiss()
+        tvDetailVideoTitle.text = param1?.title
+        Glide.with(mainActivity)
+            .load(param1?.thumbnail)
+            .into(ivDetailVideoThumbnail)
+        tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
+        tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
+        tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
+        tvDetailUploadDate.text =
+            "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
+        tvDetailTextDescription.text = when (param1?.description) {
+            "" -> "내용이 없습니다."
+            else -> param1?.description
         }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: VideoForUi) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_PARAM1, param1)
-                }
-            }
-    }
-
-    private fun setUI() {
-        binding.apply {
-            tvDetailVideoTitle.text = param1?.title
-            Glide.with(mainActivity)
-                .load(param1?.thumbnail)
-                .into(ivDetailVideoThumbnail)
-            tvDetailCountLike.text = setCount(param1?.likeCount!!.toLong())
-            tvDetailCountView.text = setCount(param1?.viewCount!!.toLong())
-            tvDetailCountRec.text = "${param1?.recommendScore}/5.0"
-            tvDetailUploadDate.text =
-                "게시일 : ${dtf.format(OffsetDateTime.parse(param1?.publishedAt))}"
-            tvDetailTextDescription.text = when (param1?.description) {
-                "" -> "내용이 없습니다."
-                else -> param1?.description
-            }
 
             btnDetailSaveData.setOnClickListener {
                 when (param1!!.id) {
@@ -132,74 +119,79 @@ class DetailFragment : DialogFragment() {
                 shareLink(param1!!)
             }
 
-            val average = Utils.getCounts(requireContext())
-            val entry1 = arrayListOf<BarEntry>(
-                BarEntry(1f, average.first.toFloat() / 5),
-                BarEntry(2f, average.second.toFloat() / 100),
-                BarEntry(3f, average.third.toFloat()),
-            )
+        binding.ivBtnDetailClose.setOnClickListener { // X버튼 클릭 시 프래그먼트 닫기
+            this@DetailFragment.dismiss()
+        }
+    }
 
-            val entry2 = arrayListOf<BarEntry>(
-                BarEntry(1f, param1?.likeCount!!.toFloat() / 5),
-                BarEntry(2f, param1?.viewCount!!.toFloat() / 100),
-                BarEntry(3f, param1?.commentCount!!.toFloat()),
-            )
+    private fun initChart() {
+        val average = Utils.getCounts(requireContext())
+        val entry1 = arrayListOf<BarEntry>(
+            BarEntry(1f, average.first.toFloat() / 5),
+            BarEntry(2f, average.second.toFloat() / 100),
+            BarEntry(3f, average.third.toFloat()),
+        )
 
-            val dataSet1 = BarDataSet(entry1, "인기 동영상 평균")
-            dataSet1.color = ContextCompat.getColor(mainActivity, R.color.yellow_background)
+        val entry2 = arrayListOf<BarEntry>(
+            BarEntry(1f, param1?.likeCount!!.toFloat() / 5),
+            BarEntry(2f, param1?.viewCount!!.toFloat() / 100),
+            BarEntry(3f, param1?.commentCount!!.toFloat()),
+        )
 
-            val dataSet2 = BarDataSet(entry2, "현재 동영상")
-            dataSet2.color = ContextCompat.getColor(mainActivity, R.color.white)
+        val dataSet1 = BarDataSet(entry1, "인기 동영상 평균")
+        dataSet1.color = ContextCompat.getColor(mainActivity, R.color.yellow_background)
 
-            val dataSet: ArrayList<IBarDataSet> = arrayListOf(
-                dataSet1,
-                dataSet2
-            )
-            val data = BarData(dataSet)
-            data.barWidth = 0.2f
+        val dataSet2 = BarDataSet(entry2, "현재 동영상")
+        dataSet2.color = ContextCompat.getColor(mainActivity, R.color.white)
 
-            barChartDetail.run {
-                this.data = data
-                setFitBars(true)
+        val dataSet: ArrayList<IBarDataSet> = arrayListOf(
+            dataSet1,
+            dataSet2
+        )
+        val data = BarData(dataSet)
+        data.barWidth = 0.2f
 
-                description.isEnabled = false
-                setMaxVisibleValueCount(3)
-                setPinchZoom(false)
-                setDrawBarShadow(false)
-                setDrawGridBackground(false)
-                axisLeft.run {
-                    axisMinimum = 0f
-                    setDrawAxisLine(false)
-                    setDrawLabels(false)
-                    setDrawGridLines(false)
-                    axisLineColor = ContextCompat.getColor(mainActivity, R.color.white)
-                    gridColor = ContextCompat.getColor(mainActivity, R.color.white)
-                    textColor = ContextCompat.getColor(mainActivity, R.color.white)
-                    textSize = 13f
-                }
-                xAxis.run {
-                    position = XAxis.XAxisPosition.BOTTOM
-                    axisMaximum = (0f + barData.getGroupWidth(0.44f, 0.08f) * 3)
-                    axisMinimum = 0f
-                    granularity = 1f
-                    setDrawAxisLine(true)
-                    setDrawGridLines(false)
-                    setCenterAxisLabels(true)
-                    isGranularityEnabled = true
-                    textColor = ContextCompat.getColor(mainActivity, R.color.white)
-                    textSize = 12f
-                    valueFormatter = MyXAxisFormatter()
-                }
-                axisRight.isEnabled = false
-                setTouchEnabled(false)
-                groupBars(0f, 0.44f, 0.08f)
-                animateY(1000)
-                legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
-                legend.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-                legend.textColor = ContextCompat.getColor(mainActivity, R.color.white)
-                legend.isEnabled = true
-                invalidate()
+        binding.barChartDetail.run {
+            this.data = data
+            setFitBars(true)
+
+            description.isEnabled = false
+            setMaxVisibleValueCount(3)
+            setPinchZoom(false)
+            setDrawBarShadow(false)
+            setDrawGridBackground(false)
+            axisLeft.run {
+                axisMinimum = 0f
+                setDrawAxisLine(false)
+                setDrawLabels(false)
+                setDrawGridLines(false)
+                axisLineColor = ContextCompat.getColor(mainActivity, R.color.white)
+                gridColor = ContextCompat.getColor(mainActivity, R.color.white)
+                textColor = ContextCompat.getColor(mainActivity, R.color.white)
+                textSize = 13f
             }
+            xAxis.run {
+                position = XAxis.XAxisPosition.BOTTOM
+                axisMaximum = (0f + barData.getGroupWidth(0.44f, 0.08f) * 3)
+                axisMinimum = 0f
+                granularity = 1f
+                setDrawAxisLine(true)
+                setDrawGridLines(false)
+                setCenterAxisLabels(true)
+                isGranularityEnabled = true
+                textColor = ContextCompat.getColor(mainActivity, R.color.white)
+                textSize = 12f
+                valueFormatter = MyXAxisFormatter()
+            }
+            axisRight.isEnabled = false
+            setTouchEnabled(false)
+            groupBars(0f, 0.44f, 0.08f)
+            animateY(1000)
+            legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+            legend.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+            legend.textColor = ContextCompat.getColor(mainActivity, R.color.white)
+            legend.isEnabled = true
+            invalidate()
         }
     }
 
@@ -208,25 +200,6 @@ class DetailFragment : DialogFragment() {
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return counts.getOrNull(value.toInt()) ?: value.toString()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun setCount(count: Long): String {
-        var ans = ""
-        if (count / 10000L <= 0L) {
-            ans = "$count"
-        } else if (count / 10000L > 0L) {
-            ans = if ((count / 10000L) / 10000L <= 0L) {
-                "${count / 10000L}.${(count % 10000L).toString().first()}만"
-            } else {
-                "${(count / 10000L) / 10000L}.${((count / 10000L) % 10000L).toString().first()}억"
-            }
-        }
-        return ans
     }
 
     // SharedPreference에 저장(key = id, value = 값.toString)
@@ -269,11 +242,28 @@ class DetailFragment : DialogFragment() {
         startActivity(Intent.createChooser(intent, text))
     }
 
-    // 스낵바 생성
-    private fun snackBar(view: View, str:String) {
-        Snackbar.make(view, str, Snackbar.LENGTH_SHORT).show()
+    companion object {
+        private const val ARG_PARAM1 = "param1"
+
+        @JvmStatic
+        fun newInstance(param1: VideoForUi) =
+            DetailFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_PARAM1, param1)
+                }
+            }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
+// 스낵바 생성
+private fun snackBar(view: View, str:String) {
+    Snackbar.make(view, str, Snackbar.LENGTH_SHORT).show()
+}
+
 
 object DetailTags{
     const val YOUTUBE_LINK = "https://youtube.com/watch?v="

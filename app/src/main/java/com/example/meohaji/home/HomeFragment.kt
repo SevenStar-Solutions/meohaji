@@ -15,13 +15,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
+import com.example.meohaji.detail.DetailChannelFragment
 import com.example.meohaji.detail.DetailFragment
 
 interface BtnClick2 {
-    fun click()
+    fun clickFromHome()
 }
 
 class HomeFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = HomeFragment()
+    }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -40,7 +45,9 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        btnClick2 = context as BtnClick2
+        if (context is BtnClick2) {
+            btnClick2 = context
+        }
     }
 
     override fun onCreateView(
@@ -94,6 +101,12 @@ class HomeFragment : Fragment() {
                 }
             }
 
+            detailCategoryChannel = object : HomeAdapter.DetailCategoryChannel {
+                override fun move(channelData: CategoryChannel) {
+                    setDetailChannelFragment(channelData)
+                }
+            }
+
             sortCategoryVideo = object : HomeAdapter.SortCategoryVideo {
                 override fun sort(order: Int) {
                     homeViewModel.sortVideo(order)
@@ -134,9 +147,14 @@ class HomeFragment : Fragment() {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
             override fun click() {
-                btnClick2?.click()
+                btnClick2?.clickFromHome()
             }
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
+    }
+
+    private fun setDetailChannelFragment(item: CategoryChannel) {
+        val dialog = DetailChannelFragment.newInstance(item)
+        dialog.show(requireActivity().supportFragmentManager, "DetailChannelFragment")
     }
 }
