@@ -53,6 +53,7 @@ class MyPageFragment : Fragment() {
             val resultCode = result.resultCode
             val data = result.data
 
+            //ImagePicker로 이미지를 성공적으로 받아오면 selectedImageUri과 dialogImg에 전달
             if (resultCode == Activity.RESULT_OK) {
                 val fileUri = data?.data!!
 
@@ -86,6 +87,7 @@ class MyPageFragment : Fragment() {
         val (name, image) = Utils.getMyInfo(requireContext())
         items = loadData()
         selectedImageUri = image?.toUri()
+        //표시할 내용이 없는 경우 텍스트뷰로 알림
         uiData = if (items.isEmpty()) {
             listOf(
                 MyPageUiData.Profile(name, image),
@@ -99,6 +101,7 @@ class MyPageFragment : Fragment() {
             ) + items.map { MyPageUiData.Video(it) }
         }
 
+        //프로필 수정 다이얼로그
         myPageAdapter = MyPageAdapter(requireContext())
         myPageAdapter.apply {
             editMyProfile = object : MyPageAdapter.EditMyProfile {
@@ -170,6 +173,7 @@ class MyPageFragment : Fragment() {
         myPageAdapter.submitList(uiData.toList())
     }
 
+    //뒤로가기 클릭 시 한번 더 눌러야 종료
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (backPressedOnce) {
