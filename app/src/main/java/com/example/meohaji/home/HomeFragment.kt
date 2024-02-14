@@ -24,6 +24,10 @@ interface BtnClick2 {
 
 class HomeFragment : Fragment() {
 
+    companion object {
+        fun newInstance() = HomeFragment()
+    }
+
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 

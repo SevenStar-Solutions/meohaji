@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
@@ -27,16 +28,17 @@ import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
-import kotlin.math.round
 
 interface BtnClick3 {
     fun clickFromSearch()
 }
 
 class SearchFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = SearchFragment()
+    }
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -56,9 +58,6 @@ class SearchFragment : Fragment() {
 
     private var pageToken: String? = null
     private var isLoading = false
-
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -189,7 +188,7 @@ class SearchFragment : Fragment() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -234,7 +233,7 @@ class SearchFragment : Fragment() {
                             item.snippet.title,
                             item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
-                            outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                            Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                             item.id.videoId
                         )
                     }
@@ -245,7 +244,7 @@ class SearchFragment : Fragment() {
                                 item.snippet.title,
                                 item.snippet.thumbnails.medium.url,
                                 item.snippet.channelTitle,
-                                outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                                Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                                 item.id.videoId
                             )
                         })
@@ -256,22 +255,5 @@ class SearchFragment : Fragment() {
                 Log.e("search", "잘못됐다")
             }
         }
-    }
-
-    private fun calRecommendScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): Double {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) 5.0 else totalScore
     }
 }

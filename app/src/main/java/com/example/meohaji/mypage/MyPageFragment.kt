@@ -34,6 +34,11 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.gson.GsonBuilder
 
 class MyPageFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = MyPageFragment()
+    }
+
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
     private var backPressedOnce = false
