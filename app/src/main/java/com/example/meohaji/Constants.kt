@@ -4,6 +4,8 @@ object Constants {
 
     // 영상 저장용 SharedPreference
     const val PREF_KEY = "My Preferences"
+    const val PREF_RECENT_KEY = "My Recent Datas"
+    const val PREF_RECENT_KEY_VALUE = "RECENT"
 
     // 프로필 이미지와 이름 저장용 SharedPreference
     const val PREFS_DIALOG_IMG = "com.example.meohaji.prefs"
