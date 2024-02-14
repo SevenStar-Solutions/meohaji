@@ -3,6 +3,8 @@ package com.example.meohaji
 object Constants {
 
     const val PREF_KEY = "My Preferences"
+    const val PREF_RECENT_KEY = "My Recent Datas"
+    const val PREF_RECENT_KEY_VALUE = "RECENT"
 
     const val PREFS_DIALOG_IMG = "com.example.meohaji.prefs"
     const val PREFS_DIALOG_IMG_KEY = "DIALOG_IMG_PREF"
