@@ -102,9 +102,15 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
     private val spotMid: Float = 0f
     private val spotRight: Float = 45f
 
-    private val btnL = binding.btnTestLeft
-    private val btnM = binding.btnTestMiddle
-    private val btnR = binding.btnTestRight
+    private val btnL by lazy {
+        binding.btnTestLeft
+    }
+    private val btnM by lazy {
+        binding.btnTestMiddle
+    }
+    private val btnR by lazy {
+        binding.btnTestRight
+    }
 
     //네비게이션 버튼을 비추는 스포트라이트의 rotation + alpha 애니메이션
     private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
