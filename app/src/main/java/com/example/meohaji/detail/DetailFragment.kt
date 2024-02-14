@@ -18,6 +18,7 @@ import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.Utils.setCount
 import com.example.meohaji.databinding.FragmentDetailBinding
+import com.example.meohaji.detail.DetailTags.YOUTUBE_LINK
 import com.example.meohaji.home.VideoForUi
 import com.example.meohaji.main.MainActivity
 import com.github.mikephil.charting.components.AxisBase
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.GsonBuilder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -97,24 +99,25 @@ class DetailFragment : DialogFragment() {
             else -> param1?.description
         }
 
-        btnDetailSaveData.setOnClickListener {
-            when (param1!!.id) {
-                !in preferences.all.keys -> {
-                    saveData(param1!!)
-                    deleteButton()
-                }
+            btnDetailSaveData.setOnClickListener {
+                when (param1!!.id) {
+                    !in preferences.all.keys -> {
+                        saveData(param1!!)
+                        snackBar(requireView(),"내 보관함에 저장됨.")
+                        deleteButton()
+                    }
 
-                in preferences.all.keys -> {
-                    deleteData(param1!!.id)
-                    saveButton()
+                    in preferences.all.keys -> {
+                        deleteData(param1!!.id)
+                        snackBar(requireView(),"내 보관함에서 삭제됨.")
+                        saveButton()
+                    }
                 }
+                btnClick?.click()
             }
-            btnClick?.click()
-        }
-
-        btnDetailShare.setOnClickListener {
-            shareLink(param1!!)
-        }
+            btnDetailShare.setOnClickListener {
+                shareLink(param1!!)
+            }
 
         binding.ivBtnDetailClose.setOnClickListener { // X버튼 클릭 시 프래그먼트 닫기
             this@DetailFragment.dismiss()
@@ -219,7 +222,6 @@ class DetailFragment : DialogFragment() {
         binding.btnDetailSaveData.setTextColor(Color.BLACK)
         binding.btnDetailSaveData.setBackgroundResource(R.drawable.apply_detail_button_save)
     }
-
     private fun deleteButton() {
         binding.btnDetailSaveData.text = "삭제"
         binding.btnDetailSaveData.setTextColor(Color.parseColor("#FF4141"))
@@ -232,7 +234,7 @@ class DetailFragment : DialogFragment() {
         intent.type = "text/html"
 
         // 링크 생성 & 인텐트에 담기
-        val url = "https://youtube.com/video/${data.id}"
+        val url = "$YOUTUBE_LINK${data.id}"
         intent.putExtra(Intent.EXTRA_TEXT, url)
 
         // chooser로 앱 선택하기
@@ -256,4 +258,13 @@ class DetailFragment : DialogFragment() {
         super.onDestroyView()
         _binding = null
     }
+}
+// 스낵바 생성
+private fun snackBar(view: View, str:String) {
+    Snackbar.make(view, str, Snackbar.LENGTH_SHORT).show()
+}
+
+
+object DetailTags{
+    const val YOUTUBE_LINK = "https://youtube.com/watch?v="
 }

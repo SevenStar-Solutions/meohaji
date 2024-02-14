@@ -4,16 +4,26 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.example.meohaji.R
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.ActivityMainBinding
 import com.example.meohaji.home.BtnClick2
+import com.example.meohaji.mypage.MyPageUiData
 import com.example.meohaji.search.BtnClick3
+import com.example.meohaji.search.NetworkStatus
+import com.github.dhaval2404.imagepicker.ImagePicker
 
 class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
 
@@ -26,6 +36,13 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        //인터넷 연결 안될시 예외처리
+        if ( NetworkStatus.getConnectivityStatus( this ) == NetworkStatus.TYPE_NOT_CONNECTED ) {
+            // 네트워크가 연결 상태가 아닐 때
+            Toast.makeText(this,"인터넷 연결이 되어있지 않습니다",Toast.LENGTH_SHORT).show()
+            finish()
+        }
 
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             ObjectAnimator.ofFloat(binding.constraintLayoutMainSplash, "alpha", 1f, 0f).apply {
@@ -102,9 +119,15 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
     private val spotMid: Float = 0f
     private val spotRight: Float = 45f
 
-    private val btnL by lazy { binding.btnTestLeft }
-    private val btnM by lazy { binding.btnTestMiddle }
-    private val btnR by lazy { binding.btnTestRight }
+    private val btnL by lazy {
+        binding.btnTestLeft
+    }
+    private val btnM by lazy {
+        binding.btnTestMiddle
+    }
+    private val btnR by lazy {
+        binding.btnTestRight
+    }
 
     //네비게이션 버튼을 비추는 스포트라이트의 rotation + alpha 애니메이션
     private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
