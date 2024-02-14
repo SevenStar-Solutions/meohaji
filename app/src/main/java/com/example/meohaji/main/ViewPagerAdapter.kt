@@ -9,9 +9,9 @@ import com.example.meohaji.search.SearchFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
 
-    private val search = SearchFragment()
-    private val home = HomeFragment()
-    private val myPage = MyPageFragment()
+    private val search = SearchFragment.newInstance()
+    private val home = HomeFragment.newInstance()
+    private val myPage = MyPageFragment.newInstance()
 
     private val fragmentList = listOf(
         search,
