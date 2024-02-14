@@ -1,5 +1,6 @@
 package com.example.meohaji.search
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -9,12 +10,14 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -93,6 +96,7 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvSearch.adapter = searchAdapter
@@ -130,18 +134,28 @@ class SearchFragment : Fragment() {
         searchRecentAdapter.recentClick = object : SearchRecentAdapter.RecentClick {
             override fun onClick(name: String) {
                 binding.etSearchFragmentSearch.setText(name)
-                etFocus = false
+                binding.etSearchFragmentSearch.clearFocus()
             }
         }
 
         binding.etSearchFragmentSearch.setOnFocusChangeListener { _, hasFocus ->
             binding.rvSearchLatestWords.scrollToPosition(0)
-            binding.constraintLayoutSearchLatestWords.visibility = if (hasFocus) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+            binding.constraintLayoutSearchLatestWords.isVisible = hasFocus
+            binding.viewSearchClearFocus.isVisible = hasFocus
             _searchRecentList.value = showRecentData()  // 얘가 있어야 LiveData에 업데이트 가능???
+        }
+
+        binding.viewSearchClearFocus.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.etSearchFragmentSearch.clearFocus()
+                    hideKeyboard()
+                    v.isVisible = false
+                    true
+                }
+
+                else -> false
+            }
         }
 
         //LiveData로 Adapter에 연결할때
@@ -157,10 +171,7 @@ class SearchFragment : Fragment() {
             if (action == EditorInfo.IME_ACTION_SEARCH) {
                 pageToken = null
                 binding.etSearchFragmentSearch.clearFocus()
-                //키보드 숨기기
-                val imm =
-                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
+                hideKeyboard()
                 communicateSearchVideos()
                 handled = true
 
@@ -359,6 +370,13 @@ class SearchFragment : Fragment() {
         val date = Date(now)
         val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale("ko","KR"))
         return dateFormat.format(date)
+    }
+
+    private fun hideKeyboard() {
+        //키보드 숨기기
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
     }
 }
 
