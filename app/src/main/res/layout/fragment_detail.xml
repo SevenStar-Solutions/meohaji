@@ -27,6 +27,7 @@
                 android:id="@+id/tv_detail_video_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:text="@string/detail_item_title"

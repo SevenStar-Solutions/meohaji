@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.Constants
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
@@ -31,16 +32,17 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
-import kotlin.math.round
 
 interface BtnClick3 {
     fun clickFromSearch()
 }
 
 class SearchFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = SearchFragment()
+    }
 
     private lateinit var preferences: SharedPreferences
     private var historyDataList: ArrayList<HistoryList> = arrayListOf()
@@ -67,9 +69,6 @@ class SearchFragment : Fragment() {
 
     private var pageToken: String? = null
     private var isLoading = false
-
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -137,7 +136,6 @@ class SearchFragment : Fragment() {
                 val imm =
                     requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(binding.etSearchFragmentSearch.windowToken, 0)
-//                saveData(historyDataList)
                 communicateSearchVideos()
                 handled = true
             }
@@ -149,52 +147,6 @@ class SearchFragment : Fragment() {
                 communicateIDSearchVideos(videoData.videoId)
             }
         }
-    }
-/** 최근검색어 */
-    private fun saveData(historyData: ArrayList<HistoryList>) {
-    Log.d("history","save함수실행")
-        val editor = preferences.edit()
-        val gson = GsonBuilder().create()
-        editor.putString("historyData", gson.toJson(historyData))
-        editor.apply()
-    Log.d("history","json 변환 $historyData")
-    }
-
-    fun addPrefItem(context: Context, item: String) {
-        val prefs = context.getSharedPreferences("$item", Activity.MODE_PRIVATE)
-        val editor = prefs.edit()
-        val gson = GsonBuilder().create()
-        editor.putString(item, gson.toJson(item))
-        editor.apply()
-    }
-
-    private fun deleteData(id: String) {
-        val editor = preferences.edit()
-        editor.remove(id)
-        editor.apply()
-    }
-
-    private fun loadData():ArrayList<HistoryList> {
-        val allEntries: Map<String, *> = preferences.all
-        val bookmarks = ArrayList<HistoryList>()
-        val gson = GsonBuilder().create()
-        for((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, HistoryList::class.java)
-            bookmarks.add(item)
-        }
-        return bookmarks
-    }
-
-    fun getPrefBookmarkItems(context: Context): ArrayList<HistoryList> {
-        val prefs = context.getSharedPreferences("pref", Activity.MODE_PRIVATE)
-        val allEntries: Map<String, *> = prefs.all
-        val bookmarkItems = ArrayList<HistoryList>()
-        val gson = GsonBuilder().create()
-        for ((key, value) in allEntries) {
-            val item = gson.fromJson(value as String, HistoryList::class.java)
-            bookmarkItems.add(item)
-        }
-        return bookmarkItems
     }
 
     override fun onDestroyView() {
@@ -215,6 +167,11 @@ class SearchFragment : Fragment() {
 
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (binding.etSearchFragmentSearch.hasFocus()) {
+                binding.etSearchFragmentSearch.clearFocus()
+                return@addCallback
+            }
+
             if (backPressedOnce) {
                 requireActivity().finish() // 애플리케이션 종료
             } else {
@@ -255,7 +212,7 @@ class SearchFragment : Fragment() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -294,7 +251,6 @@ class SearchFragment : Fragment() {
                 val videos = searchByQueryList(query = search, page = pageToken)
                 historyDataList.add(HistoryList(search)) //검색어 리스트에 저장
                 Log.d("history","검색어 리스트에 저장 $historyDataList")
-                addPrefItem(requireContext(),search)
                 /**라이브데이타를 쓸때 .value를 붙여야 변수를 넣는다*/
                 /**라이브데이타를 안할땐 searchadapter에 submitlist를 바로 해도된다*/
                 if (pageToken == null) {
@@ -303,7 +259,7 @@ class SearchFragment : Fragment() {
                             item.snippet.title,
                             item.snippet.thumbnails.medium.url,
                             item.snippet.channelTitle,
-                            outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                            Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                             item.id.videoId
                         )
                     }
@@ -314,7 +270,7 @@ class SearchFragment : Fragment() {
                                 item.snippet.title,
                                 item.snippet.thumbnails.medium.url,
                                 item.snippet.channelTitle,
-                                outputFormat.format(inputFormat.parse(item.snippet.publishedAt) as Date),
+                                Utils.outputFormat.format(Utils.inputFormat.parse(item.snippet.publishedAt) as Date),
                                 item.id.videoId
                             )
                         })
@@ -325,22 +281,5 @@ class SearchFragment : Fragment() {
                 Log.e("search", "잘못됐다")
             }
         }
-    }
-
-    private fun calRecommendScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): Double {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) 5.0 else totalScore
     }
 }

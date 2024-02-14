@@ -20,8 +20,6 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private val btnOn: Float = 1f
-    private val btnOff: Float = 0.5f
 
     private val adapter = ViewPagerAdapter(this)
 
@@ -36,49 +34,48 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
             }
         }, 3000)
 
-        setSupportActionBar(binding.toolbarMain)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        binding.viewPagerMain.adapter = adapter
-        binding.viewPagerMain.isUserInputEnabled = false
-        binding.viewPagerMain.setCurrentItem(1, false)
-        binding.viewPagerMain.offscreenPageLimit = 1
-
-        setInitialSize(binding.btnTestMiddle)
-
         with(binding) {
 
+            setSupportActionBar(toolbarMain)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+
+            viewPagerMain.adapter = adapter
+            viewPagerMain.isUserInputEnabled = false
+            viewPagerMain.setCurrentItem(1, false)
+            viewPagerMain.offscreenPageLimit = 1
+
+            //시작 위치인 홈의 크기와 그 주변의 알파 설정
+            setInitialSize(btnTestMiddle)
             btnTestLeft.alpha = 0.6f
             btnTestRight.alpha = 0.6f
 
+            //현재 Frag 위치를 조건으로 행동을 구분
             btnTestLeft.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 0) {
                     viewPagerMain.currentItem = 0
+                    //버튼 크기 확대 시 기준점이 필요해 설정
                     ivSpotLight.pivotX = (ivSpotLight.width / 2).toFloat()
                     ivSpotLight.pivotY = ivSpotLight.height.toFloat()
-                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
+                    animateBtnSizeUp(it as CardView)
 
                     when (currentItem) {
                         1 -> spotlight1to0()
                         2 -> spotlight2to0()
                     }
                 }
-
             }
-
             btnTestMiddle.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 1) {
                     viewPagerMain.currentItem = 1
-                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
+                    animateBtnSizeUp(it as CardView)
 
                     when (currentItem) {
                         0 -> spotlight0to1()
                         2 -> spotlight2to1()
                     }
                 }
-
             }
             btnTestRight.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
@@ -86,24 +83,32 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
                     viewPagerMain.currentItem = 2
                     ivSpotLight.pivotX = (ivSpotLight.width / 2).toFloat()
                     ivSpotLight.pivotY = ivSpotLight.height.toFloat()
-                    animateBtnSizeUp(it as CardView) //적용이 되지 않아 gpt에게 확인해 달라고 하고 추가된 코드인데 학습요망
+                    animateBtnSizeUp(it as CardView)
 
                     when (currentItem) {
                         0 -> spotlight0to2()
                         1 -> spotlight1to2()
                     }
-
                 }
-
             }
+        }
+    }
 
+    //Float 값을 쉽게 변경할 수 있도록 변수화
+    private val lightOn: Float = 1f
+    private val lightOff: Float = 0.6f
 
-        } //end of with binding!!
-    } //end of onCreate!!
+    private val spotLeft: Float = -45f
+    private val spotMid: Float = 0f
+    private val spotRight: Float = 45f
 
+    private val btnL by lazy { binding.btnTestLeft }
+    private val btnM by lazy { binding.btnTestMiddle }
+    private val btnR by lazy { binding.btnTestRight }
+
+    //네비게이션 버튼을 비추는 스포트라이트의 rotation + alpha 애니메이션
     private fun animateSpotlight(fromRotation: Float, toRotation: Float) {
         val spotlight = binding.ivSpotLight
-
         val rotationAnimator =
             ObjectAnimator.ofFloat(spotlight, "rotation", fromRotation, toRotation).apply {
                 duration = 200
@@ -112,7 +117,6 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
             duration = 50
             start()
         }
-
         //애니메이션을 변수화 해서 이동이 완료되면 다시 밝히도록 리스너를 추가
         rotationAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
@@ -122,10 +126,10 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
                 }
             }
         })
-
         rotationAnimator.start()
     }
 
+    //시작 Frag인 홈 위치 버튼 크기를 증가
     private fun setInitialSize(cardView: CardView) {
         val layoutParams = cardView.layoutParams
         val initialWidth = layoutParams.width + 20
@@ -135,129 +139,99 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
         cardView.layoutParams = layoutParams
     }
 
+    //인자로 받은 카드 뷰의 크기를 확대
     private fun animateBtnSizeUp(cardView: CardView) {
+        ObjectAnimator.ofFloat(cardView, "alpha", lightOff, lightOn).apply {
+            duration = 400
+            start()
+        }
         val initialWidth = cardView.width
         val initialHeight = cardView.height
         val targetWidth = initialWidth + 20
         val targetHeight = initialHeight + 20
-
         val animator = ValueAnimator.ofFloat(0f, 1f)
         animator.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Float
             val width = (initialWidth - (initialWidth - targetWidth) * value).toInt()
             val height = (initialHeight - (initialHeight - targetHeight) * value).toInt()
-
             val layoutParams = cardView.layoutParams
             layoutParams.width = width
             layoutParams.height = height
             cardView.layoutParams = layoutParams
         }
-
         animator.duration = 200
         animator.start()
     }
 
+    //인자로 받은 카드 뷰의 키워진 크기를 원래 크기로 축소
     private fun animateBtnSizeDown(cardView: CardView) {
+        ObjectAnimator.ofFloat(cardView, "alpha", lightOn, lightOff).apply {
+            duration = 700
+            start()
+        }
         val initialWidth = cardView.width
         val initialHeight = cardView.height
         val targetWidth = initialWidth - 20
         val targetHeight = initialHeight - 20
-
         val animator = ValueAnimator.ofFloat(0f, 1f)
         animator.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Float
             val width = (initialWidth - (initialWidth - targetWidth) * value).toInt()
             val height = (initialHeight - (initialHeight - targetHeight) * value).toInt()
-
             val layoutParams = cardView.layoutParams
             layoutParams.width = width
             layoutParams.height = height
             cardView.layoutParams = layoutParams
         }
-
         animator.duration = 200
         animator.start()
     }
 
-    private val spotLeft: Float = -45f
-    private val spotMid: Float = 0f
-    private val spotRight: Float = 45f
-
-    private fun testAlphaOn(target : CardView){
-        ObjectAnimator.ofFloat(target,"alpha",0.6f,1f).apply {
-            duration = 400
-            start()
-        }
-    }
-    private fun testAlphaOff(target : CardView){
-        ObjectAnimator.ofFloat(target,"alpha",1f,0.6f).apply {
-            duration = 700
-            start()
-        }
+    //선택된 버튼의 색상을 변경
+    private fun colorChange(target1: CardView, target2: CardView) {
+        target1.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        target2.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
     }
 
+    /**
+     *  버튼간 상호 작용 하는 모습을 만들어 주는 최선의 방법
+     *  좋은 방법이 있으면 지도 부탁드립니다
+     */
     private fun spotlight0to1() {
         animateSpotlight(spotLeft, spotMid)
-        animateBtnSizeDown(binding.btnTestLeft)
-        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-//        binding.btnTestLeft.setCardBackgroundColor(Color.parseColor("#D1D1D1"))
-        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestLeft)
-        testAlphaOn(binding.btnTestMiddle)
-
-
-
+        animateBtnSizeDown(btnL)
+        colorChange(btnL, btnM)
     }
-
     private fun spotlight0to2() {
         animateSpotlight(spotLeft, spotRight)
-        animateBtnSizeDown(binding.btnTestLeft)
-        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestLeft)
-        testAlphaOn(binding.btnTestRight)
+        animateBtnSizeDown(btnL)
+        colorChange(btnL, btnR)
     }
-
     private fun spotlight1to0() {
         animateSpotlight(spotMid, spotLeft)
-        animateBtnSizeDown(binding.btnTestMiddle)
-        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestMiddle)
-        testAlphaOn(binding.btnTestLeft)
+        animateBtnSizeDown(btnM)
+        colorChange(btnM, btnL)
     }
-
     private fun spotlight1to2() {
         animateSpotlight(spotMid, spotRight)
-        animateBtnSizeDown(binding.btnTestMiddle)
-        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestMiddle)
-        testAlphaOn(binding.btnTestRight)
+        animateBtnSizeDown(btnM)
+        colorChange(btnM, btnR)
     }
-
     private fun spotlight2to0() {
         animateSpotlight(spotRight, spotLeft)
-        animateBtnSizeDown(binding.btnTestRight)
-        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestRight)
-        testAlphaOn(binding.btnTestLeft)
+        animateBtnSizeDown(btnR)
+        colorChange(btnR, btnL)
     }
-
     private fun spotlight2to1() {
         animateSpotlight(spotRight, spotMid)
-        animateBtnSizeDown(binding.btnTestRight)
-        binding.btnTestRight.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
-        testAlphaOff(binding.btnTestRight)
-        testAlphaOn(binding.btnTestMiddle)
+        animateBtnSizeDown(btnR)
+        colorChange(btnR, btnM)
     }
 
+    //데이터 변경을 인터페이스로 전달하기 위한 통로
     override fun clickFromHome() {
         adapter.notifyChangeData()
     }
-
     override fun clickFromSearch() {
         adapter.notifyChangeData()
     }

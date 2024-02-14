@@ -10,7 +10,6 @@ import com.example.meohaji.BuildConfig
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.Utils
 import kotlinx.coroutines.launch
-import kotlin.math.round
 
 class HomeViewModel(private val context: Context) : ViewModel() {
 
@@ -37,6 +36,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     private var categoryId = "1"
     var isLoading = false
 
+    // 가장 처음에 사용되는 함수
     fun initialCommunicateNetwork() {
         viewModelScope.launch {
             communicateMostPopularVideos()
@@ -46,6 +46,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 카테고리 변경 시 사용되는 함수
     fun changeCategory(id: String, sortOrder: Int) {
         viewModelScope.launch {
             pageToken = null
@@ -56,6 +57,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 무한 스크롤 시 사용되는 함수
     fun additionalCommunicateNetwork() {
         viewModelScope.launch {
             isLoading = true
@@ -63,11 +65,13 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 영상 정렬시 사용되는 함수
     fun sortVideo(sortOrder: Int) {
         sortByOrder(sortOrder)
         checkComplete(SORT_CHANGE)
     }
 
+    // 가장 인기있는 영상 가져오는 함수
     private suspend fun communicateMostPopularVideos() {
         val response = NetworkClient.apiService.mostPopularVideos(
             BuildConfig.YOUTUBE_API_KEY,
@@ -89,7 +93,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -101,9 +105,9 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         } else {
             Log.d("dkj", "is not Successful")
         }
-
     }
 
+    // 카테고리 영상을 받아오는 함수
     private suspend fun communicateVideoByCategory(id: String) {
         val response = NetworkClient.apiService.videoByCategory(
             BuildConfig.YOUTUBE_API_KEY,
@@ -114,6 +118,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             pageToken,
             id
         )
+
         if (response.isSuccessful) {
             videoByCategoryList.clear()
             additionalVideoList.clear()
@@ -130,7 +135,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -146,6 +151,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 스크롤 시 카테고리 영상을 받아오는 함수
     private suspend fun scrollCommunicateVideoByCategory() {
         val response = NetworkClient.apiService.videoByCategory(
             BuildConfig.YOUTUBE_API_KEY,
@@ -156,6 +162,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
             pageToken,
             categoryId
         )
+
         if (response.isSuccessful) {
             response.body()?.items?.forEach { item ->
                 additionalVideoList.add(
@@ -169,7 +176,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.statistics.viewCount.toInt(),
                         item.statistics.likeCount?.toInt() ?: 0,
                         item.statistics.commentCount.toInt(),
-                        calRecommendScore(
+                        Utils.calRecommendScore(
                             item.snippet.description,
                             item.statistics.viewCount.toInt(),
                             item.statistics.likeCount?.toInt() ?: 0,
@@ -182,12 +189,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 카테고리 채널을 받아오는 함수
     private suspend fun communicationChannelByCategory() {
         val response = NetworkClient.apiService.channelByCategory(
             BuildConfig.YOUTUBE_API_KEY,
             "snippet,statistics",
             channelIds.toString()
         )
+
         if (response.isSuccessful) {
             channelByCategoryList.clear()
             response.body()?.items?.forEach { item ->
@@ -195,31 +204,19 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                     CategoryChannel(
                         item.id,
                         item.snippet.title,
-                        item.snippet.thumbnails.medium.url
+                        item.snippet.thumbnails.high.url,
+                        item.snippet.description,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.subscriberCount.toInt(),
+                        item.statistics.videoCount.toInt(),
+                        item.snippet.customURL
                     )
                 )
             }
         }
-
     }
 
-    private fun calRecommendScore(
-        description: String,
-        viewCount: Int,
-        likeCount: Int,
-        commentCount: Int
-    ): Double {
-        val viewScore = viewCount * 0.5 * (1.0 / viewCount.toString().length)
-        val likeScore = likeCount * 0.3 * (1.0 / likeCount.toString().length)
-        val commentScore = commentCount * 0.2 * (1.0 / commentCount.toString().length)
-        val isShorts = description.contains("shorts")
-
-        var totalScore =
-            if (isShorts) (viewScore + likeScore + commentScore) / viewScore * 3.3 * 1.5 else (viewScore + likeScore + commentScore) / viewScore * 3.3
-        totalScore = round(totalScore * 10) / 10
-        return if (totalScore > 5.0) 5.0 else totalScore
-    }
-
+    // order에 맞춰 영상을 정렬하는 함수
     private fun sortByOrder(order: Int) {
         when (order) {
             0 -> {
@@ -240,9 +237,10 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 타입에 맞춰 UI 데이터를 갱신하는 함수
     private fun checkComplete(type: Int) {
         when (type) {
-            0 -> {
+            ENTIRE_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().subList(0, 6).apply {
                     set(1, HomeUiData.MostPopularVideos(mostPopularVideoList))
                     set(4, HomeUiData.CategoryChannels(channelByCategoryList))
@@ -251,7 +249,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 }
             }
 
-            1 -> {
+            CATEGORY_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().subList(0, 6).apply {
                     set(4, HomeUiData.CategoryChannels(channelByCategoryList))
                 } + videoByCategoryList.map {
@@ -259,14 +257,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 }
             }
 
-            2 -> {
+            SORT_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList()
                     .subList(0, 6) + (videoByCategoryList + additionalVideoList).map {
                     HomeUiData.CategoryVideos(it)
                 }
             }
 
-            3 -> {
+            SCROLL_DOWN -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().apply {
                     addAll(additionalVideoList.map {
                         HomeUiData.CategoryVideos(it)
@@ -276,6 +274,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 인기 영상 Top5 평균 저장하는 함수
     private fun popularVideoAverage() {
         Utils.saveCounts(
             context,

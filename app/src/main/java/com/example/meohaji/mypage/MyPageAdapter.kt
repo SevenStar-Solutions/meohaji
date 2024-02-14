@@ -14,13 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.meohaji.R
 import com.example.meohaji.Utils
+import com.example.meohaji.databinding.ItemNoItemBinding
 import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import com.example.meohaji.databinding.LayoutMyProfileBinding
 import com.example.meohaji.databinding.LayoutSaveVideoTitleBinding
 import com.example.meohaji.home.VideoForUi
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class MyPageAdapter(private val context: Context) :
     ListAdapter<MyPageUiData, RecyclerView.ViewHolder>(
@@ -35,19 +34,18 @@ class MyPageAdapter(private val context: Context) :
         }
     ) {
 
+    // 프로필 편집 페이지로 이동할 때 사용되는 인터페이스
     interface EditMyProfile {
         fun open(name: String, image: Drawable?)
     }
 
+    // 영상 상세 페이지로 이동할 때 사용되는 인터페이스
     interface DetailSaveVideo {
         fun move(videoData: VideoForUi)
     }
 
     var editMyProfile: EditMyProfile? = null
     var detailSaveVideo: DetailSaveVideo? = null
-
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun getItemCount(): Int {
         return currentList.size
@@ -58,6 +56,7 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> PROFILE
             is MyPageUiData.Title -> TITLE
             is MyPageUiData.Video -> VIDEO
+            else -> TEXT
         }
     }
 
@@ -83,9 +82,19 @@ class MyPageAdapter(private val context: Context) :
                 )
             }
 
-            else -> {
+            VIDEO -> {
                 SaveVideoViewHolder(
                     ItemVideoByCategoryBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> {
+                TextViewHolder(
+                    ItemNoItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -96,20 +105,27 @@ class MyPageAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (currentList[position]) {
+        when (getItem(position)) {
             is MyPageUiData.Profile -> (holder as ProfileViewHolder).bind(currentList[position] as MyPageUiData.Profile)
             is MyPageUiData.Title -> (holder as TitleViewHolder).bind(currentList[position] as MyPageUiData.Title)
             is MyPageUiData.Video -> (holder as SaveVideoViewHolder).bind(currentList[position] as MyPageUiData.Video)
+            else -> (holder as TextViewHolder).bind(currentList[position] as MyPageUiData.Text)
         }
     }
 
+    // 프로필 영역 뷰홀더
     inner class ProfileViewHolder(private val binding: LayoutMyProfileBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Profile) = with(binding) {
             tvMyPageName.text = item.name
 
             if (item.image == null) {
-                civMyPageProfile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_default_profile))
+                civMyPageProfile.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_default_profile
+                    )
+                )
 
             } else {
                 Glide.with(context)
@@ -126,6 +142,7 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    // 텍스트 영역 뷰홀더
     inner class TitleViewHolder(private val binding: LayoutSaveVideoTitleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Title) = with(binding) {
@@ -143,11 +160,12 @@ class MyPageAdapter(private val context: Context) :
 
             btnClearSavedVideo.setOnClickListener {
                 Utils.deletePrefItem(context)
-                submitList(currentList.subList(0, 2))
+                submitList(currentList.subList(0, 2) + MyPageUiData.Text)
             }
         }
     }
 
+    // 저장된 영상 영역 뷰홀더
     inner class SaveVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Video) = with(binding) {
@@ -158,7 +176,7 @@ class MyPageAdapter(private val context: Context) :
             tvVideoByCategoryItemTitle.text = item.video.title
             tvVideoByCategoryItemChannelName.text = item.video.channelTitle
             tvVideoByCategoryItemUploadDate.text =
-                outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
+                Utils.outputFormat.format(Utils.inputFormat.parse(item.video.publishedAt) as Date)
             tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
             ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailSaveVideo?.move(item.video)
@@ -166,10 +184,17 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    // 안내 텍스트 영역 뷰홀더
+    inner class TextViewHolder(private val binding: ItemNoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: MyPageUiData.Text) = Unit
+    }
+
     companion object {
         private const val PROFILE = 1
         private const val TITLE = 2
         private const val VIDEO = 3
+        private const val TEXT = 4
     }
 }
 

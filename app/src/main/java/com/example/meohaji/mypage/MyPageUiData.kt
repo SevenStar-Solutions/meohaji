@@ -13,4 +13,6 @@ sealed class MyPageUiData {
     data class Video(
         val video: VideoForUi
     ): MyPageUiData()
+
+    data object Text : MyPageUiData()
 }
