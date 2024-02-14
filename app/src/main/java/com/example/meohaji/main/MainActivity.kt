@@ -196,6 +196,8 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
         }
     }
 
+
+
     private fun spotlight0to1() {
         animateSpotlight(spotLeft, spotMid)
         animateBtnSizeDown(binding.btnTestLeft)
