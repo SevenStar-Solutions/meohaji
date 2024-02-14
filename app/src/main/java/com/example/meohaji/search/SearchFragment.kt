@@ -148,6 +148,11 @@ class SearchFragment : Fragment() {
 
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (binding.etSearchFragmentSearch.hasFocus()) {
+                binding.etSearchFragmentSearch.clearFocus()
+                return@addCallback
+            }
+
             if (backPressedOnce) {
                 requireActivity().finish() // 애플리케이션 종료
             } else {
