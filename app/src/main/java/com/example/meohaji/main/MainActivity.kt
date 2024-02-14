@@ -36,17 +36,17 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
             }
         }, 3000)
 
-        setSupportActionBar(binding.toolbarMain)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        binding.viewPagerMain.adapter = adapter
-        binding.viewPagerMain.isUserInputEnabled = false
-        binding.viewPagerMain.setCurrentItem(1, false)
-        binding.viewPagerMain.offscreenPageLimit = 1
-
-        setInitialSize(binding.btnTestMiddle)
-
         with(binding) {
+
+            setSupportActionBar(toolbarMain)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+
+            viewPagerMain.adapter = adapter
+            viewPagerMain.isUserInputEnabled = false
+            viewPagerMain.setCurrentItem(1, false)
+            viewPagerMain.offscreenPageLimit = 1
+
+            setInitialSize(btnTestMiddle)
 
             btnTestLeft.alpha = 0.6f
             btnTestRight.alpha = 0.6f
@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
                         2 -> spotlight2to0()
                     }
                 }
-
             }
 
             btnTestMiddle.setOnClickListener {
@@ -78,8 +77,8 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
                         2 -> spotlight2to1()
                     }
                 }
-
             }
+
             btnTestRight.setOnClickListener {
                 val currentItem = viewPagerMain.currentItem
                 if (currentItem != 2) {
@@ -92,12 +91,8 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
                         0 -> spotlight0to2()
                         1 -> spotlight1to2()
                     }
-
                 }
-
             }
-
-
         } //end of with binding!!
     } //end of onCreate!!
 
@@ -202,13 +197,9 @@ class MainActivity : AppCompatActivity(), BtnClick2, BtnClick3 {
         animateSpotlight(spotLeft, spotMid)
         animateBtnSizeDown(binding.btnTestLeft)
         binding.btnTestLeft.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white))
-//        binding.btnTestLeft.setCardBackgroundColor(Color.parseColor("#D1D1D1"))
         binding.btnTestMiddle.setCardBackgroundColor(ContextCompat.getColor(this, R.color.yellow_background))
         testAlphaOff(binding.btnTestLeft)
         testAlphaOn(binding.btnTestMiddle)
-
-
-
     }
 
     private fun spotlight0to2() {

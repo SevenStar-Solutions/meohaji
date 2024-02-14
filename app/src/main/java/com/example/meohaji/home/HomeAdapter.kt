@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import com.example.meohaji.databinding.LayoutChannelByCategoryBinding
 import com.example.meohaji.databinding.LayoutMostPopularVideoBinding
@@ -17,9 +18,7 @@ import com.example.meohaji.databinding.LayoutSelectCategoryBinding
 import com.example.meohaji.databinding.LayoutThemeTitleBinding
 import com.example.meohaji.databinding.LayoutThemeTitleWithSpinnerBinding
 import com.google.android.material.R
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class HomeAdapter(private val context: Context) :
     ListAdapter<HomeUiData, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<HomeUiData>() {
@@ -60,9 +59,6 @@ class HomeAdapter(private val context: Context) :
 
     private var categorySpinnerIdx = 0
     private var sortSpinnerIdx = 0
-
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -176,7 +172,7 @@ class HomeAdapter(private val context: Context) :
             tvVideoByCategoryItemTitle.text = item.video.title
             tvVideoByCategoryItemChannelName.text = item.video.channelTitle
             tvVideoByCategoryItemUploadDate.text =
-                outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
+                Utils.outputFormat.format(Utils.inputFormat.parse(item.video.publishedAt) as Date)
             tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
             ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailCategoryVideo?.move(item.video)

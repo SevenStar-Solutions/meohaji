@@ -19,9 +19,7 @@ import com.example.meohaji.databinding.ItemVideoByCategoryBinding
 import com.example.meohaji.databinding.LayoutMyProfileBinding
 import com.example.meohaji.databinding.LayoutSaveVideoTitleBinding
 import com.example.meohaji.home.VideoForUi
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 class MyPageAdapter(private val context: Context) :
     ListAdapter<MyPageUiData, RecyclerView.ViewHolder>(
@@ -46,9 +44,6 @@ class MyPageAdapter(private val context: Context) :
 
     var editMyProfile: EditMyProfile? = null
     var detailSaveVideo: DetailSaveVideo? = null
-
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun getItemCount(): Int {
         return currentList.size
@@ -123,7 +118,12 @@ class MyPageAdapter(private val context: Context) :
             tvMyPageName.text = item.name
 
             if (item.image == null) {
-                civMyPageProfile.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_default_profile))
+                civMyPageProfile.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_default_profile
+                    )
+                )
 
             } else {
                 Glide.with(context)
@@ -172,7 +172,7 @@ class MyPageAdapter(private val context: Context) :
             tvVideoByCategoryItemTitle.text = item.video.title
             tvVideoByCategoryItemChannelName.text = item.video.channelTitle
             tvVideoByCategoryItemUploadDate.text =
-                outputFormat.format(inputFormat.parse(item.video.publishedAt) as Date)
+                Utils.outputFormat.format(Utils.inputFormat.parse(item.video.publishedAt) as Date)
             tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
             ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailSaveVideo?.move(item.video)
