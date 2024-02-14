@@ -3,7 +3,7 @@
     <item android:state_pressed="true">
         <shape>
             <solid
-                android:color="@color/black_background"/>
+                android:color="#7F6B05"/>
         </shape>
     </item>
 

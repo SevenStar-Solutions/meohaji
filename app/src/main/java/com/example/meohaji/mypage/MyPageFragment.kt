@@ -53,6 +53,7 @@ class MyPageFragment : Fragment() {
             val resultCode = result.resultCode
             val data = result.data
 
+            //ImagePicker로 이미지를 성공적으로 받아오면 selectedImageUri과 dialogImg에 전달
             if (resultCode == Activity.RESULT_OK) {
                 val fileUri = data?.data!!
 
@@ -86,6 +87,7 @@ class MyPageFragment : Fragment() {
         val (name, image) = Utils.getMyInfo(requireContext())
         items = loadData()
         selectedImageUri = image?.toUri()
+        //표시할 내용이 없는 경우 텍스트뷰로 알림
         uiData = if (items.isEmpty()) {
             listOf(
                 MyPageUiData.Profile(name, image),
@@ -99,6 +101,7 @@ class MyPageFragment : Fragment() {
             ) + items.map { MyPageUiData.Video(it) }
         }
 
+        //프로필 수정 다이얼로그
         myPageAdapter = MyPageAdapter(requireContext())
         myPageAdapter.apply {
             editMyProfile = object : MyPageAdapter.EditMyProfile {
@@ -170,6 +173,7 @@ class MyPageFragment : Fragment() {
         myPageAdapter.submitList(uiData.toList())
     }
 
+    //뒤로가기 클릭 시 한번 더 눌러서 종료
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (backPressedOnce) {
@@ -185,6 +189,7 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    //SharedPreference 저장분 확인
     fun checkSharedPreference() {
         items = loadData()
         uiData = if (items.isEmpty()) {
@@ -195,6 +200,7 @@ class MyPageFragment : Fragment() {
         myPageAdapter.submitList(uiData.toList())
     }
 
+    //저장한 이미지 불러오기
     private fun loadData(): ArrayList<VideoForUi> {
         val allEntries: Map<String, *> = preferences.all
         val bookmarks = ArrayList<VideoForUi>()
@@ -206,6 +212,7 @@ class MyPageFragment : Fragment() {
         return bookmarks
     }
 
+    //디테일 프레그먼트의 저장 변경 신호를 가져오기
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
