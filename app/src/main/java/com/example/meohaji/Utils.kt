@@ -9,9 +9,11 @@ import kotlin.math.round
 
 object Utils {
 
+    // 들어오는 String타입 날짜 포맷팅을 위한 변수
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
     val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
+    // 사용자 정보 저장하는 함수
     fun saveMyInfo(context: Context, name: String, image: String) {
         val namePrefs =
             context.getSharedPreferences(Constants.PREFS_DIALOG_NAME, Context.MODE_PRIVATE)
@@ -22,6 +24,7 @@ object Utils {
 
     }
 
+    // 사용자 정보 불러오는 함수
     fun getMyInfo(context: Context): Pair<String?, String?> {
         val namePrefs = context.getSharedPreferences(Constants.PREFS_DIALOG_NAME, 0)
         val name = namePrefs.getString(Constants.PREFS_DIALOG_NAME_KEY, null)
@@ -32,12 +35,14 @@ object Utils {
         return Pair(name, image)
     }
 
+    // 영상 정보 다 지우는 함수
     fun deletePrefItem(context: Context) {
         val prefs = context.getSharedPreferences(PREF_KEY, Activity.MODE_PRIVATE)
         val editor = prefs.edit()
         editor.clear().apply()
     }
 
+    // 통계 자료 저장하는 함수
     fun saveCounts(context: Context, view: Int, like: Int, comment: Int) {
         val viewPrefs =
             context.getSharedPreferences(Constants.PREFS_VIEW_COUNT, Context.MODE_PRIVATE)
@@ -50,6 +55,7 @@ object Utils {
         commentPrefs.edit().putString(Constants.PREFS_COMMENT_COUNT_KEY, comment.toString()).apply()
     }
 
+    // 통계 자료 불러오는 함수
     fun getCounts(context: Context): Triple<String, String, String> {
         val viewPrefs =
             context.getSharedPreferences(Constants.PREFS_VIEW_COUNT, Context.MODE_PRIVATE)
@@ -65,6 +71,7 @@ object Utils {
         )
     }
 
+    // 통계 자료 세팅하는 함수
     fun setCount(count: Long): String {
         var ans = ""
         if (count / 10000L <= 0L) {
@@ -79,6 +86,7 @@ object Utils {
         return ans
     }
 
+    // 추천 점수 계산하는 함수
     fun calRecommendScore(
         description: String,
         viewCount: Int,

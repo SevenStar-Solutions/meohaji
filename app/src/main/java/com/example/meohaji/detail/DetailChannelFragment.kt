@@ -50,6 +50,7 @@ class DetailChannelFragment : DialogFragment() {
         initView()
     }
 
+    // 뷰 초기화 함수
     private fun initView() = with(binding) {
 
         Glide.with(mainActivity)
@@ -63,10 +64,12 @@ class DetailChannelFragment : DialogFragment() {
         tvDetailChannelTextDescription.text = param1?.description
         tvDetailChannelCustomUrl.text = param1?.customUrl
 
-        ivBtnDetailChannelClose.setOnClickListener {// X버튼 클릭 시 프래그먼트 닫기
+        // X버튼 클릭 리스너
+        ivBtnDetailChannelClose.setOnClickListener {
             dismiss()
         }
 
+        // 썸네일 영역 눌렀을 때 유튜브 앱의 채널로 이동하는 클릭 리스너
         constraintLayoutDetailChannelClickArea.setOnClickListener {
             startActivity(Intent(
                 Intent.ACTION_VIEW,

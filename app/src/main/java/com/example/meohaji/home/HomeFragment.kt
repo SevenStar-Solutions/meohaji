@@ -39,6 +39,7 @@ class HomeFragment : Fragment() {
         HomeAdapter(requireContext())
     }
 
+    // Context를 가지는 뷰모델 생성
     private val homeViewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(requireContext())
     }
@@ -69,8 +70,11 @@ class HomeFragment : Fragment() {
         initView()
     }
 
+    // 뷰 초기화 함수
     private fun initView() {
         binding.rvHome.adapter = homeAdapter
+
+        // 스크롤 감지하여 무한 스크롤 진행
         binding.rvHome.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val lastItemPosition =
@@ -82,6 +86,7 @@ class HomeFragment : Fragment() {
             }
         })
 
+        // 어댑터에서 만든 인터페이스 함수 구현
         homeAdapter.apply {
             communicateVideoByCategory = object : HomeAdapter.CommunicateVideoByCategory {
                 override fun call(id: String, sortOrder: Int) {
@@ -103,7 +108,7 @@ class HomeFragment : Fragment() {
 
             detailCategoryChannel = object : HomeAdapter.DetailCategoryChannel {
                 override fun move(channelData: CategoryChannel) {
-                    setDetailChannelFragment(channelData)
+                    setDetailFragment(channelData)
                 }
             }
 
@@ -115,6 +120,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // 뷰모델 초기화 함수
     private fun initViewModel() = with(homeViewModel) {
         homeList.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it.toList())
@@ -143,6 +149,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // 영상 상세 페이지 다이얼로그 생성하는 함수
     private fun setDetailFragment(item: VideoForUi) {
         val dialog = DetailFragment.newInstance(item)
         dialog.btnClick = object : BtnClick {
@@ -153,7 +160,8 @@ class HomeFragment : Fragment() {
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
 
-    private fun setDetailChannelFragment(item: CategoryChannel) {
+    // 채널 상세 페이지 다이얼로그 생성하는 함수
+    private fun setDetailFragment(item: CategoryChannel) {
         val dialog = DetailChannelFragment.newInstance(item)
         dialog.show(requireActivity().supportFragmentManager, "DetailChannelFragment")
     }
