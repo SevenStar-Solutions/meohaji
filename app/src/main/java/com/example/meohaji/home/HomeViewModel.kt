@@ -101,7 +101,6 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         } else {
             Log.d("dkj", "is not Successful")
         }
-
     }
 
     private suspend fun communicateVideoByCategory(id: String) {
@@ -195,12 +194,16 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                     CategoryChannel(
                         item.id,
                         item.snippet.title,
-                        item.snippet.thumbnails.medium.url
+                        item.snippet.thumbnails.high.url,
+                        item.snippet.description,
+                        item.statistics.viewCount.toInt(),
+                        item.statistics.subscriberCount.toInt(),
+                        item.statistics.videoCount.toInt(),
+                        item.snippet.customURL
                     )
                 )
             }
         }
-
     }
 
     private fun calRecommendScore(

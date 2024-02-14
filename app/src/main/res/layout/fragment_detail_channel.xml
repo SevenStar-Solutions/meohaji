@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".detail.DetailFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black_background"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/tv_detail_channel_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginHorizontal="20dp"
+                android:fontFamily="@font/moyamoya"
+                android:gravity="center"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="채널 이름" />
+
+            <ImageView
+                android:id="@+id/iv_btn_detail_channel_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/ic_close"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_detail_channel_click_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_channel_name">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/civ_detail_channel_thumbnail"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_detail_channel_custom_url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="\@hangoutwith_yoo"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/civ_detail_channel_thumbnail" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tv_detail_channel_custom_url_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="썸네일 또는 커스텀 URL을 클릭시 해당 채널로 이동합니다."
+                android:textSize="10sp"
+                android:textColor="#AFAFAF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraint_layout_detail_channel_click_area" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_subscriber_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="29,564"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_channel_video_count"
+                app:layout_constraintEnd_toEndOf="@+id/tv_detail_channel_subscriber"
+                app:layout_constraintStart_toStartOf="@+id/tv_detail_channel_subscriber"
+                app:layout_constraintTop_toTopOf="@+id/tv_detail_channel_video_count" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_video_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="15dp"
+                android:text="29,1231"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_detail_channel_video"
+                app:layout_constraintEnd_toEndOf="@+id/tv_detail_channel_video"
+                app:layout_constraintStart_toStartOf="@+id/tv_detail_channel_video"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_channel_custom_url_description" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_total_view_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="29,121231"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_channel_video_count"
+                app:layout_constraintEnd_toEndOf="@+id/tv_detail_channel_total_view"
+                app:layout_constraintStart_toStartOf="@+id/tv_detail_channel_total_view"
+                app:layout_constraintTop_toTopOf="@+id/tv_detail_channel_video_count" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_subscriber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="구독자수"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_channel_video"
+                app:layout_constraintEnd_toStartOf="@+id/tv_detail_channel_video"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_detail_channel_video" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="동영상수"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_detail_channel_total_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_detail_channel_subscriber"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_channel_video_count" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_total_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="총조회수"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_channel_video"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_detail_channel_video"
+                app:layout_constraintTop_toTopOf="@+id/tv_detail_channel_video" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/detail_text_description"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_detail_channel_video" />
+
+            <TextView
+                android:id="@+id/tv_detail_channel_text_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="4dp"
+                android:text="설명"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_detail_channel_description" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

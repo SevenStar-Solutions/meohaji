@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
+import com.example.meohaji.detail.DetailChannelFragment
 import com.example.meohaji.detail.DetailFragment
 
 interface BtnClick2 {
@@ -96,6 +97,12 @@ class HomeFragment : Fragment() {
                 }
             }
 
+            detailCategoryChannel = object : HomeAdapter.DetailCategoryChannel {
+                override fun move(channelData: CategoryChannel) {
+                    setDetailChannelFragment(channelData)
+                }
+            }
+
             sortCategoryVideo = object : HomeAdapter.SortCategoryVideo {
                 override fun sort(order: Int) {
                     homeViewModel.sortVideo(order)
@@ -140,5 +147,10 @@ class HomeFragment : Fragment() {
             }
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
+    }
+
+    private fun setDetailChannelFragment(item: CategoryChannel) {
+        val dialog = DetailChannelFragment.newInstance(item)
+        dialog.show(requireActivity().supportFragmentManager, "DetailChannelFragment")
     }
 }
