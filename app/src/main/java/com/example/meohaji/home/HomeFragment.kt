@@ -1,6 +1,7 @@
 package com.example.meohaji.home
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,10 +14,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.meohaji.NetworkCheckActivity
+import com.example.meohaji.NetworkStatus
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailChannelFragment
 import com.example.meohaji.detail.DetailFragment
+import com.example.meohaji.main.MainActivity
 
 interface BtnClick2 {
     fun clickFromHome()
@@ -81,7 +85,13 @@ class HomeFragment : Fragment() {
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
                 if (lastItemPosition + 2 == totalItemCount && !homeViewModel.isLoading) {
-                    homeViewModel.additionalCommunicateNetwork()
+                    if (NetworkStatus.getConnectivityStatus(requireContext()) == NetworkStatus.TYPE_NOT_CONNECTED) {
+                        Toast.makeText(requireContext(), "네트워크 연결이 끊어졌습니다.", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), NetworkCheckActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        homeViewModel.additionalCommunicateNetwork()
+                    }
                 }
             }
         })
@@ -90,7 +100,13 @@ class HomeFragment : Fragment() {
         homeAdapter.apply {
             communicateVideoByCategory = object : HomeAdapter.CommunicateVideoByCategory {
                 override fun call(id: String, sortOrder: Int) {
-                    homeViewModel.changeCategory(id, sortOrder)
+                    if (NetworkStatus.getConnectivityStatus(requireContext()) == NetworkStatus.TYPE_NOT_CONNECTED) {
+                        Toast.makeText(requireContext(), "네트워크 연결이 끊어졌습니다.", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), NetworkCheckActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        homeViewModel.changeCategory(id, sortOrder)
+                    }
                 }
             }
 
