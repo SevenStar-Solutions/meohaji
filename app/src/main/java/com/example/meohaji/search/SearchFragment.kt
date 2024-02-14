@@ -1,10 +1,9 @@
 package com.example.meohaji.search
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -27,14 +26,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
 import com.example.meohaji.Constants.PREF_RECENT_KEY
 import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
-import com.example.meohaji.Constants
+import com.example.meohaji.NetworkCheckActivity
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.NetworkStatus
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,7 +63,6 @@ class SearchFragment : Fragment() {
     }
     private val _searchRecentList = MutableLiveData<List<RecentDataClass>>()
     private val searchRecentList: LiveData<List<RecentDataClass>> get() = _searchRecentList
-    private var etFocus: Boolean = false
 
     var btnClick3: BtnClick3? = null
 
@@ -106,13 +104,19 @@ class SearchFragment : Fragment() {
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
                 if (lastItemPosition + 2 == totalItemCount && !isLoading) {
-                    isLoading = true
-                    communicateSearchVideos()
+                    if (NetworkStatus.getConnectivityStatus(requireContext()) == NetworkStatus.TYPE_NOT_CONNECTED) {
+                        Toast.makeText(requireContext(), "네트워크 연결이 끊어졌습니다.", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), NetworkCheckActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        isLoading = true
+                        communicateSearchVideos()
+                    }
                 }
             }
         })
 
-/**포커스 유무 확인*/
+        /**포커스 유무 확인*/
         // LiveData에 Recent Adapter 연결(???)
         searchRecentList.observe(viewLifecycleOwner) {
             searchRecentAdapter.submitList(showRecentData())
@@ -205,7 +209,8 @@ class SearchFragment : Fragment() {
         }
         dialog.show(requireActivity().supportFragmentManager, "DetailFragment")
     }
-// 뒤로가기
+
+    // 뒤로가기
     private fun overrideBackAction() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (binding.etSearchFragmentSearch.hasFocus()) {
@@ -266,8 +271,8 @@ class SearchFragment : Fragment() {
             }
             setDetailFragment(idData)
         }
-
     }
+
     //  API 호출
     private suspend fun searchByQueryList(query: String, page: String?) =
         withContext(Dispatchers.IO) {

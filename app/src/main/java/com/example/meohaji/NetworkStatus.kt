@@ -1,4 +1,4 @@
-package com.example.meohaji.search
+package com.example.meohaji
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -6,12 +6,10 @@ import android.net.NetworkCapabilities
 import android.os.Build
 
 class NetworkStatus {
-
     companion object {
         const val TYPE_WIFI = 1
         const val TYPE_MOBILE = 2
         const val TYPE_NOT_CONNECTED = 3
-
 
         fun getConnectivityStatus(context: Context): Int {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -26,10 +24,20 @@ class NetworkStatus {
                     else -> return TYPE_NOT_CONNECTED
                 }
             }
+            else {
+                connectivityManager.run {
+                    connectivityManager.activeNetworkInfo?.run {
 
+                        return when (type) {
+                            ConnectivityManager.TYPE_WIFI -> return TYPE_WIFI
+                            ConnectivityManager.TYPE_MOBILE -> return TYPE_MOBILE
+                            else -> return TYPE_NOT_CONNECTED
+                        }
+
+                    }
+                }
+            }
             return TYPE_NOT_CONNECTED
         }
-
     }
-
 }
