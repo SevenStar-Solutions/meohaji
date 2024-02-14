@@ -1,6 +1,7 @@
 package com.example.meohaji.search
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,8 +20,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
+import com.example.meohaji.Constants.PREF_RECENT_KEY
+import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
 import com.example.meohaji.NetworkClient
+import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
+import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailFragment
 import com.example.meohaji.home.VideoForUi
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +34,6 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.round
 
 interface BtnClick3 {
     fun clickFromSearch()
