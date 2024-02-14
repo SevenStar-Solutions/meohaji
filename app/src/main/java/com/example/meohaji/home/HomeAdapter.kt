@@ -44,6 +44,10 @@ class HomeAdapter(private val context: Context) :
         fun move(videoData: VideoForUi)
     }
 
+    interface DetailCategoryChannel {
+        fun move(channelData: CategoryChannel)
+    }
+
     interface SortCategoryVideo {
         fun sort(order: Int)
     }
@@ -51,6 +55,7 @@ class HomeAdapter(private val context: Context) :
     var communicateVideoByCategory: CommunicateVideoByCategory? = null
     var detailMostPopularVideo: DetailMostPopularVideo? = null
     var detailCategoryVideo: DetailCategoryVideo? = null
+    var detailCategoryChannel: DetailCategoryChannel? = null
     var sortCategoryVideo: SortCategoryVideo? = null
 
     private var categorySpinnerIdx = 0
@@ -152,6 +157,11 @@ class HomeAdapter(private val context: Context) :
             val categoryChannelAdapter = CategoryChannelAdapter(context)
             binding.rvHomeChannelByCategory.adapter = categoryChannelAdapter
             categoryChannelAdapter.submitList(item.list.toList())
+            categoryChannelAdapter.videoChannelClick = object : CategoryChannelAdapter.VideoChannelClick {
+                override fun onClick(channelData: CategoryChannel) {
+                    detailCategoryChannel?.move(channelData)
+                }
+            }
         }
     }
 
