@@ -67,6 +67,12 @@
         app:layout_constraintTop_toBottomOf="@+id/et_search_fragment_search"
         app:layout_constraintVertical_bias="1.0" />
 
+    <View
+        android:id="@+id/view_search_clear_focus"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
