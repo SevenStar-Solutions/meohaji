@@ -36,6 +36,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     private var categoryId = "1"
     var isLoading = false
 
+    // 가장 처음에 사용되는 함수
     fun initialCommunicateNetwork() {
         viewModelScope.launch {
             communicateMostPopularVideos()
@@ -45,6 +46,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 카테고리 변경 시 사용되는 함수
     fun changeCategory(id: String, sortOrder: Int) {
         viewModelScope.launch {
             pageToken = null
@@ -55,6 +57,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 무한 스크롤 시 사용되는 함수
     fun additionalCommunicateNetwork() {
         viewModelScope.launch {
             isLoading = true
@@ -62,11 +65,13 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 영상 정렬시 사용되는 함수
     fun sortVideo(sortOrder: Int) {
         sortByOrder(sortOrder)
         checkComplete(SORT_CHANGE)
     }
 
+    // 가장 인기있는 영상 가져오는 함수
     private suspend fun communicateMostPopularVideos() {
         val response = NetworkClient.apiService.mostPopularVideos(
             BuildConfig.YOUTUBE_API_KEY,
@@ -102,6 +107,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 카테고리 영상을 받아오는 함수
     private suspend fun communicateVideoByCategory(id: String) {
         val response = NetworkClient.apiService.videoByCategory(
             BuildConfig.YOUTUBE_API_KEY,
@@ -145,6 +151,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 스크롤 시 카테고리 영상을 받아오는 함수
     private suspend fun scrollCommunicateVideoByCategory() {
         val response = NetworkClient.apiService.videoByCategory(
             BuildConfig.YOUTUBE_API_KEY,
@@ -182,6 +189,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 카테고리 채널을 받아오는 함수
     private suspend fun communicationChannelByCategory() {
         val response = NetworkClient.apiService.channelByCategory(
             BuildConfig.YOUTUBE_API_KEY,
@@ -208,6 +216,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // order에 맞춰 영상을 정렬하는 함수
     private fun sortByOrder(order: Int) {
         when (order) {
             0 -> {
@@ -228,9 +237,10 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 타입에 맞춰 UI 데이터를 갱신하는 함수
     private fun checkComplete(type: Int) {
         when (type) {
-            0 -> {
+            ENTIRE_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().subList(0, 6).apply {
                     set(1, HomeUiData.MostPopularVideos(mostPopularVideoList))
                     set(4, HomeUiData.CategoryChannels(channelByCategoryList))
@@ -239,7 +249,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 }
             }
 
-            1 -> {
+            CATEGORY_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().subList(0, 6).apply {
                     set(4, HomeUiData.CategoryChannels(channelByCategoryList))
                 } + videoByCategoryList.map {
@@ -247,14 +257,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                 }
             }
 
-            2 -> {
+            SORT_CHANGE -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList()
                     .subList(0, 6) + (videoByCategoryList + additionalVideoList).map {
                     HomeUiData.CategoryVideos(it)
                 }
             }
 
-            3 -> {
+            SCROLL_DOWN -> {
                 _homeList.value = homeList.value.orEmpty().toMutableList().apply {
                     addAll(additionalVideoList.map {
                         HomeUiData.CategoryVideos(it)
@@ -264,6 +274,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // 인기 영상 Top5 평균 저장하는 함수
     private fun popularVideoAverage() {
         Utils.saveCounts(
             context,

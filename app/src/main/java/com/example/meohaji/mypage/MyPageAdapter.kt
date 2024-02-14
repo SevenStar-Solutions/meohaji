@@ -34,10 +34,12 @@ class MyPageAdapter(private val context: Context) :
         }
     ) {
 
+    // 프로필 편집 페이지로 이동할 때 사용되는 인터페이스
     interface EditMyProfile {
         fun open(name: String, image: Drawable?)
     }
 
+    // 영상 상세 페이지로 이동할 때 사용되는 인터페이스
     interface DetailSaveVideo {
         fun move(videoData: VideoForUi)
     }
@@ -54,7 +56,7 @@ class MyPageAdapter(private val context: Context) :
             is MyPageUiData.Profile -> PROFILE
             is MyPageUiData.Title -> TITLE
             is MyPageUiData.Video -> VIDEO
-            is MyPageUiData.Text -> TEXT
+            else -> TEXT
         }
     }
 
@@ -103,15 +105,15 @@ class MyPageAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (currentList[position]) {
+        when (getItem(position)) {
             is MyPageUiData.Profile -> (holder as ProfileViewHolder).bind(currentList[position] as MyPageUiData.Profile)
             is MyPageUiData.Title -> (holder as TitleViewHolder).bind(currentList[position] as MyPageUiData.Title)
             is MyPageUiData.Video -> (holder as SaveVideoViewHolder).bind(currentList[position] as MyPageUiData.Video)
-            is MyPageUiData.Text -> (holder as TextViewHolder).bind(currentList[position] as MyPageUiData.Text)
-
+            else -> (holder as TextViewHolder).bind(currentList[position] as MyPageUiData.Text)
         }
     }
 
+    // 프로필 영역 뷰홀더
     inner class ProfileViewHolder(private val binding: LayoutMyProfileBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Profile) = with(binding) {
@@ -140,6 +142,7 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    // 텍스트 영역 뷰홀더
     inner class TitleViewHolder(private val binding: LayoutSaveVideoTitleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Title) = with(binding) {
@@ -162,6 +165,7 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    // 저장된 영상 영역 뷰홀더
     inner class SaveVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MyPageUiData.Video) = with(binding) {
@@ -180,11 +184,10 @@ class MyPageAdapter(private val context: Context) :
         }
     }
 
+    // 안내 텍스트 영역 뷰홀더
     inner class TextViewHolder(private val binding: ItemNoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: MyPageUiData.Text) = with(binding) {
-
-        }
+        fun bind(item: MyPageUiData.Text) = Unit
     }
 
     companion object {

@@ -31,22 +31,27 @@ class HomeAdapter(private val context: Context) :
         }
     }) {
 
+    // 카테고리 지정에 사용되는 인터페이스
     interface CommunicateVideoByCategory {
         fun call(id: String, sortOrder: Int)
     }
 
+    // 가장 인기있는 영상 상세 페이지 이동에 사용되는 인터페이스
     interface DetailMostPopularVideo {
         fun move(videoData: VideoForUi)
     }
 
+    // 카테고리 영상 상세 페이지 이동에 사용되는 인터페이스
     interface DetailCategoryVideo {
         fun move(videoData: VideoForUi)
     }
 
+    // 카테고리 채널 상세 페이지 이동에 사용되는 인터페이스
     interface DetailCategoryChannel {
         fun move(channelData: CategoryChannel)
     }
 
+    // 카테고리 영상 정렬에 사용되는 인터페이스
     interface SortCategoryVideo {
         fun sort(order: Int)
     }
@@ -57,7 +62,10 @@ class HomeAdapter(private val context: Context) :
     var detailCategoryChannel: DetailCategoryChannel? = null
     var sortCategoryVideo: SortCategoryVideo? = null
 
+    // 카테고리 위치 저장하는 변수
     private var categorySpinnerIdx = 0
+
+    // 스피너 위치 저장하는 변수
     private var sortSpinnerIdx = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -125,27 +133,31 @@ class HomeAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (currentList[position]) {
+        when (getItem(position)) {
             is HomeUiData.Title -> (holder as TitleViewHolder).bind(currentList[position] as HomeUiData.Title)
             is HomeUiData.CategoryChannels -> (holder as CategoryChannelViewHolder).bind(currentList[position] as HomeUiData.CategoryChannels)
             is HomeUiData.CategoryVideos -> (holder as CategoryVideoViewHolder).bind(currentList[position] as HomeUiData.CategoryVideos)
-            is HomeUiData.MostPopularVideos -> (holder as MostPopularVideoViewHolder).bind(currentList[position] as HomeUiData.MostPopularVideos)
+            is HomeUiData.MostPopularVideos -> (holder as MostPopularVideoViewHolder).bind(
+                currentList[position] as HomeUiData.MostPopularVideos
+            )
+
             is HomeUiData.Spinner -> (holder as SpinnerViewHolder).bind(currentList[position] as HomeUiData.Spinner)
-            is HomeUiData.TitleWithSpinner -> (holder as TitleWithViewHolder).bind(currentList[position] as HomeUiData.TitleWithSpinner)
+            else -> (holder as TitleWithViewHolder).bind(currentList[position] as HomeUiData.TitleWithSpinner)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (currentList[position]) {
+        return when (getItem(position)) {
             is HomeUiData.CategoryChannels -> CHANNEL
             is HomeUiData.CategoryVideos -> VIDEO
             is HomeUiData.MostPopularVideos -> POPULARVIDEO
             is HomeUiData.Spinner -> SPINNER
             is HomeUiData.Title -> TITLE
-            is HomeUiData.TitleWithSpinner -> TITLE_SPINNER
+            else -> TITLE_SPINNER
         }
     }
 
+    // 카테고리 채널 영역 뷰홀더
     inner class CategoryChannelViewHolder(private val binding: LayoutChannelByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.CategoryChannels) {
@@ -153,14 +165,17 @@ class HomeAdapter(private val context: Context) :
             val categoryChannelAdapter = CategoryChannelAdapter(context)
             binding.rvHomeChannelByCategory.adapter = categoryChannelAdapter
             categoryChannelAdapter.submitList(item.list.toList())
-            categoryChannelAdapter.videoChannelClick = object : CategoryChannelAdapter.VideoChannelClick {
-                override fun onClick(channelData: CategoryChannel) {
-                    detailCategoryChannel?.move(channelData)
+            // 채널 클릭 이벤트
+            categoryChannelAdapter.videoChannelClick =
+                object : CategoryChannelAdapter.VideoChannelClick {
+                    override fun onClick(channelData: CategoryChannel) {
+                        detailCategoryChannel?.move(channelData)
+                    }
                 }
-            }
         }
     }
 
+    // 카테고리 영상 영역 뷰홀더
     inner class CategoryVideoViewHolder(private val binding: ItemVideoByCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.CategoryVideos) = with(binding) {
@@ -174,12 +189,14 @@ class HomeAdapter(private val context: Context) :
             tvVideoByCategoryItemUploadDate.text =
                 Utils.outputFormat.format(Utils.inputFormat.parse(item.video.publishedAt) as Date)
             tvVideoByCategoryItemRecommendScore.text = item.video.recommendScore.toString()
+            // 영상 클릭 이벤트
             ivVideoByCategoryItemThumbnail.setOnClickListener {
                 detailCategoryVideo?.move(item.video)
             }
         }
     }
 
+    // 가장 인기있는 영상 영역 뷰홀더
     inner class MostPopularVideoViewHolder(private val binding: LayoutMostPopularVideoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.MostPopularVideos) {
@@ -189,6 +206,7 @@ class HomeAdapter(private val context: Context) :
             binding.rvHomeMostPopularVideo.adapter = mostPopularVideoAdapter
 
             mostPopularVideoAdapter.submitList(item.list.toList())
+            // 영상 클릭 이벤트
             mostPopularVideoAdapter.videoClick =
                 object : MostPopularVideoAdapter.MostPopularVideoClick {
                     override fun onClick(videoData: VideoForUi) {
@@ -198,6 +216,7 @@ class HomeAdapter(private val context: Context) :
         }
     }
 
+    // 스피너 영역 뷰홀더
     inner class SpinnerViewHolder(private val binding: LayoutSelectCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Spinner) = with(binding) {
@@ -210,6 +229,7 @@ class HomeAdapter(private val context: Context) :
 
             spinnerHomeSelectCategory.adapter = adapter
             spinnerHomeSelectCategory.setSelection(categorySpinnerIdx)
+            // 스피너 아이템 선택 리스너
             spinnerHomeSelectCategory.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -229,6 +249,7 @@ class HomeAdapter(private val context: Context) :
         }
     }
 
+    // 텍스트 영역 뷰홀더
     inner class TitleViewHolder(private val binding: LayoutThemeTitleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: HomeUiData.Title) {
@@ -237,9 +258,10 @@ class HomeAdapter(private val context: Context) :
         }
     }
 
+    // 스피너있는 텍스트 영역 뷰홀더
     inner class TitleWithViewHolder(private val binding: LayoutThemeTitleWithSpinnerBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: HomeUiData.TitleWithSpinner) = with(binding){
+        fun bind(item: HomeUiData.TitleWithSpinner) = with(binding) {
 
             tvHomeThemeTitleWithSpinner.text = item.title
 
