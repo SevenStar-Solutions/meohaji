@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -30,6 +32,7 @@ import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
 import com.example.meohaji.NetworkCheckActivity
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.NetworkStatus
+import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentSearchBinding
 import com.example.meohaji.detail.BtnClick
@@ -77,6 +80,16 @@ class SearchFragment : Fragment() {
     private var pageToken: String? = null
     private var isLoading = false
 
+    // 페이드인 애니메이션
+    private val fadeIn: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+    }
+
+    // 페이드아웃 애니메이션
+    private val fadeOut: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -100,7 +113,25 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.rvSearch.adapter = searchAdapter
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            var curVisible = false
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && recyclerView.canScrollVertically(-1)
+                        .not()
+                ) {
+                    binding.fabSearchScrollUp.startAnimation(fadeOut)
+                    binding.fabSearchScrollUp.isVisible = false
+                    curVisible = false
+                }
+            }
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    binding.fabSearchScrollUp.isVisible = true
+                    if (curVisible.not()) binding.fabSearchScrollUp.startAnimation(fadeIn)
+                    curVisible = true
+                }
+
                 val lastItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
@@ -192,6 +223,10 @@ class SearchFragment : Fragment() {
             override fun onClick(videoData: SearchList) {
                 communicateIDSearchVideos(videoData.videoId)
             }
+        }
+
+        binding.fabSearchScrollUp.setOnClickListener {
+            binding.rvSearch.smoothScrollToPosition(0)
         }
     }
 

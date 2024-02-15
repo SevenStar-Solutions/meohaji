@@ -82,4 +82,23 @@
         app:layout_constraintBottom_toBottomOf="@+id/et_search_fragment_search"
         app:layout_constraintStart_toStartOf="@+id/et_search_fragment_search"
         app:layout_constraintTop_toTopOf="@+id/et_search_fragment_search" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_search_scroll_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/apply_fab_click"
+        android:outlineSpotShadowColor="@color/white"
+        android:src="@drawable/ic_home_floating_btn_scroll_up"
+        android:visibility="gone"
+        app:backgroundTint="@color/grey_background"
+        app:borderWidth="1dp"
+        app:fabCustomSize="45dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="20dp"
+        app:shapeAppearance="@style/FloatingButtonTheme"
+        app:tint="@color/apply_fab_icon_click" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.example.meohaji.mypage
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -12,6 +13,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -21,9 +24,13 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.Constants.PREF_KEY
+import com.example.meohaji.NetworkCheckActivity
+import com.example.meohaji.NetworkStatus
 import com.example.meohaji.R
 import com.example.meohaji.Utils
 import com.example.meohaji.databinding.FragmentMyPageBinding
@@ -48,6 +55,7 @@ class MyPageFragment : Fragment() {
     private var items: ArrayList<VideoForUi> = ArrayList()
     private lateinit var preferences: SharedPreferences
     var uiData: List<MyPageUiData> = listOf()
+
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val resultCode = result.resultCode
@@ -66,6 +74,16 @@ class MyPageFragment : Fragment() {
                 Toast.makeText(requireContext(), "선택을 취소하셨습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+
+    // 페이드인 애니메이션
+    private val fadeIn: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+    }
+
+    // 페이드아웃 애니메이션
+    private val fadeOut: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -170,6 +188,32 @@ class MyPageFragment : Fragment() {
         }
         binding.rvMyPage.adapter = myPageAdapter
         binding.rvMyPage.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMyPage.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            var curVisible = false
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && recyclerView.canScrollVertically(-1)
+                        .not()
+                ) {
+                    binding.fabMyPageScrollUp.startAnimation(fadeOut)
+                    binding.fabMyPageScrollUp.isVisible = false
+                    curVisible = false
+                }
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    binding.fabMyPageScrollUp.isVisible = true
+                    if (curVisible.not()) binding.fabMyPageScrollUp.startAnimation(fadeIn)
+                    curVisible = true
+                }
+            }
+        })
+
+        binding.fabMyPageScrollUp.setOnClickListener {
+            binding.rvMyPage.smoothScrollToPosition(0)
+        }
+
         myPageAdapter.submitList(uiData.toList())
     }
 

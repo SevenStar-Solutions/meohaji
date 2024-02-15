@@ -18,4 +18,8 @@
 
         <item name="android:windowBackground">#80000000</item>
     </style>
+
+    <style name="FloatingButtonTheme" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
