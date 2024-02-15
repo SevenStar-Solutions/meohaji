@@ -2,8 +2,24 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Meohaji" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#1A1B1F</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="Theme.Meohaji" parent="Base.Theme.Meohaji" />
+
+    <style name="DetailTransparent">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+
+        <item name="android:windowBackground">#80000000</item>
+    </style>
+
+    <style name="FloatingButtonTheme" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

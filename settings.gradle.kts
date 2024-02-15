@@ -10,9 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://www.jitpack.io") }
     }
 }
 
+//fgdr
 rootProject.name = "Meohaji"
 include(":app")
- 

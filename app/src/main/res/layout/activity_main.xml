@@ -4,15 +4,217 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#1A1B1F"
+    tools:context=".main.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginStart="-15dp"
+        android:background="@color/trans"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/img_poop"
+            android:backgroundTint="@color/yellow_background"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/moyamoya"
+            android:text="머하지"
+            android:textColor="#FFD80B"
+            android:textSize="26sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/cv_main"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_main" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="-60dp"
+        android:src="@drawable/apply_dock_background"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_main"
+        android:layout_width="match_parent"
+        android:layout_height="134dp"
+        android:layout_marginBottom="-40dp"
+        android:clickable="false"
+        android:contextClickable="true"
+        app:cardBackgroundColor="#24262A"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:strokeColor="#33FFFFFF"
+        app:strokeWidth="0.5dp" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testLeft"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:outlineSpotShadowColor="#C5DC40"
+        android:text="Home"
+        app:strokeWidth="0dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_home_search"
+        app:layout_constraintStart_toStartOf="@id/tv_home_search">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_search" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testMiddle"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        android:outlineSpotShadowColor="#C5DC40"
+        android:text="Home"
+        app:cardBackgroundColor="@color/yellow_background"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:strokeWidth="0dp">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_home" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btn_testRight"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="25dp"
+        android:foreground="@drawable/apply_ripple_effect_circle"
+        android:outlineSpotShadowColor="#C5DC40"
+        app:strokeWidth="0dp"
+        android:text="Home"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_home_myPage"
+        app:layout_constraintStart_toStartOf="@id/tv_home_myPage">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_mypage" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/iv_spotLight"
+        android:layout_width="140dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="-55dp"
+        android:alpha="0.8"
+        android:background="@drawable/ic_spot_light"
+        android:backgroundTint="@color/yellow_background"
+        android:elevation="15dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_home_search"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="65dp"
+        android:gravity="center"
+        android:text="검색"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
+        app:layout_constraintEnd_toStartOf="@id/tv_home_title"
+        app:layout_constraintTop_toTopOf="@id/tv_home_title" />
+
+    <TextView
+        android:id="@+id/tv_home_title"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="홈"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@id/btn_testMiddle"
+        app:layout_constraintStart_toStartOf="@id/btn_testMiddle"
+        app:layout_constraintTop_toBottomOf="@id/btn_testMiddle" />
+
+    <TextView
+        android:id="@+id/tv_home_myPage"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="65dp"
+        android:gravity="center"
+        android:text="내 정보"
+        android:textColor="#AEAEAE"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_home_title"
+        app:layout_constraintStart_toEndOf="@id/tv_home_title"
+        app:layout_constraintTop_toTopOf="@id/tv_home_title" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout_main_splash"
+        android:elevation="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_background">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:rotation="-20"
+            android:background="@drawable/img_poop"
+            android:backgroundTint="@color/yellow_background"
+            android:layout_marginEnd="-30dp"
+            android:layout_marginBottom="-40dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintEnd_toStartOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/moyamoya"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="머하지"
+            android:textColor="#FFD80B"
+            android:textSize="100sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

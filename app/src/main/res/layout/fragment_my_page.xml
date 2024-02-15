@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_myPageFrag"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".mypage.MyPageFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_my_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_my_page_scroll_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/apply_fab_click"
+        android:outlineSpotShadowColor="@color/white"
+        android:src="@drawable/ic_home_floating_btn_scroll_up"
+        android:visibility="gone"
+        app:backgroundTint="@color/grey_background"
+        app:borderWidth="1dp"
+        app:fabCustomSize="45dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="20dp"
+        app:shapeAppearance="@style/FloatingButtonTheme"
+        app:tint="@color/apply_fab_icon_click" />
+</androidx.constraintlayout.widget.ConstraintLayout>

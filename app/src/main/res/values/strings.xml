@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Meohaji</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="detail_item_title">제목</string>
+    <string name="detail_liked">좋아요</string>
+    <string name="detail_view_count">조회수</string>
+    <string name="detail_recommended">추천</string>
+    <string name="detail_button_save">저장</string>
+    <string name="detail_button_share">공유</string>
+    <string name="detail_upload_date">게시일 : 2024년 01월 01일</string>
+    <string name="detail_text_description">Description</string>
 </resources>
