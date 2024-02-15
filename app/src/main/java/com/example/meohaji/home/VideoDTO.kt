@@ -111,13 +111,13 @@ data class Default (
 
 data class Statistics (
     @SerializedName("viewCount")
-    val viewCount: String,
+    val viewCount: String?,
     @SerializedName("likeCount")
     val likeCount: String?,
     @SerializedName("favoriteCount")
     val favoriteCount: String,
     @SerializedName("commentCount")
-    val commentCount: String
+    val commentCount: String?
 )
 
 data class PageInfo (

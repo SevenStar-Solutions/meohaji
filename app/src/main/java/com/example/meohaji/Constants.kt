@@ -21,4 +21,7 @@ object Constants {
     const val PREFS_COMMENT_COUNT = "com.example.meohaji.counts"
     const val PREFS_COMMENT_COUNT_KEY = "COMMENT_COUNT_PREF"
     const val PREFS_HISTORY_DATA_KEY = "HISTORY_DATA_PREF"
+
+    // 검사용 API 키
+    const val YOUTUBE_API_KEY="AIzaSyDk9t1GplYFwXMOrwI0Sd0W7F6qAd5_GZA"
 }
