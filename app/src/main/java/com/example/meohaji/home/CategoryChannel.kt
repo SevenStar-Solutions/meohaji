@@ -9,8 +9,8 @@ data class CategoryChannel(
     val title: String,
     val thumbnail: String,
     val description: String,
-    val viewCount: Int,
-    val subscriberCount: Int,
-    val videoCount: Int,
+    val viewCount: Long,
+    val subscriberCount: Long,
+    val videoCount: Long,
     val customUrl: String
 ): Parcelable

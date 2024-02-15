@@ -32,7 +32,7 @@ data class ChannelSnippet (
     @SerializedName("description")
     val description: String,
     @SerializedName("customUrl")
-    val customURL: String,
+    val customURL: String?,
     @SerializedName("publishedAt")
     val publishedAt: String,
     @SerializedName("thumbnails")
@@ -72,13 +72,13 @@ data class ChannelDefault (
 
 data class ChannelStatistics (
     @SerializedName("viewCount")
-    val viewCount: String,
+    val viewCount: String?,
     @SerializedName("subscriberCount")
-    val subscriberCount: String,
+    val subscriberCount: String?,
     @SerializedName("hiddenSubscriberCount")
     val hiddenSubscriberCount: Boolean,
     @SerializedName("videoCount")
-    val videoCount: String
+    val videoCount: String?
 )
 
 data class ChannelPageInfo (

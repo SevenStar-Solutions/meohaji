@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.meohaji.BuildConfig
+import com.example.meohaji.Constants
 import com.example.meohaji.NetworkClient
 import com.example.meohaji.Utils
 import kotlinx.coroutines.launch
@@ -75,7 +76,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     // 가장 인기있는 영상 가져오는 함수
     private suspend fun communicateMostPopularVideos() {
         val response = NetworkClient.apiService.mostPopularVideos(
-            BuildConfig.YOUTUBE_API_KEY,
+            Constants.YOUTUBE_API_KEY,
             "snippet,statistics",
             "mostPopular",
             "kr"
@@ -91,14 +92,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.snippet.title,
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
-                        item.statistics.viewCount.toInt(),
+                        item.statistics.viewCount?.toInt() ?: 0,
                         item.statistics.likeCount?.toInt() ?: 0,
-                        item.statistics.commentCount.toInt(),
+                        item.statistics.commentCount?.toInt() ?: 0,
                         Utils.calRecommendScore(
                             item.snippet.description,
-                            item.statistics.viewCount.toInt(),
+                            item.statistics.viewCount?.toInt() ?: 0,
                             item.statistics.likeCount?.toInt() ?: 0,
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount?.toInt() ?: 0
                         )
                     )
                 )
@@ -111,7 +112,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     // 카테고리 영상을 받아오는 함수
     private suspend fun communicateVideoByCategory(id: String) {
         val response = NetworkClient.apiService.videoByCategory(
-            BuildConfig.YOUTUBE_API_KEY,
+            Constants.YOUTUBE_API_KEY,
             "snippet,statistics",
             "mostPopular",
             10,
@@ -133,14 +134,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.snippet.title,
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
-                        item.statistics.viewCount.toInt(),
+                        item.statistics.viewCount?.toInt() ?: 0,
                         item.statistics.likeCount?.toInt() ?: 0,
-                        item.statistics.commentCount.toInt(),
+                        item.statistics.commentCount?.toInt() ?: 0,
                         Utils.calRecommendScore(
                             item.snippet.description,
-                            item.statistics.viewCount.toInt(),
+                            item.statistics.viewCount?.toInt() ?: 0,
                             item.statistics.likeCount?.toInt() ?: 0,
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount?.toInt() ?: 0
                         )
                     )
                 )
@@ -155,7 +156,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     // 스크롤 시 카테고리 영상을 받아오는 함수
     private suspend fun scrollCommunicateVideoByCategory() {
         val response = NetworkClient.apiService.videoByCategory(
-            BuildConfig.YOUTUBE_API_KEY,
+            Constants.YOUTUBE_API_KEY,
             "snippet,statistics",
             "mostPopular",
             10,
@@ -174,14 +175,14 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.snippet.title,
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
-                        item.statistics.viewCount.toInt(),
+                        item.statistics.viewCount?.toInt() ?: 0,
                         item.statistics.likeCount?.toInt() ?: 0,
-                        item.statistics.commentCount.toInt(),
+                        item.statistics.commentCount?.toInt() ?: 0,
                         Utils.calRecommendScore(
                             item.snippet.description,
-                            item.statistics.viewCount.toInt(),
+                            item.statistics.viewCount?.toInt() ?: 0,
                             item.statistics.likeCount?.toInt() ?: 0,
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount?.toInt() ?: 0
                         )
                     )
                 )
@@ -195,7 +196,7 @@ class HomeViewModel(private val context: Context) : ViewModel() {
     // 카테고리 채널을 받아오는 함수
     private suspend fun communicationChannelByCategory() {
         val response = NetworkClient.apiService.channelByCategory(
-            BuildConfig.YOUTUBE_API_KEY,
+            Constants.YOUTUBE_API_KEY,
             "snippet,statistics",
             channelIds.toString()
         )
@@ -209,10 +210,10 @@ class HomeViewModel(private val context: Context) : ViewModel() {
                         item.snippet.title,
                         item.snippet.thumbnails.high.url,
                         item.snippet.description,
-                        item.statistics.viewCount.toInt(),
-                        item.statistics.subscriberCount.toInt(),
-                        item.statistics.videoCount.toInt(),
-                        item.snippet.customURL
+                        item.statistics.viewCount?.toLong() ?: 0L,
+                        item.statistics.subscriberCount?.toLong() ?: 0L,
+                        item.statistics.videoCount?.toLong() ?: 0L,
+                        item.snippet.customURL ?: ""
                     )
                 )
             }

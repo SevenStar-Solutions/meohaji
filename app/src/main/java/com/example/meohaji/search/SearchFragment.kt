@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.BuildConfig
+import com.example.meohaji.Constants
 import com.example.meohaji.Constants.PREF_RECENT_KEY
 import com.example.meohaji.Constants.PREF_RECENT_KEY_VALUE
 import com.example.meohaji.NetworkCheckActivity
@@ -235,7 +236,7 @@ class SearchFragment : Fragment() {
     /** 클릭한 아이템 id로 데이터 요청*/
     private suspend fun searchVideoById(id: String) = withContext(Dispatchers.IO) {
         NetworkClient.apiService.searchByIdList(
-            BuildConfig.YOUTUBE_API_KEY,
+            Constants.YOUTUBE_API_KEY,
             "snippet,statistics",
             id,
         )
@@ -255,14 +256,14 @@ class SearchFragment : Fragment() {
                         item.snippet.title,
                         item.snippet.description,
                         item.snippet.thumbnails.medium.url,
-                        item.statistics.viewCount.toInt(),
+                        item.statistics.viewCount?.toInt() ?: 0,
                         item.statistics.likeCount?.toInt() ?: 0,
-                        item.statistics.commentCount.toInt(),
+                        item.statistics.commentCount?.toInt() ?: 0,
                         Utils.calRecommendScore(
                             item.snippet.description,
-                            item.statistics.viewCount.toInt(),
+                            item.statistics.viewCount?.toInt() ?: 0,
                             item.statistics.likeCount?.toInt() ?: 0,
-                            item.statistics.commentCount.toInt()
+                            item.statistics.commentCount?.toInt() ?: 0
                         )
                     )
                 }
@@ -277,7 +278,7 @@ class SearchFragment : Fragment() {
     private suspend fun searchByQueryList(query: String, page: String?) =
         withContext(Dispatchers.IO) {
             NetworkClient.apiService.searchByQueryList(
-                BuildConfig.YOUTUBE_API_KEY,
+                Constants.YOUTUBE_API_KEY,
                 "snippet",
                 10,
                 "relevance",
