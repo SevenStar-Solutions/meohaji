@@ -8,14 +8,18 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meohaji.NetworkCheckActivity
 import com.example.meohaji.NetworkStatus
+import com.example.meohaji.R
 import com.example.meohaji.databinding.FragmentHomeBinding
 import com.example.meohaji.detail.BtnClick
 import com.example.meohaji.detail.DetailChannelFragment
@@ -45,6 +49,16 @@ class HomeFragment : Fragment() {
     // Context를 가지는 뷰모델 생성
     private val homeViewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(requireContext())
+    }
+
+    // 페이드인 애니메이션
+    private val fadeIn: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+    }
+
+    // 페이드아웃 애니메이션
+    private val fadeOut: Animation by lazy {
+        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
     }
 
     override fun onAttach(context: Context) {
@@ -79,7 +93,25 @@ class HomeFragment : Fragment() {
 
         // 스크롤 감지하여 무한 스크롤 진행
         binding.rvHome.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            var curVisible = false
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && recyclerView.canScrollVertically(-1)
+                        .not()
+                ) {
+                    binding.fabHomeScrollUp.startAnimation(fadeOut)
+                    binding.fabHomeScrollUp.isVisible = false
+                    curVisible = false
+                }
+            }
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    binding.fabHomeScrollUp.isVisible = true
+                    if (curVisible.not()) binding.fabHomeScrollUp.startAnimation(fadeIn)
+                    curVisible = true
+                }
+
                 val lastItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter?.itemCount?.minus(1)
@@ -132,6 +164,10 @@ class HomeFragment : Fragment() {
                     homeViewModel.sortVideo(order)
                 }
             }
+        }
+
+        binding.fabHomeScrollUp.setOnClickListener {
+            binding.rvHome.smoothScrollToPosition(0)
         }
     }
 
